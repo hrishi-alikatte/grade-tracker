@@ -652,11 +652,26 @@ function updateDashboard() {
         promoStatusBadge.style.color = '#fff';
         promoStatusBadge.innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>';
     } else {
-        if (!results.coreSumPassed) {
-            promoTitle.textContent = "Promotion insuffisante (Groupe 1 < 16 pts) ⚠️";
-        } else {
-            promoTitle.textContent = "Promotion insuffisante ⚠️";
+        const reasons = [];
+        if (results.overallAverage < 4.0) {
+            reasons.push("points Groupe 2 insuffisants");
         }
+        if (!results.coreSumPassed) {
+            reasons.push("Groupe 1 < 16 pts");
+        }
+        if (results.insuffisances > 4) {
+            reasons.push("> 4 insuffisances");
+        }
+        if (results.pointsManquants > 3.0) {
+            reasons.push("déficit > 3.0 pts");
+        }
+        if (results.pointsEnPlus < results.requiredCompensation) {
+            reasons.push("compensation insuffisante");
+        }
+        
+        const reasonsStr = reasons.length > 0 ? ` (${reasons.join(', ')})` : '';
+        promoTitle.textContent = `Promotion insuffisante${reasonsStr} ⚠️`;
+        
         promoStatusBadge.style.backgroundColor = '#ef4444'; // Red circle
         promoStatusBadge.style.color = '#fff';
         promoStatusBadge.innerHTML = '<span style="font-size: 1.1rem; font-weight: bold;">!</span>';
@@ -707,6 +722,11 @@ function updateGroupsBilan() {
     }
 
     g1PointsText.textContent = `Min 16 / tes points: ${results.g1Sum.toFixed(1)} · Max 24`;
+    if (results.g1Sum < 16.0) {
+        g1PointsText.style.color = 'var(--color-avg-failing-text)';
+    } else {
+        g1PointsText.style.color = 'var(--color-avg-passing-text)';
+    }
 
     const createBilanItem = (name, val) => {
         const li = document.createElement('li');
@@ -754,6 +774,11 @@ function updateGroupsBilan() {
     const g2Min = g2Count * 4;
     const g2Max = g2Count * 6;
     g2PointsText.textContent = `Min ${g2Min} / tes points: ${g2Sum.toFixed(1)} · Max ${g2Max}`;
+    if (g2Sum < g2Min) {
+        g2PointsText.style.color = 'var(--color-avg-failing-text)';
+    } else {
+        g2PointsText.style.color = 'var(--color-avg-passing-text)';
+    }
 }
 
 function findMatchingSubject(subjectList, refSubject) {
