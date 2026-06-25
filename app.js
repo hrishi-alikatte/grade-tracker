@@ -175,6 +175,22 @@ function getYear2SubjectAverage(nameSub) {
     return data.rawAverage !== null ? data.roundedAverage : null;
 }
 
+function getYear2ArtAverage() {
+    if (!state.subjectsYear2) return null;
+    const sub = state.subjectsYear2.find(s => s.role === 'art');
+    if (!sub) return null;
+    const data = calculateSubjectData(sub, 'annual');
+    return data.rawAverage !== null ? data.roundedAverage : null;
+}
+
+function formatYear2ArtAvg() {
+    if (!state.subjectsYear2) return '—';
+    const sub = state.subjectsYear2.find(s => s.role === 'art');
+    if (!sub) return '—';
+    const data = calculateSubjectData(sub, 'annual');
+    return data.rawAverage !== null ? `${data.roundedAverage.toFixed(1)} (moy: ${data.rawAverage.toFixed(2)})` : '—';
+}
+
 /**
  * Calculates subject averages supporting both semesters and annual combinations
  */
@@ -190,6 +206,15 @@ function calculateSubjectData(subject, semester) {
     }
     if (subject.role === 'chimie_y2') {
         const val = getYear2SubjectAverage('chimie');
+        return {
+            rawAverage: val,
+            roundedAverage: val,
+            taAverage: null,
+            tsAverage: null
+        };
+    }
+    if (subject.role === 'art_y2') {
+        const val = getYear2ArtAverage();
         return {
             rawAverage: val,
             roundedAverage: val,
@@ -439,7 +464,8 @@ const defaultSubjectsYear3 = [
     { id: 'y3_histoire', name: 'Histoire', role: 'general', target: 4.0, evaluationMode: 'dual', grades: { sem1: [], sem2: [] } },
     { id: 'y3_tm', name: 'Travail de Maturité (TM)', role: 'tm', target: 4.5, evaluationMode: 'standard', grades: { sem1: [], sem2: [] } },
     { id: 'y3_physique_y2', name: 'Physique (Y2)', role: 'physique_y2', target: 4.0, evaluationMode: 'locked', grades: { sem1: [], sem2: [] } },
-    { id: 'y3_chimie_y2', name: 'Chimie (Y2)', role: 'chimie_y2', target: 4.0, evaluationMode: 'locked', grades: { sem1: [], sem2: [] } }
+    { id: 'y3_chimie_y2', name: 'Chimie (Y2)', role: 'chimie_y2', target: 4.0, evaluationMode: 'locked', grades: { sem1: [], sem2: [] } },
+    { id: 'y3_art_y2', name: 'Arts Visuels / Musique (Y2)', role: 'art_y2', target: 4.0, evaluationMode: 'locked', grades: { sem1: [], sem2: [] } }
 ];
 
 // --- 6. State Management ---
@@ -470,6 +496,32 @@ function migrateSubjectGrades(subject) {
     }
 }
 
+function runStateMigrations() {
+    if (!state.subjectsYear1 || state.subjectsYear1.length === 0) {
+        state.subjectsYear1 = JSON.parse(JSON.stringify(defaultSubjectsYear1));
+    }
+    if (!state.subjectsYear2 || state.subjectsYear2.length === 0) {
+        state.subjectsYear2 = JSON.parse(JSON.stringify(defaultSubjectsYear2));
+    }
+    if (!state.subjectsYear3 || state.subjectsYear3.length === 0) {
+        state.subjectsYear3 = JSON.parse(JSON.stringify(defaultSubjectsYear3));
+    } else {
+        const hasCombined = state.subjectsYear3.some(s => s.id === 'y3_phys_chimie_y2');
+        if (hasCombined) {
+            state.subjectsYear3 = state.subjectsYear3.filter(s => s.id !== 'y3_phys_chimie_y2');
+            if (!state.subjectsYear3.some(s => s.id === 'y3_physique_y2')) {
+                state.subjectsYear3.push({ id: 'y3_physique_y2', name: 'Physique (Y2)', role: 'physique_y2', target: 4.0, evaluationMode: 'locked', grades: { sem1: [], sem2: [] } });
+            }
+            if (!state.subjectsYear3.some(s => s.id === 'y3_chimie_y2')) {
+                state.subjectsYear3.push({ id: 'y3_chimie_y2', name: 'Chimie (Y2)', role: 'chimie_y2', target: 4.0, evaluationMode: 'locked', grades: { sem1: [], sem2: [] } });
+            }
+        }
+        if (!state.subjectsYear3.some(s => s.id === 'y3_art_y2')) {
+            state.subjectsYear3.push({ id: 'y3_art_y2', name: 'Arts Visuels / Musique (Y2)', role: 'art_y2', target: 4.0, evaluationMode: 'locked', grades: { sem1: [], sem2: [] } });
+        }
+    }
+}
+
 function loadState() {
     const saved = localStorage.getItem('gymnase_vaud_state_v5');
     if (saved) {
@@ -479,26 +531,7 @@ function loadState() {
             if (!state.currentYear) state.currentYear = 1;
             if (!state.currentSemester) state.currentSemester = 'sem1';
             
-            if (!state.subjectsYear1 || state.subjectsYear1.length === 0) {
-                state.subjectsYear1 = JSON.parse(JSON.stringify(defaultSubjectsYear1));
-            }
-            if (!state.subjectsYear2 || state.subjectsYear2.length === 0) {
-                state.subjectsYear2 = JSON.parse(JSON.stringify(defaultSubjectsYear2));
-            }
-            if (!state.subjectsYear3 || state.subjectsYear3.length === 0) {
-                state.subjectsYear3 = JSON.parse(JSON.stringify(defaultSubjectsYear3));
-            } else {
-                const hasCombined = state.subjectsYear3.some(s => s.id === 'y3_phys_chimie_y2');
-                if (hasCombined) {
-                    state.subjectsYear3 = state.subjectsYear3.filter(s => s.id !== 'y3_phys_chimie_y2');
-                    if (!state.subjectsYear3.some(s => s.id === 'y3_physique_y2')) {
-                        state.subjectsYear3.push({ id: 'y3_physique_y2', name: 'Physique (Y2)', role: 'physique_y2', target: 4.0, evaluationMode: 'locked', grades: { sem1: [], sem2: [] } });
-                    }
-                    if (!state.subjectsYear3.some(s => s.id === 'y3_chimie_y2')) {
-                        state.subjectsYear3.push({ id: 'y3_chimie_y2', name: 'Chimie (Y2)', role: 'chimie_y2', target: 4.0, evaluationMode: 'locked', grades: { sem1: [], sem2: [] } });
-                    }
-                }
-            }
+            runStateMigrations();
             
             state.subjectsYear1.forEach(migrateSubjectGrades);
             state.subjectsYear2.forEach(migrateSubjectGrades);
@@ -712,6 +745,304 @@ function updateGroupsBilan() {
     const g2Min = g2Count * 4;
     const g2Max = g2Count * 6;
     g2PointsText.textContent = `Min ${g2Min} / tes points: ${g2Sum.toFixed(1)} · Max ${g2Max}`;
+}
+
+function findMatchingSubject(subjectList, refSubject) {
+    if (!subjectList) return null;
+    // 1. Try matching by role if it's not a generic role
+    if (refSubject.role && !['general', 'standard', 'locked', 'art_y2', 'physique_y2', 'chimie_y2', 'phys_chimie_y2'].includes(refSubject.role)) {
+        const found = subjectList.find(s => s.role === refSubject.role);
+        if (found) return found;
+    }
+    // 2. If it's a locked Y2 science/art subject in Year 3, match it to the normal counterpart in Year 2
+    if (refSubject.role === 'physique_y2') {
+        const found = subjectList.find(s => s.name.toLowerCase().includes('physique'));
+        if (found) return found;
+    }
+    if (refSubject.role === 'chimie_y2') {
+        const found = subjectList.find(s => s.name.toLowerCase().includes('chimie'));
+        if (found) return found;
+    }
+    if (refSubject.role === 'art_y2') {
+        const found = subjectList.find(s => s.role === 'art');
+        if (found) return found;
+    }
+    // 3. Fallback to matching by name (case-insensitive, trimmed)
+    const refNameClean = refSubject.name.toLowerCase().trim();
+    const foundByName = subjectList.find(s => s.name.toLowerCase().trim() === refNameClean);
+    if (foundByName) return foundByName;
+
+    // 4. Try matching partial names
+    const foundPartial = subjectList.find(s => s.name.toLowerCase().includes(refNameClean) || refNameClean.includes(s.name.toLowerCase()));
+    return foundPartial || null;
+}
+
+function getAnnualAverageForSubjectInYear(yearNum, refSubject) {
+    let list = [];
+    if (yearNum === 1) list = state.subjectsYear1;
+    else if (yearNum === 2) list = state.subjectsYear2;
+    else if (yearNum === 3) list = state.subjectsYear3;
+
+    if (yearNum === 3) {
+        if (refSubject.role === 'art_y2') {
+            return getYear2ArtAverage();
+        }
+        if (refSubject.role === 'physique_y2') {
+            return getYear2SubjectAverage('physique');
+        }
+        if (refSubject.role === 'chimie_y2') {
+            return getYear2SubjectAverage('chimie');
+        }
+    }
+
+    const matched = findMatchingSubject(list, refSubject);
+    if (!matched) return null;
+    
+    const data = calculateSubjectData(matched, 'annual');
+    return data.rawAverage !== null ? data.roundedAverage : null;
+}
+
+function renderSubjectEvolutionChart(subject, drawer) {
+    const points = [];
+    const xCoords = { 1: 60, 2: 180, 3: 300 };
+    
+    [1, 2, 3].forEach(y => {
+        const avg = getAnnualAverageForSubjectInYear(y, subject);
+        if (avg !== null && !isNaN(avg)) {
+            const svgY = 85 - (avg - 1.0) * (70 / 5.0);
+            points.push({ year: y, avg: avg, x: xCoords[y], y: svgY });
+        }
+    });
+
+    if (points.length === 0) {
+        drawer.innerHTML = `
+            <div style="text-align: center; font-size: 0.8rem; color: var(--color-text-muted); padding: 1rem 0;">
+                Aucune moyenne disponible pour tracer l'évolution sur 3 ans.
+            </div>
+        `;
+        return;
+    }
+
+    let pathHTML = '';
+    if (points.length > 1) {
+        const pathData = points.map((p, i) => `${i === 0 ? 'M' : 'L'} ${p.x} ${p.y}`).join(' ');
+        pathHTML = `<path d="${pathData}" fill="none" stroke="var(--color-primary)" stroke-width="2.5" />`;
+    }
+
+    const circlesHTML = points.map(p => `
+        <circle cx="${p.x}" cy="${p.y}" r="4" fill="#0f172a" stroke="var(--color-primary)" stroke-width="2" />
+        <text x="${p.x}" y="${p.y - 10}" text-anchor="middle" font-size="10" font-weight="bold" fill="white">${p.avg.toFixed(1)}</text>
+    `).join('');
+
+    const thresholdY = 85 - (4.0 - 1.0) * (70 / 5.0); // 43
+
+    drawer.innerHTML = `
+        <div style="font-size: 0.8rem; font-weight: 600; color: var(--color-text-secondary); margin-bottom: 0.5rem; display: flex; justify-content: space-between;">
+            <span>📈 Évolution de ${escapeHTML(subject.name)}</span>
+            <span style="font-weight: normal; font-size: 0.75rem; color: var(--color-text-muted);">Seuil de promotion: 4.0</span>
+        </div>
+        <div style="background: rgba(0,0,0,0.2); border-radius: var(--radius-md); padding: 0.5rem; display: flex; justify-content: center;">
+            <svg viewBox="0 0 360 100" width="100%" height="100" style="max-width: 360px; overflow: visible;">
+                <!-- Promotion Threshold Line -->
+                <line x1="20" y1="${thresholdY}" x2="340" y2="${thresholdY}" stroke="#ef4444" stroke-width="1.2" stroke-dasharray="3,3" opacity="0.6" />
+                <text x="15" y="${thresholdY + 3}" font-size="8" fill="#ef4444" font-weight="bold" text-anchor="end">4.0</text>
+                
+                <!-- X-Axis Labels -->
+                <text x="60" y="98" font-size="9" fill="var(--color-text-muted)" text-anchor="middle">1ère année</text>
+                <text x="180" y="98" font-size="9" fill="var(--color-text-muted)" text-anchor="middle">2ème année</text>
+                <text x="300" y="98" font-size="9" fill="var(--color-text-muted)" text-anchor="middle">3ème année</text>
+
+                <!-- Grid lines for years -->
+                <line x1="60" y1="15" x2="60" y2="85" stroke="rgba(255,255,255,0.05)" stroke-width="1" />
+                <line x1="180" y1="15" x2="180" y2="85" stroke="rgba(255,255,255,0.05)" stroke-width="1" />
+                <line x1="300" y1="15" x2="300" y2="85" stroke="rgba(255,255,255,0.05)" stroke-width="1" />
+
+                <!-- Trend Line and circles -->
+                ${pathHTML}
+                ${circlesHTML}
+            </svg>
+        </div>
+    `;
+}
+
+function updateTabVisibility() {
+    const isYear4 = (state.currentYear === 4);
+    
+    const evoContainer = document.getElementById('evolution-slide-container');
+    const promoDashboard = document.getElementById('promo-dashboard');
+    const semTabs = document.querySelector('.semester-tabs-container');
+    const subjectsSec = document.querySelector('.subjects-section');
+    const bilanSec = document.querySelector('.bilan-section');
+    const addSubBtn = document.getElementById('add-subject-btn');
+
+    if (isYear4) {
+        if (evoContainer) evoContainer.style.display = 'flex';
+        if (promoDashboard) promoDashboard.style.display = 'none';
+        if (semTabs) semTabs.style.display = 'none';
+        if (subjectsSec) subjectsSec.style.display = 'none';
+        if (bilanSec) bilanSec.style.display = 'none';
+        if (addSubBtn) addSubBtn.style.display = 'none';
+        
+        renderDedicatedEvolutionSlide();
+    } else {
+        if (evoContainer) evoContainer.style.display = 'none';
+        if (promoDashboard) promoDashboard.style.display = 'block';
+        if (semTabs) semTabs.style.display = 'flex';
+        if (subjectsSec) subjectsSec.style.display = 'block';
+        if (bilanSec) bilanSec.style.display = 'block';
+        if (addSubBtn) addSubBtn.style.display = 'inline-flex';
+    }
+}
+
+function renderDedicatedEvolutionSlide() {
+    const container = document.getElementById('evolution-slide-container');
+    if (!container) return;
+
+    container.innerHTML = `
+        <!-- Overall Average Trend Card -->
+        <div class="subject-card" style="padding: 1.5rem; display: flex; flex-direction: column; gap: 1rem;">
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--color-border-subtle); padding-bottom: 0.5rem; flex-wrap: wrap; gap: 0.5rem;">
+                <h3 style="font-size: 1.15rem; font-weight: 800; color: white; display: flex; align-items: center; gap: 0.5rem;">
+                    <span>📈 Évolution Générale</span>
+                </h3>
+                <span style="font-size: 0.8rem; color: var(--color-text-secondary); font-weight: 500;">Moyennes annuelles générales sur 3 ans</span>
+            </div>
+            <div id="evolution-graph-wrapper" style="position: relative; width: 100%; min-height: 180px; display: flex; align-items: center; justify-content: center;">
+                <!-- Dynamically rendered -->
+            </div>
+        </div>
+
+        <!-- Multi-Subject Comparison Card -->
+        <div class="subject-card" style="padding: 1.5rem; display: flex; flex-direction: column; gap: 1rem;">
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--color-border-subtle); padding-bottom: 0.5rem; flex-wrap: wrap; gap: 0.5rem;">
+                <h3 style="font-size: 1.15rem; font-weight: 800; color: white; display: flex; align-items: center; gap: 0.5rem;">
+                    <span>📊 Évolution par Branche</span>
+                </h3>
+                <span style="font-size: 0.8rem; color: var(--color-text-secondary); font-weight: 500;">Branches principales et OS</span>
+            </div>
+            <div id="multi-subject-graph-wrapper" style="position: relative; width: 100%; min-height: 250px; display: flex; align-items: center; justify-content: center; flex-direction: column;">
+                <!-- Dynamically rendered -->
+            </div>
+        </div>
+    `;
+
+    renderEvolutionGraph();
+    renderMultiSubjectGraph();
+}
+
+function renderMultiSubjectGraph() {
+    const wrapper = document.getElementById('multi-subject-graph-wrapper');
+    if (!wrapper) return;
+
+    const subjectsToTrack = [
+        { label: 'Maths', role: 'math', color: '#ef4444' },
+        { label: 'Français', role: 'french', color: '#3b82f6' },
+        { label: 'OS', role: 'os', color: '#10b981' },
+        { label: 'Anglais', role: 'l3', color: '#f59e0b' },
+        { label: 'Langue 2', role: 'l2', color: '#a78bfa' }
+    ];
+
+    subjectsToTrack.forEach(track => {
+        const foundSub = state.subjectsYear3.find(s => s.role === track.role) ||
+                         state.subjectsYear2.find(s => s.role === track.role) ||
+                         state.subjectsYear1.find(s => s.role === track.role);
+        if (foundSub) {
+            track.label = foundSub.name;
+        }
+    });
+
+    const xCoords = { 1: 100, 2: 300, 3: 500 };
+    const mapY = (val) => {
+        const clamped = Math.max(1.0, Math.min(6.0, val));
+        return 180 - ((clamped - 1.0) / 5.0) * 150;
+    };
+
+    const thresholdY = mapY(4.0);
+
+    let pathsHTML = '';
+    let markersHTML = '';
+    let hasAnyData = false;
+
+    subjectsToTrack.forEach(track => {
+        const points = [];
+        [1, 2, 3].forEach(y => {
+            const avg = getAnnualAverageForSubjectInYear(y, track);
+            if (avg !== null && !isNaN(avg)) {
+                points.push({ year: y, val: avg, x: xCoords[y], y: mapY(avg) });
+                hasAnyData = true;
+            }
+        });
+
+        if (points.length > 1) {
+            const pathData = points.map((p, i) => `${i === 0 ? 'M' : 'L'} ${p.x} ${p.y}`).join(' ');
+            pathsHTML += `<path d="${pathData}" fill="none" stroke="${track.color}" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" />`;
+        }
+
+        points.forEach(p => {
+            markersHTML += `
+                <g>
+                    <circle cx="${p.x}" cy="${p.y}" r="5" fill="#0f172a" stroke="${track.color}" stroke-width="2" />
+                    <text x="${p.x}" y="${p.y - 8}" text-anchor="middle" font-size="9" font-weight="bold" fill="white">${p.val.toFixed(1)}</text>
+                </g>
+            `;
+        });
+    });
+
+    if (!hasAnyData) {
+        wrapper.innerHTML = `
+            <div class="graph-empty-state">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--color-primary); opacity: 0.4;">
+                    <line x1="18" y1="20" x2="18" y2="10"></line>
+                    <line x1="12" y1="20" x2="12" y2="4"></line>
+                    <line x1="6" y1="20" x2="6" y2="14"></line>
+                </svg>
+                <h4>Aucune donnée de moyenne annuelle</h4>
+                <p>Saisissez des notes dans les branches principales pour afficher la comparaison.</p>
+            </div>
+        `;
+        return;
+    }
+
+    const svgContent = `
+        <svg viewBox="0 0 600 220" width="100%" height="220" style="overflow: visible;">
+            <!-- Grid horizontal lines -->
+            <line x1="50" y1="${mapY(6.0)}" x2="550" y2="${mapY(6.0)}" stroke="rgba(255,255,255,0.03)" stroke-width="1"/>
+            <line x1="50" y1="${mapY(5.0)}" x2="550" y2="${mapY(5.0)}" stroke="rgba(255,255,255,0.03)" stroke-width="1"/>
+            <line x1="50" y1="${mapY(3.0)}" x2="550" y2="${mapY(3.0)}" stroke="rgba(255,255,255,0.03)" stroke-width="1"/>
+            <line x1="50" y1="${mapY(2.0)}" x2="550" y2="${mapY(2.0)}" stroke="rgba(255,255,255,0.03)" stroke-width="1"/>
+
+            <!-- Promotion Limit Line (4.0) -->
+            <line x1="50" y1="${thresholdY}" x2="550" y2="${thresholdY}" stroke="#ef4444" stroke-dasharray="4,4" stroke-width="1.5" opacity="0.6"/>
+            <text x="555" y="${thresholdY + 3}" fill="#ef4444" font-family="var(--font-family-sans)" font-size="10" font-weight="700">4.0</text>
+
+            <!-- X-Axis Labels -->
+            <text x="100" y="212" font-size="11" fill="var(--color-text-muted)" text-anchor="middle" font-weight="600">1ère année</text>
+            <text x="300" y="212" font-size="11" fill="var(--color-text-muted)" text-anchor="middle" font-weight="600">2ème année</text>
+            <text x="500" y="212" font-size="11" fill="var(--color-text-muted)" text-anchor="middle" font-weight="600">3ème année</text>
+
+            <!-- Vertical grid lines -->
+            <line x1="100" y1="20" x2="100" y2="190" stroke="rgba(255,255,255,0.05)" stroke-width="1" />
+            <line x1="300" y1="20" x2="300" y2="190" stroke="rgba(255,255,255,0.05)" stroke-width="1" />
+            <line x1="500" y1="20" x2="500" y2="190" stroke="rgba(255,255,255,0.05)" stroke-width="1" />
+
+            <!-- Tracked paths and circles -->
+            ${pathsHTML}
+            ${markersHTML}
+        </svg>
+    `;
+
+    const legendHTML = `
+        <div class="chart-legend">
+            ${subjectsToTrack.map(track => `
+                <div class="legend-item">
+                    <span class="legend-pill" style="background-color: ${track.color};"></span>
+                    <span>${escapeHTML(track.label)}</span>
+                </div>
+            `).join('')}
+        </div>
+    `;
+
+    wrapper.innerHTML = svgContent + legendHTML;
 }
 
 function renderEvolutionGraph() {
@@ -941,6 +1272,8 @@ function renderSubjects() {
                 detailText = formatYear2SubjectAvg('physique');
             } else if (subject.role === 'chimie_y2') {
                 detailText = formatYear2SubjectAvg('chimie');
+            } else if (subject.role === 'art_y2') {
+                detailText = formatYear2ArtAvg();
             }
             lanesHTML = `
                 <div class="grade-lanes-container" style="grid-template-columns: 1fr;">
@@ -954,10 +1287,16 @@ function renderSubjects() {
                     </div>
                 </div>
             `;
+            const showEvoBtn = (state.currentYear === 3 && sem === 'annual');
+            const evoBtnHTML = showEvoBtn ? `<button type="button" class="btn-sub-evo" title="Afficher l'évolution sur 3 ans">📊 Évolution</button>` : '';
+
             footerHTML = `
-                <div class="subject-footer">
+                <div class="subject-footer" style="display: flex; justify-content: space-between; align-items: center; gap: 0.5rem; width: 100%;">
                     ${targetStatusHTML}
-                    <span style="font-size: 0.75rem; color: var(--color-text-secondary); font-style: italic;">Note de 2ème année verrouillée pour le Bilan.</span>
+                    ${evoBtnHTML}
+                </div>
+                <div style="font-size: 0.75rem; color: var(--color-text-secondary); font-style: italic; margin-top: 0.5rem;">
+                    Note de 2ème année verrouillée pour le Bilan.
                 </div>
             `;
         } else if (sem === 'annual') {
@@ -992,10 +1331,16 @@ function renderSubjects() {
                 </div>
             `;
 
+            const showEvoBtn = (state.currentYear === 3);
+            const evoBtnHTML = showEvoBtn ? `<button type="button" class="btn-sub-evo" title="Afficher l'évolution sur 3 ans">📊 Évolution</button>` : '';
+
             footerHTML = `
-                <div class="subject-footer">
+                <div class="subject-footer" style="display: flex; justify-content: space-between; align-items: center; gap: 0.5rem; width: 100%;">
                     ${targetStatusHTML}
-                    <span style="font-size: 0.75rem; color: var(--color-text-secondary); font-style: italic;">Notes éditables en mode Semestre uniquement.</span>
+                    ${evoBtnHTML}
+                </div>
+                <div style="font-size: 0.75rem; color: var(--color-text-secondary); font-style: italic; margin-top: 0.5rem;">
+                    Notes éditables en mode Semestre uniquement.
                 </div>
             `;
         } else {
@@ -1059,6 +1404,7 @@ function renderSubjects() {
         }
 
         const deleteBtnHTML = (mode === 'locked') ? '' : `<button class="btn-delete-subject" title="Supprimer la branche">&times;</button>`;
+        const drawerHTML = (state.currentYear === 3 && sem === 'annual') ? `<div class="sub-evo-drawer"></div>` : '';
 
         card.innerHTML = `
             ${deleteBtnHTML}
@@ -1082,6 +1428,7 @@ function renderSubjects() {
             ${lanesHTML}
 
             ${footerHTML}
+            ${drawerHTML}
         `;
 
         subjectsContainer.appendChild(card);
@@ -1139,8 +1486,11 @@ document.querySelectorAll('#year-selector .lang-toggle-btn').forEach(btn => {
         btn.classList.add('active');
         state.currentYear = parseInt(btn.getAttribute('data-year'));
         saveState();
-        renderSubjects();
-        updateDashboard();
+        updateTabVisibility();
+        if (state.currentYear !== 4) {
+            renderSubjects();
+            updateDashboard();
+        }
     });
 });
 
@@ -1239,6 +1589,21 @@ subjectsContainer.addEventListener('click', (e) => {
     const currentSubjects = (state.currentYear === 3) ? state.subjectsYear3 : (state.currentYear === 2) ? state.subjectsYear2 : state.subjectsYear1;
     const subject = currentSubjects.find(s => s.id === subId);
     if (!subject) return;
+
+    // Toggle subject-specific evolution chart drawer
+    if (e.target.classList.contains('btn-sub-evo')) {
+        const drawer = card.querySelector('.sub-evo-drawer');
+        if (drawer) {
+            const isVisible = window.getComputedStyle(drawer).display !== 'none';
+            if (isVisible) {
+                drawer.style.display = 'none';
+            } else {
+                drawer.style.display = 'block';
+                renderSubjectEvolutionChart(subject, drawer);
+            }
+        }
+        return;
+    }
 
     // Open Add Grade modal
     if (e.target.classList.contains('add-grade-btn')) {
@@ -1469,9 +1834,6 @@ if (importBtn && importFileInput) {
                 if (parsed) {
                     if (parsed.subjectsYear1 && parsed.subjectsYear2) {
                         state = parsed;
-                        if (!state.subjectsYear3 || state.subjectsYear3.length === 0) {
-                            state.subjectsYear3 = JSON.parse(JSON.stringify(defaultSubjectsYear3));
-                        }
                     } else if (Array.isArray(parsed.subjects)) {
                         // Upgrade old v4 state to v5
                         state = {
@@ -1487,6 +1849,8 @@ if (importBtn && importFileInput) {
                         return;
                     }
                     
+                    runStateMigrations();
+                    
                     state.subjectsYear1.forEach(migrateSubjectGrades);
                     state.subjectsYear2.forEach(migrateSubjectGrades);
                     state.subjectsYear3.forEach(migrateSubjectGrades);
@@ -1501,8 +1865,11 @@ if (importBtn && importFileInput) {
                         btn.classList.toggle('active', btn.getAttribute('data-sem') === state.currentSemester);
                     });
 
-                    renderSubjects();
-                    updateDashboard();
+                    updateTabVisibility();
+                    if (state.currentYear !== 4) {
+                        renderSubjects();
+                        updateDashboard();
+                    }
                     alert("Données restaurées avec succès !");
                 }
             } catch (err) {
@@ -1528,8 +1895,11 @@ function init() {
         btn.classList.toggle('active', btn.getAttribute('data-sem') === state.currentSemester);
     });
 
-    renderSubjects();
-    updateDashboard();
+    updateTabVisibility();
+    if (state.currentYear !== 4) {
+        renderSubjects();
+        updateDashboard();
+    }
 }
 
 window.onload = init;
