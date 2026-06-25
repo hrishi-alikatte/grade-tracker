@@ -8,7 +8,7 @@
 :root {
     /* Slightly lighter, premium Navy Blue palette as requested */
     --color-bg-base: #0f172a;          /* Lighter midnight navy (slate-900) */
-    --color-bg-surface: #31466a;       /* Lighter navy card background (slate-800 adjusted) */
+    --color-bg-surface: #273a5a;       /* Lighter navy card background (slate-800 adjusted) */
     --color-bg-elevated: #334155;      /* Lighter elevated background (slate-700) */
     
     --color-border-subtle: #2e3b5e;    /* Slate-blue border */
