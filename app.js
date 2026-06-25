@@ -167,10 +167,36 @@ function formatYear2SubjectAvg(nameSub) {
     return data.rawAverage !== null ? `${data.roundedAverage.toFixed(1)} (moy: ${data.rawAverage.toFixed(2)})` : '—';
 }
 
+function getYear2SubjectAverage(nameSub) {
+    if (!state.subjectsYear2) return null;
+    const sub = state.subjectsYear2.find(s => s.name.toLowerCase().includes(nameSub));
+    if (!sub) return null;
+    const data = calculateSubjectData(sub, 'annual');
+    return data.rawAverage !== null ? data.roundedAverage : null;
+}
+
 /**
  * Calculates subject averages supporting both semesters and annual combinations
  */
 function calculateSubjectData(subject, semester) {
+    if (subject.role === 'physique_y2') {
+        const val = getYear2SubjectAverage('physique');
+        return {
+            rawAverage: val,
+            roundedAverage: val,
+            taAverage: null,
+            tsAverage: null
+        };
+    }
+    if (subject.role === 'chimie_y2') {
+        const val = getYear2SubjectAverage('chimie');
+        return {
+            rawAverage: val,
+            roundedAverage: val,
+            taAverage: null,
+            tsAverage: null
+        };
+    }
     if (subject.role === 'phys_chimie_y2') {
         const val = calculateLockedYear2PhysChem();
         if (val === null) {
@@ -412,7 +438,8 @@ const defaultSubjectsYear3 = [
     { id: 'y3_geographie', name: 'Géographie', role: 'general', target: 4.0, evaluationMode: 'dual', grades: { sem1: [], sem2: [] } },
     { id: 'y3_histoire', name: 'Histoire', role: 'general', target: 4.0, evaluationMode: 'dual', grades: { sem1: [], sem2: [] } },
     { id: 'y3_tm', name: 'Travail de Maturité (TM)', role: 'tm', target: 4.5, evaluationMode: 'standard', grades: { sem1: [], sem2: [] } },
-    { id: 'y3_phys_chimie_y2', name: 'Physique & Chimie (Y2)', role: 'phys_chimie_y2', target: 4.0, evaluationMode: 'locked', grades: { sem1: [], sem2: [] } }
+    { id: 'y3_physique_y2', name: 'Physique (Y2)', role: 'physique_y2', target: 4.0, evaluationMode: 'locked', grades: { sem1: [], sem2: [] } },
+    { id: 'y3_chimie_y2', name: 'Chimie (Y2)', role: 'chimie_y2', target: 4.0, evaluationMode: 'locked', grades: { sem1: [], sem2: [] } }
 ];
 
 // --- 6. State Management ---
@@ -460,6 +487,17 @@ function loadState() {
             }
             if (!state.subjectsYear3 || state.subjectsYear3.length === 0) {
                 state.subjectsYear3 = JSON.parse(JSON.stringify(defaultSubjectsYear3));
+            } else {
+                const hasCombined = state.subjectsYear3.some(s => s.id === 'y3_phys_chimie_y2');
+                if (hasCombined) {
+                    state.subjectsYear3 = state.subjectsYear3.filter(s => s.id !== 'y3_phys_chimie_y2');
+                    if (!state.subjectsYear3.some(s => s.id === 'y3_physique_y2')) {
+                        state.subjectsYear3.push({ id: 'y3_physique_y2', name: 'Physique (Y2)', role: 'physique_y2', target: 4.0, evaluationMode: 'locked', grades: { sem1: [], sem2: [] } });
+                    }
+                    if (!state.subjectsYear3.some(s => s.id === 'y3_chimie_y2')) {
+                        state.subjectsYear3.push({ id: 'y3_chimie_y2', name: 'Chimie (Y2)', role: 'chimie_y2', target: 4.0, evaluationMode: 'locked', grades: { sem1: [], sem2: [] } });
+                    }
+                }
             }
             
             state.subjectsYear1.forEach(migrateSubjectGrades);
@@ -781,24 +819,20 @@ function renderSubjects() {
         let footerHTML = '';
 
         if (mode === 'locked') {
-            const physAvg = formatYear2SubjectAvg('physique');
-            const chimAvg = formatYear2SubjectAvg('chimie');
+            let detailText = '';
+            if (subject.role === 'physique_y2') {
+                detailText = formatYear2SubjectAvg('physique');
+            } else if (subject.role === 'chimie_y2') {
+                detailText = formatYear2SubjectAvg('chimie');
+            }
             lanesHTML = `
-                <div class="grade-lanes-container" style="grid-template-columns: 1fr 1fr;">
+                <div class="grade-lanes-container" style="grid-template-columns: 1fr;">
                     <div class="grade-lane">
                         <div class="lane-title">
-                            <span>Physique (Y2)</span>
+                            <span>Moyenne reprise de la 2ème année</span>
                         </div>
                         <div style="font-size: 0.95rem; font-weight: 600; color: white; padding: 0.25rem 0;">
-                            ${physAvg}
-                        </div>
-                    </div>
-                    <div class="grade-lane">
-                        <div class="lane-title">
-                            <span>Chimie (Y2)</span>
-                        </div>
-                        <div style="font-size: 0.95rem; font-weight: 600; color: white; padding: 0.25rem 0;">
-                            ${chimAvg}
+                            ${detailText}
                         </div>
                     </div>
                 </div>
@@ -806,7 +840,7 @@ function renderSubjects() {
             footerHTML = `
                 <div class="subject-footer">
                     ${targetStatusHTML}
-                    <span style="font-size: 0.75rem; color: var(--color-text-secondary); font-style: italic;">Moyennes verrouillées de la 2ème année.</span>
+                    <span style="font-size: 0.75rem; color: var(--color-text-secondary); font-style: italic;">Note de 2ème année verrouillée pour le Bilan.</span>
                 </div>
             `;
         } else if (sem === 'annual') {
