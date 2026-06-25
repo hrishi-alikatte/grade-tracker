@@ -1,0 +1,27 @@
+{
+  "name": "Suivi des notes — Gymnase Vaud",
+  "short_name": "GradeVibe",
+  "description": "Suivi des moyennes par branche, objectifs, double compensation et confettis.",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#0a0f1d",
+  "theme_color": "#0a0f1d",
+  "icons": [
+    {
+      "src": "logo.svg",
+      "type": "image/svg+xml",
+      "sizes": "any"
+    },
+    {
+      "src": "logo.svg",
+      "type": "image/svg+xml",
+      "sizes": "192x192"
+    },
+    {
+      "src": "logo.svg",
+      "type": "image/svg+xml",
+      "sizes": "512x512"
+    }
+  ]
+}

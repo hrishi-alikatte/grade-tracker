@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#60a5fa;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#3b82f6;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  <!-- Background circle -->
+  <circle cx="256" cy="256" r="240" fill="#141c30" stroke="#253356" stroke-width="12" />
+  
+  <!-- Graduation cap base structure -->
+  <path d="M256 100 L440 180 L256 260 L72 180 Z" fill="url(#grad)" />
+  <path d="M140 226 L140 340 C140 370, 210 390, 256 390 C302 390, 372 370, 372 340 L372 226" fill="none" stroke="url(#grad)" stroke-width="24" stroke-linecap="round" stroke-linejoin="round" />
+  
+  <!-- Tassel -->
+  <path d="M372 180 L372 290 C372 305, 390 310, 390 310" fill="none" stroke="#fbbf24" stroke-width="12" stroke-linecap="round" />
+  <circle cx="390" cy="310" r="14" fill="#fbbf24" />
+
+  <!-- Success checkmark inside cap -->
+  <path d="M200 240 L240 280 L320 190" fill="none" stroke="#10b981" stroke-width="32" stroke-linecap="round" stroke-linejoin="round" />
+</svg>

@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Suivi des notes — Gymnase</title>
+    <!-- PWA Settings -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#0a0f1d">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="apple-touch-icon" href="logo.svg">
+    
+    <!-- Google Fonts: Outfit for a rounded, clean, modern feel -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="paper-texture">
+    <!-- Confetti Canvas overlay -->
+    <canvas id="confetti-canvas"></canvas>
+
+    <div class="app-container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-left">
+                <div class="logo-circle">
+                    <!-- Graduation cap icon -->
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.42 10.922a1 1 0 0 0-.019-1.838L12.83 5.18a2 2 0 0 0-1.66 0L2.6 9.08a1 1 0 0 0 0 1.832l8.57 3.908a2 2 0 0 0 1.66 0z"/><path d="M6 12v5c0 2 2 3 6 3s6-1 6-3v-5"/><path d="M21.5 12v6"/></svg>
+                </div>
+                <div class="header-text">
+                    <h1 id="title-container">Suivi des notes de <span id="student-name" contenteditable="true" title="Cliquez pour modifier le nom" style="border-bottom: 2px dashed rgba(255,255,255,0.4); outline: none;">Étudiant</span></h1>
+                    <div style="display: flex; align-items: center; gap: 0.75rem; margin-top: 0.25rem;">
+                        <span class="header-subtitle">Gymnase · barème 1 à 6</span>
+                        <div class="lang-toggle-container" id="year-selector" style="margin: 0; padding: 1px;">
+                            <button type="button" class="lang-toggle-btn active" data-year="1">1ère année</button>
+                            <button type="button" class="lang-toggle-btn" data-year="2">2ème année</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="header-actions">
+                <button id="export-btn" class="btn btn-secondary" style="padding: 0.5rem 1rem; font-size: 0.8rem; border-radius: var(--radius-full);" title="Sauvegarder les données">
+                    💾 Exporter
+                </button>
+                <button id="import-btn" class="btn btn-secondary" style="padding: 0.5rem 1rem; font-size: 0.8rem; border-radius: var(--radius-full);" title="Restaurer les données">
+                    📁 Importer
+                </button>
+                <input type="file" id="import-file-input" style="display: none;" accept=".json">
+                <button id="add-subject-btn" class="btn btn-primary">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                    Ajouter une branche
+                </button>
+            </div>
+        </header>
+
+        <!-- Semester Selection Tabs -->
+        <div class="semester-tabs-container">
+            <button class="semester-tab active" data-sem="sem1">1er Semestre</button>
+            <button class="semester-tab" data-sem="sem2">2ème Semestre</button>
+            <button class="semester-tab" data-sem="annual">Annuel (Combiné)</button>
+        </div>
+
+        <!-- PWA Install Banner -->
+        <div id="pwa-install-banner" class="promo-dashboard-container" style="background-color: var(--color-bg-surface); border: 1px solid var(--color-border-subtle); display: none; margin-bottom: 1rem; align-items: center; justify-content: space-between; flex-direction: row; gap: 1rem;">
+            <div style="display:flex; align-items:center; gap:0.75rem;">
+                <span style="font-size: 1.5rem;">📱</span>
+                <div>
+                    <h3 style="font-size:1rem;font-weight:800;color:white;">Installer l'application</h3>
+                    <p style="font-size:0.75rem;color:var(--color-text-secondary);margin:0;">Ajoutez GradeVibe à votre écran d'accueil pour l'utiliser hors-ligne.</p>
+                </div>
+            </div>
+            <button id="pwa-install-btn" class="btn btn-primary" style="padding: 6px 12px; font-size:0.8rem;">Installer</button>
+        </div>
+
+        <!-- Promotion Dashboard Banner (Green container) -->
+        <section class="promo-dashboard-container" id="promo-dashboard">
+            <div class="promo-header">
+                <div class="promo-status-badge" id="promo-status-badge">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                </div>
+                <div class="promo-text-summary">
+                    <h2 id="promo-title">En route pour réussir l'année 🎉</h2>
+                    <p id="promo-subtitle">Moyenne générale 4.5 sur 0 branches.</p>
+                </div>
+            </div>
+            
+            <div class="promo-stats-grid">
+                <div class="promo-stat-card">
+                    <span class="promo-stat-value" id="stat-insuffisances">0</span>
+                    <span class="promo-stat-label">Insuffisances</span>
+                    <span class="promo-stat-sublabel">moy. &lt; 4</span>
+                </div>
+                <div class="promo-stat-card">
+                    <span class="promo-stat-value" id="stat-deficit">0</span>
+                    <span class="promo-stat-label">Points manquants</span>
+                    <span class="promo-stat-sublabel">sous 4</span>
+                </div>
+                <div class="promo-stat-card">
+                    <span class="promo-stat-value" id="stat-surplus">0</span>
+                    <span class="promo-stat-label">Points en plus</span>
+                    <span class="promo-stat-sublabel">au-dessus de 4</span>
+                </div>
+                <div class="promo-stat-card">
+                    <span class="promo-stat-value" id="stat-compensation">0 / 0</span>
+                    <span class="promo-stat-label">Compensation</span>
+                    <span class="promo-stat-sublabel">requis (&times;2)</span>
+                </div>
+            </div>
+            
+            <footer class="promo-footer">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                <span>Chaque point sous 4 doit être compensé par deux points au-dessus de 4.</span>
+            </footer>
+        </section>
+
+        <!-- Subjects Container -->
+        <main class="subjects-section">
+            <div class="subjects-list" id="subjects-container">
+                <!-- Subject cards will be dynamically injected here -->
+            </div>
+        </main>
+
+        <!-- Bilan par groupe Section -->
+        <section class="bilan-section" style="margin-top: 1rem; margin-bottom: 2rem;">
+            <h2 style="font-size: 1.4rem; font-weight: 800; margin-bottom: 1rem; color: white; border-bottom: 1px solid var(--color-border-subtle); padding-bottom: 0.5rem;">Bilan par groupe</h2>
+            
+            <div class="bilan-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+                <!-- Groupe 1 Card -->
+                <div class="subject-card" style="padding: 1.5rem; display: flex; flex-direction: column; gap: 0.75rem;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--color-border-subtle); padding-bottom: 0.5rem;">
+                        <h3 style="font-size: 1.15rem; font-weight: 800; color: white;">Groupe 1</h3>
+                        <span id="g1-points-text" style="font-size: 0.85rem; font-weight: 700; color: var(--color-primary);">Min 16 / — · Max 24</span>
+                    </div>
+                    <ul class="bilan-list" id="g1-list" style="list-style: none; font-size: 0.9rem; color: var(--color-text-secondary); display: flex; flex-direction: column; gap: 0.4rem;">
+                        <!-- Injected branches -->
+                    </ul>
+                </div>
+
+                <!-- Groupe 2 Card -->
+                <div class="subject-card" style="padding: 1.5rem; display: flex; flex-direction: column; gap: 0.75rem;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--color-border-subtle); padding-bottom: 0.5rem;">
+                        <h3 style="font-size: 1.15rem; font-weight: 800; color: white;">Groupe 2 (Toutes branches)</h3>
+                        <span id="g2-points-text" style="font-size: 0.85rem; font-weight: 700; color: var(--color-primary);">Min 4 / — · Max 6</span>
+                    </div>
+                    <ul class="bilan-list" id="g2-list" style="list-style: none; font-size: 0.9rem; color: var(--color-text-secondary); display: flex; flex-direction: column; gap: 0.4rem;">
+                        <!-- Injected branches -->
+                    </ul>
+                </div>
+            </div>
+
+            <p style="font-size: 0.75rem; color: var(--color-text-secondary); margin-top: 1rem; font-style: italic; opacity: 0.8;">
+                * Points = somme des moyennes arrondies au demi-point. Le minimum (4 par branche) correspond à la ligne de réussite, le maximum à un 6 partout.
+            </p>
+        </section>
+    </div>
+
+    <!-- MODAL: Ajouter une branche -->
+    <div class="modal-backdrop" id="add-subject-modal">
+        <div class="modal-container">
+            <button class="modal-close-btn" id="close-subject-modal">&times;</button>
+            <h2 class="modal-title">Ajouter une branche</h2>
+            <form id="add-subject-form">
+                <div class="form-group">
+                    <label class="form-label" for="subject-name">Nom de la branche</label>
+                    <input type="text" id="subject-name" class="form-input" required placeholder="Ex: Maths, Français, Physique...">
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="subject-target">Objectif (de 1.0 à 6.0)</label>
+                    <input type="number" id="subject-target" class="form-input" min="1" max="6" step="0.1" value="4.5">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Mode d'évaluation</label>
+                    <div class="chip-container" id="subject-mode-chips" style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; width: 100%;">
+                        <button type="button" class="chip-btn active" data-value="dual">Double Voie (TA/TS)</button>
+                        <button type="button" class="chip-btn" data-value="standard">Moyenne Simple</button>
+                    </div>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" id="cancel-subject-btn">Annuler</button>
+                    <button type="submit" class="btn btn-primary">Ajouter</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL: Ajouter une note -->
+    <div class="modal-backdrop" id="add-grade-modal">
+        <div class="modal-container">
+            <button class="modal-close-btn" id="close-grade-modal">&times;</button>
+            <h2 class="modal-title">Ajouter une note pour <span id="modal-subject-name" style="color: var(--color-accent-warm);">Branche</span></h2>
+            <form id="add-grade-form">
+                <input type="hidden" id="grade-subject-id">
+                
+                <div class="form-group">
+                    <label class="form-label" for="grade-name">Nom de l'évaluation</label>
+                    <input type="text" id="grade-name" class="form-input" placeholder="Ex: Écrit 1, Test 2...">
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Note (1.0 - 6.0)</label>
+                    <div class="chip-container" id="grade-chips">
+                        <button type="button" class="chip-btn" data-value="1.0">1.0</button>
+                        <button type="button" class="chip-btn" data-value="1.5">1.5</button>
+                        <button type="button" class="chip-btn" data-value="2.0">2.0</button>
+                        <button type="button" class="chip-btn" data-value="2.5">2.5</button>
+                        <button type="button" class="chip-btn" data-value="3.0">3.0</button>
+                        <button type="button" class="chip-btn" data-value="3.5">3.5</button>
+                        <button type="button" class="chip-btn active" data-value="4.0">4.0</button>
+                        <button type="button" class="chip-btn" data-value="4.5">4.5</button>
+                        <button type="button" class="chip-btn" data-value="5.0">5.0</button>
+                        <button type="button" class="chip-btn" data-value="5.5">5.5</button>
+                        <button type="button" class="chip-btn" data-value="6.0">6.0</button>
+                    </div>
+                </div>
+                
+                <div class="form-group" id="grade-type-group">
+                    <label class="form-label">Type d'évaluation</label>
+                    <div class="chip-container" id="type-chips" style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; width: 100%;">
+                        <button type="button" class="chip-btn active" data-value="TS">Synthèse (TS)</button>
+                        <button type="button" class="chip-btn" data-value="TA">Travail Annuel (TA)</button>
+                    </div>
+                </div>
+                
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" id="cancel-grade-btn">Annuler</button>
+                    <button type="submit" class="btn btn-primary">Ajouter</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL: Détails de la note (Grade Details Popover) -->
+    <div class="modal-backdrop" id="grade-details-modal">
+        <div class="modal-container" style="max-width: 380px;">
+            <button class="modal-close-btn" id="close-details-modal">&times;</button>
+            <h2 class="modal-title" style="margin-bottom: 1rem;">Détails de la note</h2>
+            <div style="background-color: var(--color-bg-base); padding: 1.25rem; border-radius: var(--radius-md); border: 1px solid var(--color-border-subtle); margin-bottom: 1.5rem; display: flex; flex-direction: column; gap: 0.75rem;">
+                <div style="display: flex; justify-content: space-between; font-size: 0.9rem;">
+                    <span style="color: var(--color-text-secondary);">Évaluation:</span>
+                    <strong id="detail-grade-name" style="color: white;">—</strong>
+                </div>
+                <div style="display: flex; justify-content: space-between; font-size: 0.9rem;">
+                    <span style="color: var(--color-text-secondary);">Note:</span>
+                    <strong id="detail-grade-value" style="color: white; font-size: 1.1rem;">—</strong>
+                </div>
+                <div style="display: flex; justify-content: space-between; font-size: 0.9rem;">
+                    <span style="color: var(--color-text-secondary);">Type:</span>
+                    <strong id="detail-grade-type" style="color: white;">—</strong>
+                </div>
+                <div style="display: flex; justify-content: space-between; font-size: 0.8rem;">
+                    <span style="color: var(--color-text-secondary);">Date d'ajout:</span>
+                    <span id="detail-grade-date" style="color: var(--color-text-muted);">—</span>
+                </div>
+            </div>
+            <div style="display: flex; justify-content: space-between; gap: 1rem;">
+                <button type="button" class="btn btn-secondary" id="close-details-btn" style="flex: 1;">Fermer</button>
+                <button type="button" class="btn btn-primary" id="delete-detail-grade-btn" style="flex: 1; background-color: var(--color-failing-bg);">Supprimer</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
