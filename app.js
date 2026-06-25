@@ -586,6 +586,7 @@ function updateDashboard() {
         statSurplus.textContent = '0';
         statCompensation.textContent = '0 / 0';
         
+        renderEvolutionGraph();
         updateGroupsBilan();
         return;
     }
@@ -621,6 +622,7 @@ function updateDashboard() {
 
     // Update Bilan lists
     updateGroupsBilan();
+    renderEvolutionGraph();
 }
 
 function updateGroupsBilan() {
@@ -710,6 +712,121 @@ function updateGroupsBilan() {
     const g2Min = g2Count * 4;
     const g2Max = g2Count * 6;
     g2PointsText.textContent = `Min ${g2Min} / tes points: ${g2Sum.toFixed(1)} · Max ${g2Max}`;
+}
+
+function renderEvolutionGraph() {
+    const wrapper = document.getElementById('evolution-graph-wrapper');
+    if (!wrapper) return;
+
+    const resultsY1 = checkVaudPromotion(state.subjectsYear1, 'annual');
+    const resultsY2 = checkVaudPromotion(state.subjectsYear2, 'annual');
+    const resultsY3 = checkVaudPromotion(state.subjectsYear3, 'annual');
+
+    const avgY1 = resultsY1.activeSubjectsCount > 0 ? resultsY1.overallAverage : null;
+    const avgY2 = resultsY2.activeSubjectsCount > 0 ? resultsY2.overallAverage : null;
+    const avgY3 = resultsY3.activeSubjectsCount > 0 ? resultsY3.overallAverage : null;
+
+    const points = [];
+    if (avgY1 !== null) points.push({ x: 100, val: avgY1, label: "1ère année" });
+    if (avgY2 !== null) points.push({ x: 300, val: avgY2, label: "2ème année" });
+    if (avgY3 !== null) points.push({ x: 500, val: avgY3, label: "3ème année" });
+
+    if (points.length === 0) {
+        wrapper.innerHTML = `
+            <div class="graph-empty-state">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--color-primary); opacity: 0.4;">
+                    <line x1="18" y1="20" x2="18" y2="10"></line>
+                    <line x1="12" y1="20" x2="12" y2="4"></line>
+                    <line x1="6" y1="20" x2="6" y2="14"></line>
+                </svg>
+                <h4>Aucune moyenne annuelle à afficher</h4>
+                <p>Saisissez des notes pour afficher l'évolution de vos moyennes sur 3 ans.</p>
+            </div>
+        `;
+        return;
+    }
+
+    const mapY = (val) => {
+        const clamped = Math.max(1.0, Math.min(6.0, val));
+        return 160 - ((clamped - 1.0) / 5.0) * 130;
+    };
+
+    points.forEach(pt => {
+        pt.y = mapY(pt.val);
+    });
+
+    const promotionLimitY = mapY(4.0);
+
+    let pathD = '';
+    let areaD = '';
+    if (points.length > 1) {
+        pathD = `M ${points[0].x} ${points[0].y}`;
+        for (let i = 1; i < points.length; i++) {
+            pathD += ` L ${points[i].x} ${points[i].y}`;
+        }
+        areaD = `M ${points[0].x} ${points[0].y}`;
+        for (let i = 1; i < points.length; i++) {
+            areaD += ` L ${points[i].x} ${points[i].y}`;
+        }
+        areaD += ` L ${points[points.length - 1].x} 175 L ${points[0].x} 175 Z`;
+    }
+
+    let svgContent = `
+        <svg class="evolution-graph-svg" viewBox="0 0 600 200">
+            <defs>
+                <linearGradient id="area-grad" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stop-color="var(--color-primary)" stop-opacity="0.35"/>
+                    <stop offset="100%" stop-color="var(--color-primary)" stop-opacity="0.0"/>
+                </linearGradient>
+                <linearGradient id="line-grad" x1="0" y1="0" x2="1" y2="0">
+                    <stop offset="0%" stop-color="#3b82f6"/>
+                    <stop offset="100%" stop-color="#10b981"/>
+                </linearGradient>
+                <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+                    <feGaussianBlur stdDeviation="3" result="blur" />
+                    <feComposite in="SourceGraphic" in2="blur" operator="over" />
+                </filter>
+            </defs>
+
+            <!-- Grid horizontal lines -->
+            <line x1="50" y1="${mapY(6.0)}" x2="550" y2="${mapY(6.0)}" stroke="rgba(255,255,255,0.03)" stroke-width="1"/>
+            <line x1="50" y1="${mapY(5.0)}" x2="550" y2="${mapY(5.0)}" stroke="rgba(255,255,255,0.03)" stroke-width="1"/>
+            <line x1="50" y1="${mapY(3.0)}" x2="550" y2="${mapY(3.0)}" stroke="rgba(255,255,255,0.03)" stroke-width="1"/>
+            <line x1="50" y1="${mapY(2.0)}" x2="550" y2="${mapY(2.0)}" stroke="rgba(255,255,255,0.03)" stroke-width="1"/>
+
+            <!-- Promotion Limit Line (4.0) -->
+            <line x1="50" y1="${promotionLimitY}" x2="550" y2="${promotionLimitY}" stroke="rgba(245,158,11,0.25)" stroke-dasharray="6,4" stroke-width="1.5"/>
+            <text x="555" y="${promotionLimitY + 3}" fill="rgba(245,158,11,0.7)" font-family="var(--font-family-sans)" font-size="10" font-weight="700">4.0 (limite)</text>
+
+            <!-- Area under line -->
+            ${areaD ? `<path class="graph-area" d="${areaD}" fill="url(#area-grad)"/>` : ''}
+
+            <!-- Connecting Line -->
+            ${pathD ? `<path class="graph-path" d="${pathD}" stroke="url(#line-grad)" stroke-width="3" stroke-linecap="round" fill="none"/>` : ''}
+
+            <!-- Node Points -->
+            ${points.map((pt, idx) => {
+                const color = pt.val >= 4.0 ? '#10b981' : '#ef4444';
+                return `
+                    <g class="graph-node" style="animation-delay: ${idx * 0.15}s;">
+                        <circle cx="${pt.x}" cy="${pt.y}" r="7" fill="${color}" filter="url(#glow)"/>
+                        <circle cx="${pt.x}" cy="${pt.y}" r="3" fill="white"/>
+                        
+                        <!-- Value label above node -->
+                        <text class="node-text" x="${pt.x}" y="${pt.y - 12}" fill="white" font-family="var(--font-family-sans)" font-size="11" font-weight="800" text-anchor="middle">
+                            ${pt.val.toFixed(2)}
+                        </text>
+                        
+                        <!-- Year label below node -->
+                        <text class="node-label" x="${pt.x}" y="195" fill="var(--color-text-secondary)" font-family="var(--font-family-sans)" font-size="10" font-weight="600" text-anchor="middle">
+                            ${pt.label}
+                        </text>
+                    </g>
+                `;
+            }).join('')}
+        </svg>
+    `;
+    wrapper.innerHTML = svgContent;
 }
 
 function renderSubjects() {

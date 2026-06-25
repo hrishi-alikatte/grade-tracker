@@ -116,6 +116,21 @@
             </footer>
         </section>
 
+        <!-- Evolution Section -->
+        <section class="evolution-section" id="evolution-section">
+            <div class="subject-card" style="padding: 1.5rem; display: flex; flex-direction: column; gap: 1rem;">
+                <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--color-border-subtle); padding-bottom: 0.5rem; flex-wrap: wrap; gap: 0.5rem;">
+                    <h3 style="font-size: 1.15rem; font-weight: 800; color: white; display: flex; align-items: center; gap: 0.5rem;">
+                        <span>📈 Évolution sur 3 ans</span>
+                    </h3>
+                    <span style="font-size: 0.8rem; color: var(--color-text-secondary); font-weight: 500;">Moyennes annuelles combinées</span>
+                </div>
+                <div id="evolution-graph-wrapper" style="position: relative; width: 100%; min-height: 180px; display: flex; align-items: center; justify-content: center;">
+                    <!-- SVG graph or empty state will be dynamically rendered here -->
+                </div>
+            </div>
+        </section>
+
         <!-- Subjects Container -->
         <main class="subjects-section">
             <div class="subjects-list" id="subjects-container">
