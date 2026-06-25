@@ -138,7 +138,52 @@ function roundToHalfPoint(value) {
 /**
  * Calculates subject averages supporting both semesters and annual combinations
  */
+function calculateLockedYear2PhysChem() {
+    if (!state.subjectsYear2) return null;
+    const phys = state.subjectsYear2.find(s => s.name.toLowerCase().includes('physique'));
+    const chim = state.subjectsYear2.find(s => s.name.toLowerCase().includes('chimie'));
+    
+    const physData = phys ? calculateSubjectData(phys, 'annual') : null;
+    const chimData = chim ? calculateSubjectData(chim, 'annual') : null;
+    
+    const avgPhys = physData && physData.rawAverage !== null ? physData.roundedAverage : null;
+    const avgChim = chimData && chimData.rawAverage !== null ? chimData.roundedAverage : null;
+    
+    if (avgPhys !== null && avgChim !== null) {
+        return roundToHalfPoint((avgPhys + avgChim) / 2);
+    } else if (avgPhys !== null) {
+        return avgPhys;
+    } else if (avgChim !== null) {
+        return avgChim;
+    }
+    return null;
+}
+
+function formatYear2SubjectAvg(nameSub) {
+    if (!state.subjectsYear2) return '—';
+    const sub = state.subjectsYear2.find(s => s.name.toLowerCase().includes(nameSub));
+    if (!sub) return '—';
+    const data = calculateSubjectData(sub, 'annual');
+    return data.rawAverage !== null ? `${data.roundedAverage.toFixed(1)} (moy: ${data.rawAverage.toFixed(2)})` : '—';
+}
+
+/**
+ * Calculates subject averages supporting both semesters and annual combinations
+ */
 function calculateSubjectData(subject, semester) {
+    if (subject.role === 'phys_chimie_y2') {
+        const val = calculateLockedYear2PhysChem();
+        if (val === null) {
+            return { rawAverage: null, roundedAverage: null, taAverage: null, tsAverage: null };
+        }
+        return {
+            rawAverage: val,
+            roundedAverage: val,
+            taAverage: null,
+            tsAverage: null
+        };
+    }
+
     const sem = semester || state.currentSemester;
 
     if (sem === 'annual') {
@@ -356,13 +401,28 @@ const defaultSubjectsYear2 = [
     { id: 'y2_histoire', name: 'Histoire', role: 'general', target: 4.0, evaluationMode: 'dual', grades: { sem1: [], sem2: [] } }
 ];
 
+const defaultSubjectsYear3 = [
+    { id: 'y3_maths', name: 'Maths', role: 'math', target: 4.5, evaluationMode: 'dual', grades: { sem1: [], sem2: [] } },
+    { id: 'y3_francais', name: 'Français', role: 'french', target: 4.5, evaluationMode: 'dual', grades: { sem1: [], sem2: [] } },
+    { id: 'y3_eco_os', name: 'Option Spécifique (OS)', role: 'os', target: 4.5, evaluationMode: 'dual', grades: { sem1: [], sem2: [] } },
+    { id: 'y3_anglais', name: 'Anglais', role: 'l3', target: 4.5, evaluationMode: 'dual', grades: { sem1: [], sem2: [] } },
+    { id: 'y3_l2_langue', name: 'Allemand', role: 'l2', target: 4.0, evaluationMode: 'dual', grades: { sem1: [], sem2: [] } },
+    { id: 'y3_oc', name: 'Option Complémentaire (OC)', role: 'oc', target: 4.0, evaluationMode: 'dual', grades: { sem1: [], sem2: [] } },
+    { id: 'y3_biologie', name: 'Biologie', role: 'general', target: 4.0, evaluationMode: 'dual', grades: { sem1: [], sem2: [] } },
+    { id: 'y3_geographie', name: 'Géographie', role: 'general', target: 4.0, evaluationMode: 'dual', grades: { sem1: [], sem2: [] } },
+    { id: 'y3_histoire', name: 'Histoire', role: 'general', target: 4.0, evaluationMode: 'dual', grades: { sem1: [], sem2: [] } },
+    { id: 'y3_tm', name: 'Travail de Maturité (TM)', role: 'tm', target: 4.5, evaluationMode: 'standard', grades: { sem1: [], sem2: [] } },
+    { id: 'y3_phys_chimie_y2', name: 'Physique & Chimie (Y2)', role: 'phys_chimie_y2', target: 4.0, evaluationMode: 'locked', grades: { sem1: [], sem2: [] } }
+];
+
 // --- 6. State Management ---
 let state = {
     studentName: 'Étudiant',
     currentYear: 1,
     currentSemester: 'sem1',
     subjectsYear1: [],
-    subjectsYear2: []
+    subjectsYear2: [],
+    subjectsYear3: []
 };
 
 function migrateSubjectGrades(subject) {
@@ -398,9 +458,13 @@ function loadState() {
             if (!state.subjectsYear2 || state.subjectsYear2.length === 0) {
                 state.subjectsYear2 = JSON.parse(JSON.stringify(defaultSubjectsYear2));
             }
+            if (!state.subjectsYear3 || state.subjectsYear3.length === 0) {
+                state.subjectsYear3 = JSON.parse(JSON.stringify(defaultSubjectsYear3));
+            }
             
             state.subjectsYear1.forEach(migrateSubjectGrades);
             state.subjectsYear2.forEach(migrateSubjectGrades);
+            state.subjectsYear3.forEach(migrateSubjectGrades);
         } catch(e) {
             console.error("Failed to parse state v5", e);
             resetStateToDefault();
@@ -416,7 +480,8 @@ function resetStateToDefault() {
         currentYear: 1,
         currentSemester: 'sem1',
         subjectsYear1: JSON.parse(JSON.stringify(defaultSubjectsYear1)),
-        subjectsYear2: JSON.parse(JSON.stringify(defaultSubjectsYear2))
+        subjectsYear2: JSON.parse(JSON.stringify(defaultSubjectsYear2)),
+        subjectsYear3: JSON.parse(JSON.stringify(defaultSubjectsYear3))
     };
     saveState();
 }
@@ -463,7 +528,7 @@ studentNameEl.addEventListener('keydown', (e) => {
 // --- 9. UI Rendering ---
 
 function updateDashboard() {
-    const currentSubjects = (state.currentYear === 2) ? state.subjectsYear2 : state.subjectsYear1;
+    const currentSubjects = (state.currentYear === 3) ? state.subjectsYear3 : (state.currentYear === 2) ? state.subjectsYear2 : state.subjectsYear1;
     const results = checkVaudPromotion(currentSubjects, state.currentSemester);
 
     // Update name UI if different
@@ -524,7 +589,7 @@ function updateGroupsBilan() {
     g1List.innerHTML = '';
     g2List.innerHTML = '';
 
-    const currentSubjects = (state.currentYear === 2) ? state.subjectsYear2 : state.subjectsYear1;
+    const currentSubjects = (state.currentYear === 3) ? state.subjectsYear3 : (state.currentYear === 2) ? state.subjectsYear2 : state.subjectsYear1;
     const sem = state.currentSemester;
     const results = checkVaudPromotion(currentSubjects, sem);
 
@@ -611,7 +676,7 @@ function updateGroupsBilan() {
 
 function renderSubjects() {
     subjectsContainer.innerHTML = '';
-    const currentSubjects = (state.currentYear === 2) ? state.subjectsYear2 : state.subjectsYear1;
+    const currentSubjects = (state.currentYear === 3) ? state.subjectsYear3 : (state.currentYear === 2) ? state.subjectsYear2 : state.subjectsYear1;
     const sem = state.currentSemester;
 
     currentSubjects.forEach(subject => {
@@ -715,7 +780,36 @@ function renderSubjects() {
         let lanesHTML = '';
         let footerHTML = '';
 
-        if (sem === 'annual') {
+        if (mode === 'locked') {
+            const physAvg = formatYear2SubjectAvg('physique');
+            const chimAvg = formatYear2SubjectAvg('chimie');
+            lanesHTML = `
+                <div class="grade-lanes-container" style="grid-template-columns: 1fr 1fr;">
+                    <div class="grade-lane">
+                        <div class="lane-title">
+                            <span>Physique (Y2)</span>
+                        </div>
+                        <div style="font-size: 0.95rem; font-weight: 600; color: white; padding: 0.25rem 0;">
+                            ${physAvg}
+                        </div>
+                    </div>
+                    <div class="grade-lane">
+                        <div class="lane-title">
+                            <span>Chimie (Y2)</span>
+                        </div>
+                        <div style="font-size: 0.95rem; font-weight: 600; color: white; padding: 0.25rem 0;">
+                            ${chimAvg}
+                        </div>
+                    </div>
+                </div>
+            `;
+            footerHTML = `
+                <div class="subject-footer">
+                    ${targetStatusHTML}
+                    <span style="font-size: 0.75rem; color: var(--color-text-secondary); font-style: italic;">Moyennes verrouillées de la 2ème année.</span>
+                </div>
+            `;
+        } else if (sem === 'annual') {
             // Annual Combined view: show comparison of Sem 1 and Sem 2 averages and final average
             const avgSem1 = data.sem1Data ? data.sem1Data.roundedAverage : null;
             const avgSem2 = data.sem2Data ? data.sem2Data.roundedAverage : null;
@@ -774,7 +868,7 @@ function renderSubjects() {
                     <div class="grade-lanes-container">
                         <div class="grade-lane">
                             <div class="lane-title">
-                                <span>Travaux de Synthèse (TS)</span>
+                                <span>TS</span>
                                 ${getLaneAvgHTML(tss)}
                             </div>
                             <div class="lane-grades-list">
@@ -783,7 +877,7 @@ function renderSubjects() {
                         </div>
                         <div class="grade-lane">
                             <div class="lane-title">
-                                <span>Travaux Annuels (TA)</span>
+                                <span>TA</span>
                                 ${getLaneAvgHTML(tas)}
                             </div>
                             <div class="lane-grades-list">
@@ -804,12 +898,24 @@ function renderSubjects() {
             `;
         }
 
+        let ocEditHTML = '';
+        if (subject.role === 'oc') {
+            ocEditHTML = `
+                <button type="button" class="oc-edit-btn" title="Modifier le sujet choisi">
+                    ✏️ modifier
+                </button>
+            `;
+        }
+
+        const deleteBtnHTML = (mode === 'locked') ? '' : `<button class="btn-delete-subject" title="Supprimer la branche">&times;</button>`;
+
         card.innerHTML = `
-            <button class="btn-delete-subject" title="Supprimer la branche">&times;</button>
+            ${deleteBtnHTML}
             <div class="subject-header">
                 <div class="subject-title-area">
                     <h3 class="subject-name" style="display: flex; align-items: center; gap: 0.25rem; flex-wrap: wrap;">
                         ${escapeHTML(subject.name)}
+                        ${ocEditHTML}
                         ${langToggleHTML}
                         ${artToggleHTML}
                     </h3>
@@ -953,7 +1059,9 @@ document.getElementById('add-subject-form').addEventListener('submit', (e) => {
         }
     };
 
-    if (state.currentYear === 2) {
+    if (state.currentYear === 3) {
+        state.subjectsYear3.push(newSub);
+    } else if (state.currentYear === 2) {
         state.subjectsYear2.push(newSub);
     } else {
         state.subjectsYear1.push(newSub);
@@ -977,7 +1085,7 @@ subjectsContainer.addEventListener('click', (e) => {
     const card = e.target.closest('.subject-card');
     if (!card) return;
     const subId = card.getAttribute('data-id');
-    const currentSubjects = (state.currentYear === 2) ? state.subjectsYear2 : state.subjectsYear1;
+    const currentSubjects = (state.currentYear === 3) ? state.subjectsYear3 : (state.currentYear === 2) ? state.subjectsYear2 : state.subjectsYear1;
     const subject = currentSubjects.find(s => s.id === subId);
     if (!subject) return;
 
@@ -1008,7 +1116,9 @@ subjectsContainer.addEventListener('click', (e) => {
     // Delete branch
     if (e.target.classList.contains('btn-delete-subject')) {
         if (confirm(`Voulez-vous vraiment supprimer la branche "${subject.name}"?`)) {
-            if (state.currentYear === 2) {
+            if (state.currentYear === 3) {
+                state.subjectsYear3 = state.subjectsYear3.filter(s => s.id !== subId);
+            } else if (state.currentYear === 2) {
                 state.subjectsYear2 = state.subjectsYear2.filter(s => s.id !== subId);
             } else {
                 state.subjectsYear1 = state.subjectsYear1.filter(s => s.id !== subId);
@@ -1017,6 +1127,19 @@ subjectsContainer.addEventListener('click', (e) => {
             renderSubjects();
             updateDashboard();
         }
+    }
+
+    // Edit OC choice name
+    const ocEditBtn = e.target.closest('.oc-edit-btn');
+    if (ocEditBtn) {
+        const newName = prompt("Entrez le nom de votre Option Complémentaire (OC) :", subject.name);
+        if (newName && newName.trim() !== "") {
+            subject.name = newName.trim();
+            saveState();
+            renderSubjects();
+            updateDashboard();
+        }
+        return;
     }
 
     // Toggle L2 Language or Art/Musique inside the card
@@ -1057,7 +1180,7 @@ subjectsContainer.addEventListener('click', (e) => {
                 
                 detailGradeName.textContent = gradeObj.name || 'Évaluation';
                 detailGradeValue.textContent = gradeObj.value.toFixed(1);
-                detailGradeType.textContent = gradeObj.type === 'TA' ? 'Travail Annuel (TA)' : 'Synthèse (TS)';
+                detailGradeType.textContent = gradeObj.type === 'TA' ? 'TA' : 'TS';
                 
                 const dateStr = gradeObj.date ? new Date(gradeObj.date).toLocaleDateString('fr-CH', { day: 'numeric', month: 'long', year: 'numeric' }) : 'Inconnue';
                 detailGradeDate.textContent = dateStr;
@@ -1072,7 +1195,7 @@ subjectsContainer.addEventListener('click', (e) => {
 if (deleteDetailGradeBtn) {
     deleteDetailGradeBtn.addEventListener('click', () => {
         if (selectedSubjectIdForDetails && selectedGradeIdForDetails) {
-            const currentSubjects = (state.currentYear === 2) ? state.subjectsYear2 : state.subjectsYear1;
+            const currentSubjects = (state.currentYear === 3) ? state.subjectsYear3 : (state.currentYear === 2) ? state.subjectsYear2 : state.subjectsYear1;
             const subject = currentSubjects.find(s => s.id === selectedSubjectIdForDetails);
             if (subject) {
                 if (confirm("Supprimer cette note?")) {
@@ -1108,12 +1231,17 @@ document.getElementById('add-grade-form').addEventListener('submit', (e) => {
         value = activeGradeBtn ? parseFloat(activeGradeBtn.getAttribute('data-value')) : 4.0;
         const type = activeTypeBtn ? activeTypeBtn.getAttribute('data-value') : 'TS';
 
-        const currentSubjects = (state.currentYear === 2) ? state.subjectsYear2 : state.subjectsYear1;
+        const currentSubjects = (state.currentYear === 3) ? state.subjectsYear3 : (state.currentYear === 2) ? state.subjectsYear2 : state.subjectsYear1;
         const subject = currentSubjects.find(s => s.id === subId);
         if (subject) {
             migrateSubjectGrades(subject);
             const sem = state.currentSemester;
             if (sem === 'annual') return;
+
+            if (subject.role === 'tm') {
+                subject.grades.sem1 = [];
+                subject.grades.sem2 = [];
+            }
 
             const newGrade = {
                 id: 'grade_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5),
@@ -1190,6 +1318,9 @@ if (importBtn && importFileInput) {
                 if (parsed) {
                     if (parsed.subjectsYear1 && parsed.subjectsYear2) {
                         state = parsed;
+                        if (!state.subjectsYear3 || state.subjectsYear3.length === 0) {
+                            state.subjectsYear3 = JSON.parse(JSON.stringify(defaultSubjectsYear3));
+                        }
                     } else if (Array.isArray(parsed.subjects)) {
                         // Upgrade old v4 state to v5
                         state = {
@@ -1197,13 +1328,18 @@ if (importBtn && importFileInput) {
                             currentYear: 1,
                             currentSemester: 'sem1',
                             subjectsYear1: parsed.subjects,
-                            subjectsYear2: JSON.parse(JSON.stringify(defaultSubjectsYear2))
+                            subjectsYear2: JSON.parse(JSON.stringify(defaultSubjectsYear2)),
+                            subjectsYear3: JSON.parse(JSON.stringify(defaultSubjectsYear3))
                         };
-                        state.subjectsYear1.forEach(migrateSubjectGrades);
                     } else {
                         alert("Format de fichier invalide.");
                         return;
                     }
+                    
+                    state.subjectsYear1.forEach(migrateSubjectGrades);
+                    state.subjectsYear2.forEach(migrateSubjectGrades);
+                    state.subjectsYear3.forEach(migrateSubjectGrades);
+                    
                     saveState();
                     
                     // Sync active UI buttons

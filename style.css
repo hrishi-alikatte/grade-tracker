@@ -306,6 +306,28 @@ body {
     color: white;
 }
 
+.oc-edit-btn {
+    background: none;
+    border: none;
+    color: var(--color-primary);
+    font-size: 0.75rem;
+    font-family: var(--font-family-sans);
+    font-weight: 500;
+    cursor: pointer;
+    padding: 2px 6px;
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+    opacity: 0.8;
+    transition: opacity var(--transition-fast), transform var(--transition-fast);
+}
+
+.oc-edit-btn:hover {
+    opacity: 1;
+    transform: scale(1.05);
+}
+
+
 .subject-target {
     font-size: 0.8rem;
     color: var(--color-text-secondary);
