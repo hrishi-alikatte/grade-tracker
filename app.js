@@ -478,6 +478,8 @@ let state = {
     subjectsYear3: []
 };
 
+let activeSubjectFilters = null;
+
 function migrateSubjectGrades(subject) {
     if (Array.isArray(subject.grades)) {
         const oldGrades = subject.grades;
@@ -937,26 +939,119 @@ function renderDedicatedEvolutionSlide() {
     renderMultiSubjectGraph();
 }
 
+function hexToRgb(hex) {
+    const shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
+    const fullHex = hex.replace(shorthandRegex, (m, r, g, b) => r + r + g + g + b + b);
+    const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(fullHex);
+    return result ? `${parseInt(result[1], 16)}, ${parseInt(result[2], 16)}, ${parseInt(result[3], 16)}` : '255, 255, 255';
+}
+
+function getAllUniqueSubjects() {
+    const unique = [];
+    const seen = new Set();
+
+    const addFromList = (list) => {
+        if (!list) return;
+        list.forEach(sub => {
+            let key = sub.role;
+            if (!key || ['general', 'standard', 'locked'].includes(key)) {
+                key = sub.name.toLowerCase().trim();
+            }
+            if (key === 'physique_y2') key = 'physique';
+            if (key === 'chimie_y2') key = 'chimie';
+            if (key === 'art_y2') key = 'art';
+
+            if (!seen.has(key)) {
+                seen.add(key);
+                
+                let label = sub.name;
+                if (sub.role === 'physique_y2') label = 'Physique';
+                if (sub.role === 'chimie_y2') label = 'Chimie';
+                if (sub.role === 'art_y2') {
+                    const y2Art = state.subjectsYear2.find(s => s.role === 'art');
+                    label = y2Art ? y2Art.name : 'Arts Visuels';
+                }
+                
+                unique.push({
+                    key: key,
+                    label: label,
+                    role: sub.role
+                });
+            }
+        });
+    };
+
+    addFromList(state.subjectsYear1);
+    addFromList(state.subjectsYear2);
+    addFromList(state.subjectsYear3);
+
+    return unique;
+}
+
 function renderMultiSubjectGraph() {
     const wrapper = document.getElementById('multi-subject-graph-wrapper');
     if (!wrapper) return;
 
-    const subjectsToTrack = [
-        { label: 'Maths', role: 'math', color: '#ef4444' },
-        { label: 'Français', role: 'french', color: '#3b82f6' },
-        { label: 'OS', role: 'os', color: '#10b981' },
-        { label: 'Anglais', role: 'l3', color: '#f59e0b' },
-        { label: 'Langue 2', role: 'l2', color: '#a78bfa' }
+    const allSubjects = getAllUniqueSubjects();
+
+    if (allSubjects.length === 0) {
+        wrapper.innerHTML = `
+            <div class="graph-empty-state">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--color-primary); opacity: 0.4;">
+                    <line x1="18" y1="20" x2="18" y2="10"></line>
+                    <line x1="12" y1="20" x2="12" y2="4"></line>
+                    <line x1="6" y1="20" x2="6" y2="14"></line>
+                </svg>
+                <h4>Aucune donnée de moyenne annuelle</h4>
+                <p>Saisissez des notes pour afficher la comparaison.</p>
+            </div>
+        `;
+        return;
+    }
+
+    const subjectColors = [
+        '#ef4444', // Red
+        '#3b82f6', // Blue
+        '#10b981', // Emerald Green
+        '#f59e0b', // Amber
+        '#a78bfa', // Violet
+        '#06b6d4', // Cyan
+        '#ec4899', // Pink
+        '#f97316', // Orange
+        '#14b8a6', // Teal
+        '#84cc16', // Lime
+        '#8b5cf6', // Purple
+        '#6366f1', // Indigo
+        '#d946ef'  // Fuchsia
     ];
 
-    subjectsToTrack.forEach(track => {
-        const foundSub = state.subjectsYear3.find(s => s.role === track.role) ||
-                         state.subjectsYear2.find(s => s.role === track.role) ||
-                         state.subjectsYear1.find(s => s.role === track.role);
-        if (foundSub) {
-            track.label = foundSub.name;
-        }
+    allSubjects.forEach((sub, idx) => {
+        sub.color = subjectColors[idx % subjectColors.length];
     });
+
+    // Initialize filter set if not present
+    if (!activeSubjectFilters) {
+        activeSubjectFilters = new Set();
+        // By default, enable all subjects
+        allSubjects.forEach(sub => activeSubjectFilters.add(sub.key));
+    }
+
+    const filtersHTML = `
+        <div style="font-size: 0.8rem; font-weight: 500; color: var(--color-text-secondary); margin-bottom: 0.75rem; text-align: center;">
+            Sélectionnez les branches à afficher :
+        </div>
+        <div class="chart-filters" style="display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1.5rem; justify-content: center; width: 100%;">
+            ${allSubjects.map(sub => {
+                const active = activeSubjectFilters.has(sub.key);
+                return `
+                    <button type="button" class="filter-pill ${active ? 'active' : ''}" data-key="${sub.key}" style="${active ? `border-color: ${sub.color}; background-color: rgba(${hexToRgb(sub.color)}, 0.1);` : ''}">
+                        <span class="pill-dot" style="background-color: ${active ? sub.color : 'var(--color-text-muted)'};"></span>
+                        <span>${escapeHTML(sub.label)}</span>
+                    </button>
+                `;
+            }).join('')}
+        </div>
+    `;
 
     const xCoords = { 1: 100, 2: 300, 3: 500 };
     const mapY = (val) => {
@@ -968,88 +1063,86 @@ function renderMultiSubjectGraph() {
 
     let pathsHTML = '';
     let markersHTML = '';
-    let hasAnyData = false;
+    let hasAnyDataToPlot = false;
 
-    subjectsToTrack.forEach(track => {
+    allSubjects.forEach(sub => {
+        if (!activeSubjectFilters.has(sub.key)) return;
+
         const points = [];
         [1, 2, 3].forEach(y => {
-            const avg = getAnnualAverageForSubjectInYear(y, track);
+            const avg = getAnnualAverageForSubjectInYear(y, sub);
             if (avg !== null && !isNaN(avg)) {
                 points.push({ year: y, val: avg, x: xCoords[y], y: mapY(avg) });
-                hasAnyData = true;
+                hasAnyDataToPlot = true;
             }
         });
 
         if (points.length > 1) {
             const pathData = points.map((p, i) => `${i === 0 ? 'M' : 'L'} ${p.x} ${p.y}`).join(' ');
-            pathsHTML += `<path d="${pathData}" fill="none" stroke="${track.color}" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" />`;
+            pathsHTML += `<path d="${pathData}" fill="none" stroke="${sub.color}" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" />`;
         }
 
         points.forEach(p => {
             markersHTML += `
                 <g>
-                    <circle cx="${p.x}" cy="${p.y}" r="5" fill="#0f172a" stroke="${track.color}" stroke-width="2" />
+                    <circle cx="${p.x}" cy="${p.y}" r="5" fill="#0f172a" stroke="${sub.color}" stroke-width="2" />
                     <text x="${p.x}" y="${p.y - 8}" text-anchor="middle" font-size="9" font-weight="bold" fill="white">${p.val.toFixed(1)}</text>
                 </g>
             `;
         });
     });
 
-    if (!hasAnyData) {
-        wrapper.innerHTML = `
-            <div class="graph-empty-state">
-                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--color-primary); opacity: 0.4;">
-                    <line x1="18" y1="20" x2="18" y2="10"></line>
-                    <line x1="12" y1="20" x2="12" y2="4"></line>
-                    <line x1="6" y1="20" x2="6" y2="14"></line>
-                </svg>
-                <h4>Aucune donnée de moyenne annuelle</h4>
-                <p>Saisissez des notes dans les branches principales pour afficher la comparaison.</p>
+    let svgHTML = '';
+    if (hasAnyDataToPlot) {
+        svgHTML = `
+            <svg viewBox="0 0 600 220" width="100%" height="220" style="overflow: visible;">
+                <!-- Grid horizontal lines -->
+                <line x1="50" y1="${mapY(6.0)}" x2="550" y2="${mapY(6.0)}" stroke="rgba(255,255,255,0.03)" stroke-width="1"/>
+                <line x1="50" y1="${mapY(5.0)}" x2="550" y2="${mapY(5.0)}" stroke="rgba(255,255,255,0.03)" stroke-width="1"/>
+                <line x1="50" y1="${mapY(3.0)}" x2="550" y2="${mapY(3.0)}" stroke="rgba(255,255,255,0.03)" stroke-width="1"/>
+                <line x1="50" y1="${mapY(2.0)}" x2="550" y2="${mapY(2.0)}" stroke="rgba(255,255,255,0.03)" stroke-width="1"/>
+
+                <!-- Promotion Limit Line (4.0) -->
+                <line x1="50" y1="${thresholdY}" x2="550" y2="${thresholdY}" stroke="#ef4444" stroke-dasharray="4,4" stroke-width="1.5" opacity="0.6"/>
+                <text x="555" y="${thresholdY + 3}" fill="#ef4444" font-family="var(--font-family-sans)" font-size="10" font-weight="700">4.0</text>
+
+                <!-- X-Axis Labels -->
+                <text x="100" y="212" font-size="11" fill="var(--color-text-muted)" text-anchor="middle" font-weight="600">1ère année</text>
+                <text x="300" y="212" font-size="11" fill="var(--color-text-muted)" text-anchor="middle" font-weight="600">2ème année</text>
+                <text x="500" y="212" font-size="11" fill="var(--color-text-muted)" text-anchor="middle" font-weight="600">3ème année</text>
+
+                <!-- Vertical grid lines -->
+                <line x1="100" y1="20" x2="100" y2="190" stroke="rgba(255,255,255,0.05)" stroke-width="1" />
+                <line x1="300" y1="20" x2="300" y2="190" stroke="rgba(255,255,255,0.05)" stroke-width="1" />
+                <line x1="500" y1="20" x2="500" y2="190" stroke="rgba(255,255,255,0.05)" stroke-width="1" />
+
+                <!-- Tracked paths and circles -->
+                ${pathsHTML}
+                ${markersHTML}
+            </svg>
+        `;
+    } else {
+        svgHTML = `
+            <div class="graph-empty-state" style="margin-top: 1rem; width: 100%; min-height: 180px; display: flex; align-items: center; justify-content: center;">
+                <p style="color: var(--color-text-muted); font-size: 0.9rem;">Aucune branche n'est sélectionnée ou aucune moyenne n'est disponible.</p>
             </div>
         `;
-        return;
     }
 
-    const svgContent = `
-        <svg viewBox="0 0 600 220" width="100%" height="220" style="overflow: visible;">
-            <!-- Grid horizontal lines -->
-            <line x1="50" y1="${mapY(6.0)}" x2="550" y2="${mapY(6.0)}" stroke="rgba(255,255,255,0.03)" stroke-width="1"/>
-            <line x1="50" y1="${mapY(5.0)}" x2="550" y2="${mapY(5.0)}" stroke="rgba(255,255,255,0.03)" stroke-width="1"/>
-            <line x1="50" y1="${mapY(3.0)}" x2="550" y2="${mapY(3.0)}" stroke="rgba(255,255,255,0.03)" stroke-width="1"/>
-            <line x1="50" y1="${mapY(2.0)}" x2="550" y2="${mapY(2.0)}" stroke="rgba(255,255,255,0.03)" stroke-width="1"/>
+    wrapper.innerHTML = filtersHTML + svgHTML;
 
-            <!-- Promotion Limit Line (4.0) -->
-            <line x1="50" y1="${thresholdY}" x2="550" y2="${thresholdY}" stroke="#ef4444" stroke-dasharray="4,4" stroke-width="1.5" opacity="0.6"/>
-            <text x="555" y="${thresholdY + 3}" fill="#ef4444" font-family="var(--font-family-sans)" font-size="10" font-weight="700">4.0</text>
-
-            <!-- X-Axis Labels -->
-            <text x="100" y="212" font-size="11" fill="var(--color-text-muted)" text-anchor="middle" font-weight="600">1ère année</text>
-            <text x="300" y="212" font-size="11" fill="var(--color-text-muted)" text-anchor="middle" font-weight="600">2ème année</text>
-            <text x="500" y="212" font-size="11" fill="var(--color-text-muted)" text-anchor="middle" font-weight="600">3ème année</text>
-
-            <!-- Vertical grid lines -->
-            <line x1="100" y1="20" x2="100" y2="190" stroke="rgba(255,255,255,0.05)" stroke-width="1" />
-            <line x1="300" y1="20" x2="300" y2="190" stroke="rgba(255,255,255,0.05)" stroke-width="1" />
-            <line x1="500" y1="20" x2="500" y2="190" stroke="rgba(255,255,255,0.05)" stroke-width="1" />
-
-            <!-- Tracked paths and circles -->
-            ${pathsHTML}
-            ${markersHTML}
-        </svg>
-    `;
-
-    const legendHTML = `
-        <div class="chart-legend">
-            ${subjectsToTrack.map(track => `
-                <div class="legend-item">
-                    <span class="legend-pill" style="background-color: ${track.color};"></span>
-                    <span>${escapeHTML(track.label)}</span>
-                </div>
-            `).join('')}
-        </div>
-    `;
-
-    wrapper.innerHTML = svgContent + legendHTML;
+    // Attach click listeners to filter pills
+    wrapper.querySelectorAll('.filter-pill').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const key = btn.getAttribute('data-key');
+            if (activeSubjectFilters.has(key)) {
+                activeSubjectFilters.delete(key);
+            } else {
+                activeSubjectFilters.add(key);
+            }
+            renderMultiSubjectGraph();
+        });
+    });
 }
 
 function renderEvolutionGraph() {

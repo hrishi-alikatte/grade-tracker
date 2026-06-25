@@ -935,6 +935,37 @@ body {
     height: 10px;
     border-radius: 50%;
 }
+/* Filter pills for comparative chart */
+.filter-pill {
+    background: rgba(255,255,255,0.02);
+    border: 1px solid var(--color-border-subtle);
+    color: var(--color-text-secondary);
+    padding: 6px 12px;
+    border-radius: var(--radius-full);
+    font-size: 0.75rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: all var(--transition-fast);
+}
 
+.filter-pill:hover {
+    background: var(--color-bg-elevated);
+    color: white;
+}
 
+.filter-pill.active {
+    color: white;
+    background: rgba(255, 255, 255, 0.05);
+    border-width: 1px;
+    box-shadow: 0 0 8px rgba(255, 255, 255, 0.03);
+}
 
+.filter-pill .pill-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    display: inline-block;
+}
