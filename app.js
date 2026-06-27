@@ -2064,19 +2064,6 @@ document.getElementById('add-subject-btn').addEventListener('click', () => {
 });
 
 // --- 11. Tabs and Selector Bindings ---
-document.querySelectorAll('#year-selector .lang-toggle-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-        document.querySelectorAll('#year-selector .lang-toggle-btn').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        state.currentYear = parseInt(btn.getAttribute('data-year'));
-        saveState();
-        updateTabVisibility();
-        if (state.currentYear !== 4) {
-            renderSubjects();
-            updateDashboard();
-        }
-    });
-});
 
 document.querySelectorAll('.semester-tab').forEach(btn => {
     btn.addEventListener('click', () => {
@@ -2723,88 +2710,7 @@ document.getElementById('add-grade-form').addEventListener('submit', (e) => {
     }
 });
 
-// --- 13. Data Import / Export logic ---
-const exportBtn = document.getElementById('export-btn');
-const importBtn = document.getElementById('import-btn');
-const importFileInput = document.getElementById('import-file-input');
-
-if (exportBtn) {
-    exportBtn.addEventListener('click', () => {
-        const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(state));
-        const downloadAnchor = document.createElement('a');
-        downloadAnchor.setAttribute("href", dataStr);
-        
-        const timestamp = new Date().toISOString().split('T')[0];
-        downloadAnchor.setAttribute("download", `gradevibe_vaud_${timestamp}.json`);
-        document.body.appendChild(downloadAnchor);
-        downloadAnchor.click();
-        downloadAnchor.remove();
-    });
-}
-
-if (importBtn && importFileInput) {
-    importBtn.addEventListener('click', () => {
-        importFileInput.click();
-    });
-
-    importFileInput.addEventListener('change', (e) => {
-        const file = e.target.files[0];
-        if (!file) return;
-
-        const reader = new FileReader();
-        reader.onload = (event) => {
-            try {
-                const parsed = JSON.parse(event.target.result);
-                if (parsed) {
-                    if (parsed.subjectsYear1 && parsed.subjectsYear2) {
-                        state = parsed;
-                    } else if (Array.isArray(parsed.subjects)) {
-                        // Upgrade old v4 state to v5
-                        state = {
-                            studentName: parsed.studentName || 'Étudiant',
-                            currentYear: 1,
-                            currentSemester: 'sem1',
-                            subjectsYear1: parsed.subjects,
-                            subjectsYear2: JSON.parse(JSON.stringify(defaultSubjectsYear2)),
-                            subjectsYear3: JSON.parse(JSON.stringify(defaultSubjectsYear3))
-                        };
-                    } else {
-                        alert("Format de fichier invalide.");
-                        return;
-                    }
-                    
-                    runStateMigrations();
-                    
-                    state.subjectsYear1.forEach(migrateSubjectGrades);
-                    state.subjectsYear2.forEach(migrateSubjectGrades);
-                    state.subjectsYear3.forEach(migrateSubjectGrades);
-                    
-                    saveState();
-                    applyTheme();
-                    
-                    // Sync active UI buttons
-                    document.querySelectorAll('#year-selector .lang-toggle-btn').forEach(btn => {
-                        btn.classList.toggle('active', parseInt(btn.getAttribute('data-year')) === state.currentYear);
-                    });
-                    document.querySelectorAll('.semester-tab').forEach(btn => {
-                        btn.classList.toggle('active', btn.getAttribute('data-sem') === state.currentSemester);
-                    });
-
-                    updateTabVisibility();
-                    if (state.currentYear !== 4) {
-                        renderSubjects();
-                        updateDashboard();
-                    }
-                    alert("Données restaurées avec succès !");
-                }
-            } catch (err) {
-                alert("Erreur lors de la lecture du fichier de sauvegarde.");
-                console.error(err);
-            }
-        };
-        reader.readAsText(file);
-    });
-}
+// --- 13. Data Import / Export logic (Removed) ---
 
 // --- 14. App Initializer & View Router ---
 const viewLanding = document.getElementById('view-landing');
@@ -2860,11 +2766,6 @@ function init() {
         });
     }
     applyTheme();
-
-    // Set Year selector active button on startup
-    document.querySelectorAll('#year-selector .lang-toggle-btn').forEach(btn => {
-        btn.classList.toggle('active', parseInt(btn.getAttribute('data-year')) === state.currentYear);
-    });
 
     // Set Semester selector active button on startup
     document.querySelectorAll('.semester-tab').forEach(btn => {

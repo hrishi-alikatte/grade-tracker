@@ -137,29 +137,12 @@
                     <option value="mint">🌱 Menthe</option>
                     <option value="teal">🌊 Teal</option>
                 </select>
-                <button id="export-btn" class="btn btn-secondary" style="padding: 0.5rem 1rem; font-size: 0.8rem; border-radius: var(--radius-full);" title="Sauvegarder les données">
-                    💾 Exporter
-                </button>
-                <button id="import-btn" class="btn btn-secondary" style="padding: 0.5rem 1rem; font-size: 0.8rem; border-radius: var(--radius-full);" title="Restaurer les données">
-                    📁 Importer
-                </button>
-                <input type="file" id="import-file-input" style="display: none;" accept=".json">
                 <button id="add-subject-btn" class="btn btn-primary">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
                     Ajouter une branche
                 </button>
             </div>
         </header>
-
-        <!-- Year Selection Tabs (Grouped directly above Semester Tabs) -->
-        <div class="year-tabs-container" style="display: flex; gap: 0.5rem; margin-bottom: 0.75rem; justify-content: center; width: 100%;">
-            <div class="lang-toggle-container" id="year-selector" style="margin: 0; padding: 2px; width: 100%; display: flex; max-width: 600px; justify-content: space-between;">
-                <button type="button" class="lang-toggle-btn active" data-year="1" style="flex: 1; text-align: center;">1ère année</button>
-                <button type="button" class="lang-toggle-btn" data-year="2" style="flex: 1; text-align: center;">2ème année</button>
-                <button type="button" class="lang-toggle-btn" data-year="3" style="flex: 1; text-align: center;">3ème année</button>
-                <button type="button" class="lang-toggle-btn" data-year="4" style="flex: 1; text-align: center;">Évolution (3 ans)</button>
-            </div>
-        </div>
 
         <!-- Semester Selection Tabs -->
         <div class="semester-tabs-container">
@@ -506,76 +489,104 @@
 
         <div class="guide-content-grid">
             <!-- 1. Rules Card -->
-            <div class="guide-card main-rules-card">
-                <h2 class="guide-card-title"><span class="icon">⚖️</span> Les 3 Règles d'Or du Gymnase Vaudois</h2>
-                <p class="guide-intro">La promotion au Gymnase vaudois dépend de 3 critères qui doivent être <strong>tous remplis simultanément</strong> à la fin de l'année scolaire :</p>
+            <div class="guide-card main-rules-card" style="grid-column: span 2; background-color: color-mix(in srgb, var(--color-bg-surface) 75%, transparent);">
+                <h2 class="guide-card-title" style="font-size: 1.4rem; justify-content: center;"><span class="icon">⚖️</span> Les 3 Règles d'Or du Gymnase Vaudois</h2>
+                <p class="guide-intro" style="text-align: center; font-size: 0.95rem; margin-bottom: 1rem;">Votre promotion est garantie uniquement si <strong>les 3 critères suivants sont validés simultanément</strong> :</p>
                 
-                <div class="rules-visual-list">
-                    <div class="rule-visual-item passed">
+                <div class="rules-visual-list" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.25rem;">
+                    <div class="rule-visual-item passed" style="border-top: 4px solid var(--color-primary); background-color: rgba(0,0,0,0.25);">
                         <div class="rule-status-check">✓</div>
                         <div class="rule-details">
-                            <h3>Moyenne Générale >= 4.0</h3>
-                            <p>La somme des moyennes de chaque branche divisée par le nombre de branches.</p>
+                            <h3>1. Moyenne Générale >= 4.0</h3>
+                            <p>Moyenne arithmétique de toutes les branches.</p>
+                            <span style="display:inline-block; margin-top: 0.5rem; font-size: 0.7rem; background: rgba(96,165,250,0.15); color: var(--color-primary); padding: 2px 6px; border-radius: 4px; font-weight: bold;">Éliminatoire si < 4.0</span>
                         </div>
                     </div>
-                    <div class="rule-visual-item passed">
+                    <div class="rule-visual-item passed" style="border-top: 4px solid #10b981; background-color: rgba(0,0,0,0.25);">
                         <div class="rule-status-check">✓</div>
                         <div class="rule-details">
-                            <h3>Bilan des Points >= 0</h3>
-                            <p>Les écarts positifs (ex: un 5.0 donne +1.0) compensent les écarts négatifs qui sont <strong>doublés</strong> (ex: un 3.0 donne -2.0 points de bilan).</p>
+                            <h3>2. Bilan des Points >= 0</h3>
+                            <p>Somme des écarts (les notes < 4.0 comptent négativement et sont <strong>doublées</strong>).</p>
+                            <span style="display:inline-block; margin-top: 0.5rem; font-size: 0.7rem; background: rgba(16,185,129,0.15); color: #10b981; padding: 2px 6px; border-radius: 4px; font-weight: bold;">Éliminatoire si < 0</span>
                         </div>
                     </div>
-                    <div class="rule-visual-item passed">
+                    <div class="rule-visual-item passed" style="border-top: 4px solid #f59e0b; background-color: rgba(0,0,0,0.25);">
                         <div class="rule-status-check">✓</div>
                         <div class="rule-details">
-                            <h3>Max 4 notes insuffisantes</h3>
-                            <p>Vous ne pouvez pas avoir plus de 4 branches avec une moyenne finale inférieure à 4.0.</p>
+                            <h3>3. Max 4 Insuffisances</h3>
+                            <p>Maximum 4 branches avec une moyenne annuelle inférieure à 4.0.</p>
+                            <span style="display:inline-block; margin-top: 0.5rem; font-size: 0.7rem; background: rgba(245,158,11,0.15); color: #f59e0b; padding: 2px 6px; border-radius: 4px; font-weight: bold;">Éliminatoire si > 4</span>
                         </div>
                     </div>
                 </div>
             </div>
 
             <!-- 2. Examples Card (Visual calculation profiles) -->
-            <div class="guide-card examples-card">
-                <h2 class="guide-card-title"><span class="icon">📊</span> Profils d'Exemples & Calcul du Bilan</h2>
-                <p class="guide-intro">Comprendre le doublement des écarts négatifs et la compensation :</p>
+            <div class="guide-card examples-card" style="grid-column: span 2;">
+                <h2 class="guide-card-title"><span class="icon">📊</span> Comment fonctionne le Bilan des Points ? (Exemples)</h2>
                 
-                <div class="example-profiles-container">
+                <!-- Rule Formula Explainer Box -->
+                <div style="background-color: rgba(0, 0, 0, 0.3); border: 1px dashed var(--color-border-subtle); padding: 1rem; border-radius: var(--radius-md); font-size: 0.8rem; margin-bottom: 0.5rem; line-height: 1.5;">
+                    <strong style="color: white; display: block; margin-bottom: 0.35rem;">💡 Règle de doublement des écarts :</strong>
+                    <ul style="margin-left: 1.25rem; display: flex; flex-direction: column; gap: 0.25rem;">
+                        <li>Note de <strong style="color:#10b981;">5.0</strong> : +1.0 point au-dessus de 4.0 = <span style="color:#10b981; font-weight:bold;">+1.0 point de bilan</span>.</li>
+                        <li>Note de <strong style="color:#ef4444;">3.5</strong> : -0.5 point en dessous de 4.0 = Écart doublé = <span style="color:#ef4444; font-weight:bold;">-1.0 point de bilan</span>.</li>
+                        <li>Note de <strong style="color:#ef4444;">3.0</strong> : -1.0 point en dessous de 4.0 = Écart doublé = <span style="color:#ef4444; font-weight:bold;">-2.0 points de bilan</span>.</li>
+                    </ul>
+                </div>
+
+                <div class="example-profiles-container" style="gap: 1.5rem;">
                     <!-- Profile 1: Promoted -->
-                    <div class="example-profile-box promoted">
+                    <div class="example-profile-box promoted" style="background-color: rgba(16,185,129,0.03); border: 1px solid rgba(16,185,129,0.2);">
                         <div class="profile-header-status">
-                            <h4>Profil A : Promu</h4>
-                            <span class="status-badge promoted">PROMU ✅</span>
+                            <h4 style="font-size: 0.9rem;">Élève A : Promu</h4>
+                            <span class="status-badge promoted" style="font-size: 0.75rem; padding: 0.25rem 0.6rem;">PROMU ✅</span>
                         </div>
                         <div class="mock-table">
-                            <div class="mock-row"><span>Français</span><span class="val">4.5</span><span class="diff positive">+0.5</span></div>
-                            <div class="mock-row"><span>Maths (fondamental)</span><span class="val">3.5</span><span class="diff negative">-1.0 (doublé)</span></div>
-                            <div class="mock-row"><span>Anglais</span><span class="val">5.0</span><span class="diff positive">+1.0</span></div>
-                            <div class="mock-row"><span>Physique (Y2)</span><span class="val">4.0</span><span class="diff neutral">0.0</span></div>
+                            <div class="mock-row" style="padding: 0.25rem 0; border-bottom: 1px solid rgba(255,255,255,0.03);">
+                                <span>Français</span><span class="val">4.5</span><span class="diff positive">+0.5</span>
+                            </div>
+                            <div class="mock-row" style="padding: 0.25rem 0; border-bottom: 1px solid rgba(255,255,255,0.03);">
+                                <span>Mathématiques</span><span class="val">3.5</span><span class="diff negative" style="font-weight:bold;">-1.0 (doublé)</span>
+                            </div>
+                            <div class="mock-row" style="padding: 0.25rem 0; border-bottom: 1px solid rgba(255,255,255,0.03);">
+                                <span>Anglais</span><span class="val">5.0</span><span class="diff positive">+1.0</span>
+                            </div>
+                            <div class="mock-row" style="padding: 0.25rem 0;">
+                                <span>Physique</span><span class="val">4.0</span><span class="diff neutral">0.0</span>
+                            </div>
                         </div>
-                        <div class="profile-summary-stats">
-                            <div>Moyenne: <strong>4.25</strong></div>
-                            <div>Bilan des Points: <strong class="positive">+0.5</strong></div>
-                            <div>Insuffisances: <strong>1</strong></div>
+                        <div class="profile-summary-stats" style="background-color: rgba(0,0,0,0.2); padding: 0.75rem; border-radius: var(--radius-sm); border-top: none; margin-top: 0.5rem;">
+                            <div style="display:flex; justify-content:space-between;"><span>Moyenne générale:</span><strong>4.25 (>= 4.0)</strong></div>
+                            <div style="display:flex; justify-content:space-between;"><span>Bilan des points:</span><strong class="positive">+0.5 (>= 0)</strong></div>
+                            <div style="display:flex; justify-content:space-between;"><span>Insuffisances:</span><strong>1 (<= 4)</strong></div>
                         </div>
                     </div>
 
                     <!-- Profile 2: Not Promoted -->
-                    <div class="example-profile-box failed">
+                    <div class="example-profile-box failed" style="background-color: rgba(239,68,68,0.03); border: 1px solid rgba(239,68,68,0.2);">
                         <div class="profile-header-status">
-                            <h4>Profil B : Non Promu</h4>
-                            <span class="status-badge failed">NON PROMU ❌</span>
+                            <h4 style="font-size: 0.9rem;">Élève B : Non Promu</h4>
+                            <span class="status-badge failed" style="font-size: 0.75rem; padding: 0.25rem 0.6rem;">NON PROMU ❌</span>
                         </div>
                         <div class="mock-table">
-                            <div class="mock-row"><span>Français</span><span class="val">3.5</span><span class="diff negative">-1.0 (doublé)</span></div>
-                            <div class="mock-row"><span>Maths (fondamental)</span><span class="val">3.0</span><span class="diff negative">-2.0 (doublé)</span></div>
-                            <div class="mock-row"><span>Anglais</span><span class="val">5.0</span><span class="diff positive">+1.0</span></div>
-                            <div class="mock-row"><span>Physique (Y2)</span><span class="val">4.0</span><span class="diff neutral">0.0</span></div>
+                            <div class="mock-row" style="padding: 0.25rem 0; border-bottom: 1px solid rgba(255,255,255,0.03);">
+                                <span>Français</span><span class="val">3.5</span><span class="diff negative" style="font-weight:bold;">-1.0 (doublé)</span>
+                            </div>
+                            <div class="mock-row" style="padding: 0.25rem 0; border-bottom: 1px solid rgba(255,255,255,0.03);">
+                                <span>Mathématiques</span><span class="val">3.0</span><span class="diff negative" style="font-weight:bold;">-2.0 (doublé)</span>
+                            </div>
+                            <div class="mock-row" style="padding: 0.25rem 0; border-bottom: 1px solid rgba(255,255,255,0.03);">
+                                <span>Anglais</span><span class="val">5.0</span><span class="diff positive">+1.0</span>
+                            </div>
+                            <div class="mock-row" style="padding: 0.25rem 0;">
+                                <span>Physique</span><span class="val">4.0</span><span class="diff neutral">0.0</span>
+                            </div>
                         </div>
-                        <div class="profile-summary-stats">
-                            <div>Moyenne: <strong>3.88</strong></div>
-                            <div>Bilan des Points: <strong class="failed">-2.0</strong></div>
-                            <div>Insuffisances: <strong>2</strong></div>
+                        <div class="profile-summary-stats" style="background-color: rgba(0,0,0,0.2); padding: 0.75rem; border-radius: var(--radius-sm); border-top: none; margin-top: 0.5rem;">
+                            <div style="display:flex; justify-content:space-between;"><span>Moyenne générale:</span><strong>3.88 (< 4.0)</strong></div>
+                            <div style="display:flex; justify-content:space-between;"><span>Bilan des points:</span><strong class="failed">-2.0 (< 0)</strong></div>
+                            <div style="display:flex; justify-content:space-between;"><span>Insuffisances:</span><strong>2 (<= 4)</strong></div>
                         </div>
                     </div>
                 </div>
