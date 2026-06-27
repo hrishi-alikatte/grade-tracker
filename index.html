@@ -45,6 +45,22 @@
     <!-- Confetti Canvas overlay -->
     <canvas id="confetti-canvas"></canvas>
 
+    <!-- Persistent Top Navigation Bar -->
+    <nav class="top-nav-bar">
+        <div class="top-nav-brand">
+            <div class="logo-circle" style="width: 28px; height: 28px; background-color: var(--color-primary); color: var(--color-bg-base); display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(96, 165, 250, 0.2);">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.42 10.922a1 1 0 0 0-.019-1.838L12.83 5.18a2 2 0 0 0-1.66 0L2.6 9.08a1 1 0 0 0 0 1.832l8.57 3.908a2 2 0 0 0 1.66 0z"/><path d="M6 12v5c0 2 2 3 6 3s6-1 6-3v-5"/><path d="M21.5 12v6"/></svg>
+            </div>
+            <strong style="color: white; font-size: 1.1rem; letter-spacing: -0.02em; font-weight: 800;">GradeVibe Vaud</strong>
+        </div>
+        
+        <div class="nav-tabs">
+            <button class="nav-tab-btn active" id="tab-nav-landing" data-view="view-landing">🏠 Accueil</button>
+            <button class="nav-tab-btn" id="tab-nav-dashboard" data-view="view-dashboard">📊 Mes Notes</button>
+            <button class="nav-tab-btn" id="tab-nav-guide" data-view="view-guide">ℹ️ Guide</button>
+        </div>
+    </nav>
+
     <!-- Welcoming Landing/Start Page -->
     <div id="view-landing" class="page-view landing-page-container">
         <div class="landing-card">
@@ -105,18 +121,10 @@
                     <h1 id="title-container">Suivi des notes de <span id="student-name" contenteditable="true" title="Cliquez pour modifier le nom" style="border-bottom: 2px dashed rgba(255,255,255,0.4); outline: none;">Étudiant</span></h1>
                     <div style="display: flex; align-items: center; gap: 0.75rem; margin-top: 0.25rem;">
                         <span class="header-subtitle">Gymnase · barème 1 à 6</span>
-                        <div class="lang-toggle-container" id="year-selector" style="margin: 0; padding: 1px;">
-                            <button type="button" class="lang-toggle-btn active" data-year="1">1ère année</button>
-                            <button type="button" class="lang-toggle-btn" data-year="2">2ème année</button>
-                            <button type="button" class="lang-toggle-btn" data-year="3">3ème année</button>
-                            <button type="button" class="lang-toggle-btn" data-year="4">Évolution (3 ans)</button>
-                        </div>
                     </div>
                 </div>
             </div>
             <div class="header-actions">
-                <button id="btn-show-landing" class="btn btn-secondary" style="padding: 0.5rem 1rem; font-size: 0.8rem; border-radius: var(--radius-full);" title="Page d'accueil">🏠 Accueil</button>
-                <button id="btn-show-guide" class="btn btn-secondary" style="padding: 0.5rem 1rem; font-size: 0.8rem; border-radius: var(--radius-full);" title="Comment ça marche ?">❓ Guide</button>
                 <select id="theme-selector" class="btn btn-secondary" style="padding: 0.5rem 1rem; font-size: 0.8rem; border-radius: var(--radius-full); cursor: pointer;" title="Changer le thème de couleur">
                     <option value="navy">🎨 Navy</option>
                     <option value="pink">🌸 Rose</option>
@@ -142,6 +150,16 @@
                 </button>
             </div>
         </header>
+
+        <!-- Year Selection Tabs (Grouped directly above Semester Tabs) -->
+        <div class="year-tabs-container" style="display: flex; gap: 0.5rem; margin-bottom: 0.75rem; justify-content: center; width: 100%;">
+            <div class="lang-toggle-container" id="year-selector" style="margin: 0; padding: 2px; width: 100%; display: flex; max-width: 600px; justify-content: space-between;">
+                <button type="button" class="lang-toggle-btn active" data-year="1" style="flex: 1; text-align: center;">1ère année</button>
+                <button type="button" class="lang-toggle-btn" data-year="2" style="flex: 1; text-align: center;">2ème année</button>
+                <button type="button" class="lang-toggle-btn" data-year="3" style="flex: 1; text-align: center;">3ème année</button>
+                <button type="button" class="lang-toggle-btn" data-year="4" style="flex: 1; text-align: center;">Évolution (3 ans)</button>
+            </div>
+        </div>
 
         <!-- Semester Selection Tabs -->
         <div class="semester-tabs-container">
@@ -483,9 +501,6 @@
     <!-- Dedicated Visual Guide Page View -->
     <div id="view-guide" class="page-view guide-page-container" style="display: none;">
         <div class="guide-header">
-            <button id="btn-guide-back" class="btn btn-secondary" style="border-radius: var(--radius-full); padding: 0.5rem 1.25rem;">
-                ← Retour
-            </button>
             <h1 class="guide-page-title">Guide de Promotion & d'Utilisation</h1>
         </div>
 

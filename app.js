@@ -2831,6 +2831,11 @@ function switchView(viewId) {
         }
     }
     
+    // Update top navigation active tabs class
+    document.querySelectorAll('.nav-tab-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.getAttribute('data-view') === viewId);
+    });
+    
     // Scroll to top
     window.scrollTo({ top: 0, behavior: 'instant' });
 }
@@ -2882,27 +2887,24 @@ function init() {
         });
     }
 
-    // Header Home / Landing Button
-    const btnShowLanding = document.getElementById('btn-show-landing');
-    if (btnShowLanding) {
-        btnShowLanding.addEventListener('click', () => {
-            state.hasSeenOnboarding = false;
-            saveState();
-            switchView('view-landing');
+    // Bind Top Navigation Tabs
+    document.querySelectorAll('.nav-tab-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const targetView = btn.getAttribute('data-view');
+            
+            // If they click dashboard or guide, they implicitly accept onboarding
+            if (targetView === 'view-dashboard' || targetView === 'view-guide') {
+                state.hasSeenOnboarding = true;
+                saveState();
+            }
+            switchView(targetView);
         });
-    }
+    });
 
-    // Guide view triggers
-    const btnShowGuide = document.getElementById('btn-show-guide');
-    if (btnShowGuide) {
-        btnShowGuide.addEventListener('click', () => {
-            switchView('view-guide');
-        });
-    }
-
-    const btnGuideBack = document.getElementById('btn-guide-back');
-    if (btnGuideBack) {
-        btnGuideBack.addEventListener('click', () => {
+    // Brand logo returns to dashboard if onboarded, else landing
+    const navBrand = document.querySelector('.top-nav-brand');
+    if (navBrand) {
+        navBrand.addEventListener('click', () => {
             if (state.hasSeenOnboarding) {
                 switchView('view-dashboard');
             } else {

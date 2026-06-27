@@ -1789,3 +1789,105 @@ body {
     color: var(--color-text-secondary);
     line-height: 1.4;
 }
+
+/* --- Persistent Top Navigation Bar --- */
+.top-nav-bar {
+    background-color: color-mix(in srgb, var(--color-bg-surface) 85%, transparent);
+    backdrop-filter: blur(20px) saturate(140%);
+    -webkit-backdrop-filter: blur(20px) saturate(140%);
+    border-bottom: 1px solid var(--color-border-subtle);
+    position: sticky;
+    top: 0;
+    z-index: 999;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.8rem 2rem;
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto 1.5rem auto;
+    border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
+}
+
+.top-nav-brand {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.nav-tabs {
+    display: flex;
+    gap: 0.35rem;
+    background-color: rgba(0, 0, 0, 0.2);
+    padding: 3px;
+    border-radius: var(--radius-md);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.nav-tab-btn {
+    background: transparent;
+    border: none;
+    color: var(--color-text-secondary);
+    font-family: var(--font-family-sans);
+    font-size: 0.85rem;
+    font-weight: 700;
+    padding: 0.5rem 1rem;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+}
+
+.nav-tab-btn:hover {
+    color: white;
+    background-color: rgba(255, 255, 255, 0.05);
+}
+
+.nav-tab-btn.active {
+    background-color: var(--color-primary);
+    color: var(--color-bg-base);
+    box-shadow: 0 2px 8px rgba(96, 165, 250, 0.3);
+}
+
+/* Adjust page containers for sticky nav offsets */
+.landing-page-container {
+    padding-top: 1rem !important;
+    height: calc(100vh - 100px) !important;
+}
+
+.app-container, .guide-page-container {
+    margin-top: 0 !important;
+    padding-top: 0.5rem !important;
+}
+
+/* Year Selection Tabs Container matching Semester Selector */
+.year-tabs-container {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    margin-bottom: 0.75rem;
+}
+
+.year-tabs-container .lang-toggle-container {
+    background-color: var(--color-bg-surface);
+    border: 1px solid var(--color-border-subtle);
+    padding: 4px;
+    border-radius: var(--radius-md);
+    width: 100%;
+    max-width: 600px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.year-tabs-container .lang-toggle-btn {
+    flex: 1;
+    text-align: center;
+    font-size: 0.8rem;
+    font-weight: 700;
+    padding: 0.6rem 0.5rem;
+    border-radius: var(--radius-sm);
+    text-transform: none;
+}
