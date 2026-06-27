@@ -16,8 +16,32 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
+    <!-- Tesseract OCR Library -->
+    <script src="https://unpkg.com/tesseract.js@5.0.5/dist/tesseract.min.js"></script>
 </head>
 <body class="paper-texture">
+    <!-- Ethereal Shadow Animated Background -->
+    <div id="ethereal-bg-container">
+        <div class="glow-blob blob-1"></div>
+        <div class="glow-blob blob-2"></div>
+        <div class="glow-blob blob-3"></div>
+    </div>
+
+    <!-- SVG Displacement Filter for organic distortion -->
+    <svg style="position: absolute; width: 0; height: 0; pointer-events: none;">
+        <defs>
+            <filter id="ethereal-shadow-filter">
+                <feTurbulence type="fractalNoise" baseFrequency="0.015 0.025" numOctaves="3" result="noise">
+                    <animate attributeName="seed" values="1;150;1" dur="40s" repeatCount="indefinite" />
+                </feTurbulence>
+                <feDisplacementMap in="SourceGraphic" in2="noise" scale="80" xChannelSelector="R" yChannelSelector="G" />
+            </filter>
+        </defs>
+    </svg>
+
+    <!-- Film Grain overlay for physical tactile texture -->
+    <div id="film-grain-overlay"></div>
+
     <!-- Confetti Canvas overlay -->
     <canvas id="confetti-canvas"></canvas>
 
@@ -49,6 +73,11 @@
                     <option value="green">🍃 Vert</option>
                     <option value="purple">🔮 Violet</option>
                     <option value="cozy">Sage Cozy</option>
+                    <option value="honey">🍯 Miel</option>
+                    <option value="skyblue">☁️ Sky Blue</option>
+                    <option value="crimson">🍷 Crimson</option>
+                    <option value="mint">🌱 Menthe</option>
+                    <option value="teal">🌊 Teal</option>
                 </select>
                 <button id="export-btn" class="btn btn-secondary" style="padding: 0.5rem 1rem; font-size: 0.8rem; border-radius: var(--radius-full);" title="Sauvegarder les données">
                     💾 Exporter
@@ -95,7 +124,7 @@
                 </div>
             </div>
             
-            <div class="promo-stats-grid">
+            <div class="promo-stats-grid" id="promo-stats-grid">
                 <div class="promo-stat-card">
                     <span class="promo-stat-value" id="stat-insuffisances">0</span>
                     <span class="promo-stat-label">Insuffisances</span>
@@ -111,7 +140,7 @@
                     <span class="promo-stat-label">Points en plus</span>
                     <span class="promo-stat-sublabel">au-dessus de 4</span>
                 </div>
-                <div class="promo-stat-card">
+                <div class="promo-stat-card" id="card-compensation">
                     <span class="promo-stat-value" id="stat-compensation">0 / 0</span>
                     <span class="promo-stat-label">Compensation</span>
                     <span class="promo-stat-sublabel">requis (&times;2)</span>
@@ -240,6 +269,24 @@
                         <button type="button" class="chip-btn" data-value="TA">TA</button>
                     </div>
                 </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="grade-comment">Commentaire (optionnel)</label>
+                    <input type="text" id="grade-comment" class="form-input" placeholder="Ex: Formule sur la physique, etc.">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="grade-photo">Photo de l'évaluation (preuve)</label>
+                    <input type="file" id="grade-photo" class="form-input" accept="image/*">
+                    <div id="ocr-loading-status" style="display: none; font-size: 0.75rem; color: var(--color-primary); margin-top: 0.25rem; align-items: center; gap: 0.25rem;">
+                        <span class="spinner-small" style="display: inline-block; width: 12px; height: 12px; border: 2px solid var(--color-primary); border-radius: 50%; border-top-color: transparent; animation: spin 0.8s linear infinite;"></span>
+                        Analyse OCR du document en cours...
+                    </div>
+                    <div id="grade-photo-preview-container" style="display: none; margin-top: 0.5rem; position: relative;">
+                        <img id="grade-photo-preview" src="" style="max-height: 100px; border-radius: 4px; border: 1px solid var(--color-border-subtle);">
+                        <button type="button" id="remove-grade-photo-btn" style="position: absolute; top: -5px; left: 85px; background: #ef4444; color: white; border: none; border-radius: 50%; width: 18px; height: 18px; font-size: 10px; cursor: pointer; display: flex; align-items: center; justify-content: center;">&times;</button>
+                    </div>
+                </div>
                 
                 <div class="form-actions">
                     <button type="button" class="btn btn-secondary" id="cancel-grade-btn">Annuler</button>
@@ -251,10 +298,12 @@
 
     <!-- MODAL: Détails de la note (Grade Details Popover) -->
     <div class="modal-backdrop" id="grade-details-modal">
-        <div class="modal-container" style="max-width: 380px;">
+        <div class="modal-container" style="max-width: 400px; width: 90%;">
             <button class="modal-close-btn" id="close-details-modal">&times;</button>
-            <h2 class="modal-title" style="margin-bottom: 1rem;">Détails de la note</h2>
-            <div style="background-color: var(--color-bg-base); padding: 1.25rem; border-radius: var(--radius-md); border: 1px solid var(--color-border-subtle); margin-bottom: 1.5rem; display: flex; flex-direction: column; gap: 0.75rem;">
+            <h2 class="modal-title" style="margin-bottom: 1rem;" id="details-modal-title">Détails de la note</h2>
+            
+            <!-- View Mode Panel -->
+            <div id="grade-details-view-panel" style="background-color: var(--color-bg-base); padding: 1.25rem; border-radius: var(--radius-md); border: 1px solid var(--color-border-subtle); margin-bottom: 1.5rem; display: flex; flex-direction: column; gap: 0.75rem;">
                 <div style="display: flex; justify-content: space-between; font-size: 0.9rem;">
                     <span style="color: var(--color-text-secondary);">Évaluation:</span>
                     <strong id="detail-grade-name" style="color: white;">—</strong>
@@ -267,15 +316,89 @@
                     <span style="color: var(--color-text-secondary);">Type:</span>
                     <strong id="detail-grade-type" style="color: white;">—</strong>
                 </div>
-                <div style="display: flex; justify-content: space-between; font-size: 0.8rem;">
+                <div style="display: flex; justify-content: space-between; font-size: 0.8rem; margin-bottom: 0.25rem;">
                     <span style="color: var(--color-text-secondary);">Date d'ajout:</span>
                     <span id="detail-grade-date" style="color: var(--color-text-muted);">—</span>
                 </div>
+                
+                <!-- Comment Container -->
+                <div id="detail-comment-container" style="display: none; flex-direction: column; gap: 0.25rem; font-size: 0.85rem; border-top: 1px dashed var(--color-border-subtle); padding-top: 0.5rem;">
+                    <span style="color: var(--color-text-secondary);">Commentaire:</span>
+                    <span id="detail-grade-comment" style="color: white; font-style: italic; white-space: pre-wrap;">—</span>
+                </div>
+
+                <!-- Photo Container -->
+                <div id="detail-photo-container" style="display: none; flex-direction: column; gap: 0.25rem; font-size: 0.85rem; border-top: 1px dashed var(--color-border-subtle); padding-top: 0.5rem;">
+                    <span style="color: var(--color-text-secondary);">Preuve (photo):</span>
+                    <img id="detail-grade-photo" style="max-height: 180px; width: auto; max-width: 100%; border-radius: 4px; border: 1px solid var(--color-border-subtle); margin-top: 0.25rem; object-fit: contain; cursor: zoom-in;">
+                </div>
             </div>
-            <div style="display: flex; justify-content: space-between; gap: 1rem;">
-                <button type="button" class="btn btn-secondary" id="close-details-btn" style="flex: 1;">Fermer</button>
+
+            <!-- Edit Mode Panel (hidden by default) -->
+            <form id="grade-details-edit-panel" style="display: none; background-color: var(--color-bg-base); padding: 1.25rem; border-radius: var(--radius-md); border: 1px solid var(--color-border-subtle); margin-bottom: 1.5rem; flex-direction: column; gap: 0.75rem; max-height: 50vh; overflow-y: auto;">
+                <div class="form-group" style="margin-bottom: 0.75rem;">
+                    <label class="form-label" for="edit-grade-name">Nom de l'évaluation</label>
+                    <input type="text" id="edit-grade-name" class="form-input">
+                </div>
+                <div class="form-group" style="margin-bottom: 0.75rem;">
+                    <label class="form-label" for="edit-grade-date">Date de l'évaluation</label>
+                    <input type="date" id="edit-grade-date" class="form-input">
+                </div>
+                <div class="form-group" style="margin-bottom: 0.75rem;">
+                    <label class="form-label">Note (1.0 - 6.0)</label>
+                    <div class="chip-container" id="edit-grade-chips">
+                        <button type="button" class="chip-btn" data-value="1.0">1.0</button>
+                        <button type="button" class="chip-btn" data-value="1.5">1.5</button>
+                        <button type="button" class="chip-btn" data-value="2.0">2.0</button>
+                        <button type="button" class="chip-btn" data-value="2.5">2.5</button>
+                        <button type="button" class="chip-btn" data-value="3.0">3.0</button>
+                        <button type="button" class="chip-btn" data-value="3.5">3.5</button>
+                        <button type="button" class="chip-btn" data-value="4.0">4.0</button>
+                        <button type="button" class="chip-btn" data-value="4.5">4.5</button>
+                        <button type="button" class="chip-btn" data-value="5.0">5.0</button>
+                        <button type="button" class="chip-btn" data-value="5.5">5.5</button>
+                        <button type="button" class="chip-btn" data-value="6.0">6.0</button>
+                    </div>
+                </div>
+                <div class="form-group" style="margin-bottom: 0.75rem;">
+                    <label class="form-label">Type d'évaluation</label>
+                    <div class="chip-container" id="edit-type-chips" style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; width: 100%;">
+                        <button type="button" class="chip-btn" data-value="TS">TS</button>
+                        <button type="button" class="chip-btn" data-value="TA">TA</button>
+                    </div>
+                </div>
+                <div class="form-group" style="margin-bottom: 0.75rem;">
+                    <label class="form-label" for="edit-grade-comment">Commentaire (optionnel)</label>
+                    <input type="text" id="edit-grade-comment" class="form-input" placeholder="Ex: Exercice difficile">
+                </div>
+                <div class="form-group" style="margin-bottom: 0.75rem;">
+                    <label class="form-label" for="edit-grade-photo">Modifier la photo (optionnel)</label>
+                    <input type="file" id="edit-grade-photo" class="form-input" accept="image/*">
+                    <div id="edit-ocr-loading-status" style="display: none; font-size: 0.75rem; color: var(--color-primary); margin-top: 0.25rem; align-items: center; gap: 0.25rem;">
+                        <span class="spinner-small" style="display: inline-block; width: 12px; height: 12px; border: 2px solid var(--color-primary); border-radius: 50%; border-top-color: transparent; animation: spin 0.8s linear infinite;"></span>
+                        Analyse OCR du document en cours...
+                    </div>
+                    <div id="edit-grade-photo-preview-container" style="display: none; margin-top: 0.5rem; position: relative;">
+                        <img id="edit-grade-photo-preview" src="" style="max-height: 80px; border-radius: 4px; border: 1px solid var(--color-border-subtle);">
+                        <button type="button" id="edit-remove-grade-photo-btn" style="position: absolute; top: -5px; left: 85px; background: #ef4444; color: white; border: none; border-radius: 50%; width: 18px; height: 18px; font-size: 10px; cursor: pointer; display: flex; align-items: center; justify-content: center;">&times;</button>
+                    </div>
+                </div>
+            </form>
+            
+            <!-- View Mode Actions -->
+            <div id="grade-details-view-actions" style="display: flex; justify-content: space-between; gap: 0.5rem;">
+                <button type="button" class="btn btn-secondary" id="edit-details-btn" style="flex: 1; background-color: var(--color-bg-elevated); border-color: var(--color-border-subtle);">✏️ Modifier</button>
                 <button type="button" class="btn btn-primary" id="delete-detail-grade-btn" style="flex: 1; background-color: var(--color-failing-bg);">Supprimer</button>
+                <button type="button" class="btn btn-secondary" id="close-details-btn" style="flex: 1;">Fermer</button>
             </div>
+
+            <!-- Edit Mode Actions (hidden by default) -->
+            <div id="grade-details-edit-actions" style="display: none; justify-content: space-between; gap: 1rem;">
+                <button type="button" class="btn btn-secondary" id="cancel-edit-btn" style="flex: 1;">Annuler</button>
+                <button type="button" class="btn btn-primary" id="save-edit-btn" style="flex: 1;">Enregistrer</button>
+            </div>
+        </div>
+    </div>
         </div>
     </div>
 

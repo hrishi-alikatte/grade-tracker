@@ -166,7 +166,9 @@ body {
 
 /* Promotion Dashboard (Green Card) */
 .promo-dashboard-container {
-    background-color: #3b5a45;         /* Cozy forest green card */
+    background-color: color-mix(in srgb, #3b5a45 75%, transparent);         /* Translucent forest green */
+    backdrop-filter: blur(12px) saturate(120%);
+    -webkit-backdrop-filter: blur(12px) saturate(120%);
     border: 1px solid rgba(255, 255, 255, 0.08);
     border-radius: var(--radius-lg);
     padding: 1.5rem;
@@ -274,8 +276,10 @@ body {
 
 /* Subject Card */
 .subject-card {
-    background-color: var(--color-bg-surface);
-    border: 1px solid var(--color-border-subtle);
+    background-color: color-mix(in srgb, var(--color-bg-surface) 60%, transparent);
+    backdrop-filter: blur(16px) saturate(130%);
+    -webkit-backdrop-filter: blur(16px) saturate(130%);
+    border: 1px solid rgba(255, 255, 255, 0.05);
     border-radius: var(--radius-lg);
     padding: 1.5rem;
     display: flex;
@@ -555,8 +559,10 @@ body {
 }
 
 .modal-container {
-    background-color: var(--color-bg-surface);
-    border: 1px solid var(--color-border-subtle);
+    background-color: color-mix(in srgb, var(--color-bg-surface) 80%, transparent);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: var(--radius-lg);
     width: 100%;
     max-width: 440px;
@@ -1060,6 +1066,73 @@ body {
     --color-border-focus: #c2d6bf;
 }
 
+/* Honey (warm gold / amber) Theme */
+[data-theme="honey"] {
+    --color-bg-base: #1c150b;          /* Dark warm gold / amber */
+    --color-bg-surface: #302413;       /* Gold card bg */
+    --color-bg-elevated: #42321b;      /* Elevated gold card */
+    --color-border-subtle: #3a2b17;
+    --color-primary: #f59e0b;          /* Honey gold */
+    --color-primary-hover: #d97706;
+    --color-border-focus: #fbbf24;
+}
+
+/* Sky Blue Theme */
+[data-theme="skyblue"] {
+    --color-bg-base: #0c151c;          /* Deep dark blue-grey */
+    --color-bg-surface: #172633;       /* Slate-blue card bg */
+    --color-bg-elevated: #213547;      /* Elevated blue card */
+    --color-border-subtle: #1c2e3d;
+    --color-primary: #38bdf8;          /* Sky blue */
+    --color-primary-hover: #0ea5e9;
+    --color-border-focus: #7dd3fc;
+}
+
+/* Crimson Theme */
+[data-theme="crimson"] {
+    --color-bg-base: #1c0b0f;          /* Deep dark ruby / crimson */
+    --color-bg-surface: #33141b;       /* Crimson card bg */
+    --color-bg-elevated: #471d26;      /* Elevated crimson card */
+    --color-border-subtle: #3d1920;
+    --color-primary: #f43f5e;          /* Rose / Crimson */
+    --color-primary-hover: #e11d48;
+    --color-border-focus: #fb7185;
+}
+
+/* Mint Theme */
+[data-theme="mint"] {
+    --color-bg-base: #0b1c15;          /* Dark minty forest */
+    --color-bg-surface: #143326;       /* Mint card bg */
+    --color-bg-elevated: #1d4735;      /* Elevated mint card */
+    --color-border-subtle: #193d2e;
+    --color-primary: #34d399;          /* Mint green */
+    --color-primary-hover: #10b981;
+    --color-border-focus: #6ee7b7;
+}
+
+/* Teal Theme */
+[data-theme="teal"] {
+    --color-bg-base: #091a1e;          /* Dark teal ocean */
+    --color-bg-surface: #113138;       /* Teal card bg */
+    --color-bg-elevated: #18434d;      /* Elevated teal card */
+    --color-border-subtle: #143840;
+    --color-primary: #14b8a6;          /* Teal cyan */
+    --color-primary-hover: #0d9488;
+    --color-border-focus: #2dd4bf;
+}
+
+/* Helper to show 3 columns in the promotion stats dashboard grid when Compensation is hidden */
+.promo-stats-grid.three-cols {
+    grid-template-columns: repeat(3, 1fr) !important;
+}
+
+@media (max-width: 640px) {
+    .promo-stats-grid.three-cols {
+        grid-template-columns: repeat(3, 1fr) !important;
+    }
+}
+
+
 /* Theme selector custom dropdown arrow styling */
 #theme-selector {
     appearance: none;
@@ -1141,4 +1214,94 @@ body {
     background-color: rgba(239, 68, 68, 0.3);
     color: #f87171;
     text-decoration: line-through;
+}
+
+/* Spinner animation */
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+.spinner-small {
+    animation: spin 0.8s linear infinite;
+}
+
+/* --- Ethereal Shadow Background Styles --- */
+#ethereal-bg-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+    z-index: -10;
+    pointer-events: none;
+    background-color: var(--color-bg-base);
+    transition: background-color var(--transition-normal);
+}
+
+.glow-blob {
+    position: absolute;
+    border-radius: 50%;
+    filter: url(#ethereal-shadow-filter) blur(85px);
+    opacity: 0.18;
+    mix-blend-mode: screen;
+    transition: background-color var(--transition-normal);
+}
+
+.blob-1 {
+    width: 600px;
+    height: 600px;
+    background-color: var(--color-primary);
+    top: -120px;
+    left: -120px;
+    animation: moveBlob1 32s ease-in-out infinite alternate;
+}
+
+.blob-2 {
+    width: 500px;
+    height: 500px;
+    background-color: var(--color-border-focus);
+    bottom: -100px;
+    right: -100px;
+    animation: moveBlob2 38s ease-in-out infinite alternate;
+}
+
+.blob-3 {
+    width: 450px;
+    height: 450px;
+    background-color: rgba(128, 128, 128, 0.35);
+    top: 35%;
+    left: 45%;
+    animation: moveBlob3 28s ease-in-out infinite alternate;
+}
+
+#film-grain-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: -9;
+    pointer-events: none;
+    opacity: 0.038;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+}
+
+@keyframes moveBlob1 {
+    0% { transform: translate(0, 0) scale(1); }
+    33% { transform: translate(120px, 80px) scale(1.1); }
+    66% { transform: translate(-40px, 160px) scale(0.9); }
+    100% { transform: translate(60px, 40px) scale(1.05); }
+}
+
+@keyframes moveBlob2 {
+    0% { transform: translate(0, 0) scale(1); }
+    33% { transform: translate(-140px, -90px) scale(0.9); }
+    66% { transform: translate(80px, -180px) scale(1.15); }
+    100% { transform: translate(-60px, -40px) scale(1.0); }
+}
+
+@keyframes moveBlob3 {
+    0% { transform: translate(0, 0) scale(0.95); }
+    50% { transform: translate(-110px, 140px) scale(1.1); }
+    100% { transform: translate(140px, -110px) scale(0.9); }
 }

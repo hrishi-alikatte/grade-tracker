@@ -2,6 +2,128 @@
  * GradeVibe Vaud - PWA App Logic & Customizations v3
  */
 
+// --- IndexedDB Storage for Test Photos ---
+const DB_NAME = 'GradeTrackerDB';
+const DB_VERSION = 1;
+const STORE_NAME = 'grade_photos';
+let db = null;
+
+function initDB() {
+    return new Promise((resolve) => {
+        const request = indexedDB.open(DB_NAME, DB_VERSION);
+        request.onupgradeneeded = (e) => {
+            const database = e.target.result;
+            if (!database.objectStoreNames.contains(STORE_NAME)) {
+                database.createObjectStore(STORE_NAME);
+            }
+        };
+        request.onsuccess = (e) => {
+            db = e.target.result;
+            console.log('IndexedDB initialized successfully');
+            resolve(db);
+        };
+        request.onerror = (e) => {
+            console.error('IndexedDB initialization error:', e.target.error);
+            resolve(null);
+        };
+    });
+}
+
+// Call initDB on startup
+initDB();
+
+function storePhoto(gradeId, base64Data) {
+    return new Promise((resolve) => {
+        if (!db) {
+            console.warn('IndexedDB not ready, cannot store photo');
+            resolve(false);
+            return;
+        }
+        try {
+            const transaction = db.transaction([STORE_NAME], 'readwrite');
+            const store = transaction.objectStore(STORE_NAME);
+            const request = store.put(base64Data, gradeId);
+            request.onsuccess = () => resolve(true);
+            request.onerror = (e) => {
+                console.error('storePhoto error:', e.target.error);
+                resolve(false);
+            };
+        } catch (err) {
+            console.error('storePhoto transaction error:', err);
+            resolve(false);
+        }
+    });
+}
+
+function getPhoto(gradeId) {
+    return new Promise((resolve) => {
+        if (!db) {
+            resolve(null);
+            return;
+        }
+        try {
+            const transaction = db.transaction([STORE_NAME], 'readonly');
+            const store = transaction.objectStore(STORE_NAME);
+            const request = store.get(gradeId);
+            request.onsuccess = (e) => resolve(e.target.result || null);
+            request.onerror = (e) => {
+                console.error('getPhoto error:', e.target.error);
+                resolve(null);
+            };
+        } catch (err) {
+            console.error('getPhoto transaction error:', err);
+            resolve(null);
+        }
+    });
+}
+
+function deletePhoto(gradeId) {
+    return new Promise((resolve) => {
+        if (!db) {
+            resolve(false);
+            return;
+        }
+        try {
+            const transaction = db.transaction([STORE_NAME], 'readwrite');
+            const store = transaction.objectStore(STORE_NAME);
+            const request = store.delete(gradeId);
+            request.onsuccess = () => resolve(true);
+            request.onerror = (e) => {
+                console.error('deletePhoto error:', e.target.error);
+                resolve(false);
+            };
+        } catch (err) {
+            console.error('deletePhoto transaction error:', err);
+            resolve(false);
+        }
+    });
+}
+
+// --- OCR and Photo Temporary State ---
+let currentUploadedPhotoBase64 = null;
+let currentOcrText = "";
+let isOcrRunning = false;
+
+let editUploadedPhotoBase64 = null;
+let editOcrText = "";
+let isEditOcrRunning = false;
+let editPhotoDeleted = false;
+
+// Normalize text and check if grade exists in it
+function verifyGradeInText(ocrText, gradeValue) {
+    if (!ocrText) return false;
+    const normalized = ocrText.toLowerCase().replace(/[,;]/g, '.').replace(/\s+/g, ' ');
+    const valStr = gradeValue.toFixed(1);
+    const valInt = Math.floor(gradeValue).toString();
+    
+    if (normalized.includes(valStr)) return true;
+    if (gradeValue % 1 === 0) {
+        const regex = new RegExp(`\\b${valInt}\\b`);
+        if (regex.test(normalized)) return true;
+    }
+    return false;
+}
+
 // --- 1. PWA Service Worker Registration ---
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
@@ -490,7 +612,7 @@ function checkVaudPromotion(subjects, semester) {
     const coreSumPassed = !hasCoreGrades || g1Sum >= 16.0;
 
     const overallAverage = activeSubjectsCount > 0 ? (roundedAveragesSum / activeSubjectsCount) : null;
-    const requiredCompensation = 2 * pointsManquants;
+    const requiredCompensation = (state.currentYear === 3) ? (2 * pointsManquants) : 0;
     const isPromoted = activeSubjectsCount > 0 && 
                        overallAverage >= 4.0 && 
                        insuffisances <= 4 && 
@@ -690,6 +812,8 @@ const statInsuffisances = document.getElementById('stat-insuffisances');
 const statDeficit = document.getElementById('stat-deficit');
 const statSurplus = document.getElementById('stat-surplus');
 const statCompensation = document.getElementById('stat-compensation');
+const cardCompensation = document.getElementById('card-compensation');
+const promoStatsGrid = document.getElementById('promo-stats-grid');
 
 // Group Bilan Elements
 const g1PointsText = document.getElementById('g1-points-text');
@@ -720,6 +844,14 @@ studentNameEl.addEventListener('keydown', (e) => {
 function updateDashboard() {
     const currentSubjects = (state.currentYear === 3) ? state.subjectsYear3 : (state.currentYear === 2) ? state.subjectsYear2 : state.subjectsYear1;
     const results = checkVaudPromotion(currentSubjects, state.currentSemester);
+
+    if (state.currentYear === 3) {
+        if (cardCompensation) cardCompensation.style.display = '';
+        if (promoStatsGrid) promoStatsGrid.classList.remove('three-cols');
+    } else {
+        if (cardCompensation) cardCompensation.style.display = 'none';
+        if (promoStatsGrid) promoStatsGrid.classList.add('three-cols');
+    }
 
     // Update name UI if different
     if (studentNameEl.textContent !== state.studentName) {
@@ -1504,9 +1636,12 @@ function renderSubjects() {
             if (list.length === 0) return '<span style="font-size:0.75rem; color:var(--color-text-muted); font-style:italic;">—</span>';
             return list.map(g => {
                 const statusClass = getStatusClass(g.value);
+                const commentIndicator = g.comment ? '💬' : '';
+                const photoIndicator = g.hasPhoto ? '📷' : '';
+                const indicators = (commentIndicator || photoIndicator) ? `<span style="font-size:0.6rem; margin-left:0.2rem; opacity:0.85; letter-spacing:-1px;">${commentIndicator}${photoIndicator}</span>` : '';
                 return `
                     <div class="grade-pill ${statusClass}" data-grade-id="${g.id}">
-                        <span>${g.value.toFixed(1)}</span>
+                        <span>${g.value.toFixed(1)}</span>${indicators}
                     </div>
                 `;
             }).join('');
@@ -1783,6 +1918,26 @@ const detailGradeValue = document.getElementById('detail-grade-value');
 const detailGradeType = document.getElementById('detail-grade-type');
 const detailGradeDate = document.getElementById('detail-grade-date');
 const deleteDetailGradeBtn = document.getElementById('delete-detail-grade-btn');
+const detailCommentContainer = document.getElementById('detail-comment-container');
+const detailGradeComment = document.getElementById('detail-grade-comment');
+const detailPhotoContainer = document.getElementById('detail-photo-container');
+const detailGradePhoto = document.getElementById('detail-grade-photo');
+
+const detailsModalTitle = document.getElementById('details-modal-title');
+const gradeDetailsViewPanel = document.getElementById('grade-details-view-panel');
+const gradeDetailsEditPanel = document.getElementById('grade-details-edit-panel');
+const gradeDetailsViewActions = document.getElementById('grade-details-view-actions');
+const gradeDetailsEditActions = document.getElementById('grade-details-edit-actions');
+
+// Edit inputs
+const editGradeName = document.getElementById('edit-grade-name');
+const editGradeDate = document.getElementById('edit-grade-date');
+const editGradeComment = document.getElementById('edit-grade-comment');
+const editGradePhoto = document.getElementById('edit-grade-photo');
+const editOcrLoadingStatus = document.getElementById('edit-ocr-loading-status');
+const editGradePhotoPreviewContainer = document.getElementById('edit-grade-photo-preview-container');
+const editGradePhotoPreview = document.getElementById('edit-grade-photo-preview');
+const editRemoveGradePhotoBtn = document.getElementById('edit-remove-grade-photo-btn');
 
 let selectedSubjectIdForDetails = null;
 let selectedGradeIdForDetails = null;
@@ -1794,6 +1949,27 @@ function closeModal(modal) {
     modal.classList.remove('active');
 }
 
+function toggleEditMode(enable) {
+    if (enable) {
+        gradeDetailsViewPanel.style.display = 'none';
+        gradeDetailsViewActions.style.display = 'none';
+        gradeDetailsEditPanel.style.display = 'flex';
+        gradeDetailsEditActions.style.display = 'flex';
+        detailsModalTitle.textContent = "Modifier la note";
+    } else {
+        gradeDetailsViewPanel.style.display = 'flex';
+        gradeDetailsViewActions.style.display = 'flex';
+        gradeDetailsEditPanel.style.display = 'none';
+        gradeDetailsEditActions.style.display = 'none';
+        detailsModalTitle.textContent = "Détails de la note";
+    }
+}
+
+function closeDetailsModalAndReset() {
+    closeModal(gradeDetailsModal);
+    toggleEditMode(false);
+}
+
 // Modal headers close actions
 document.getElementById('close-subject-modal').addEventListener('click', () => closeModal(addSubjectModal));
 document.getElementById('cancel-subject-btn').addEventListener('click', () => closeModal(addSubjectModal));
@@ -1801,8 +1977,9 @@ document.getElementById('cancel-subject-btn').addEventListener('click', () => cl
 document.getElementById('close-grade-modal').addEventListener('click', () => closeModal(addGradeModal));
 document.getElementById('cancel-grade-btn').addEventListener('click', () => closeModal(addGradeModal));
 
-document.getElementById('close-details-modal').addEventListener('click', () => closeModal(gradeDetailsModal));
-document.getElementById('close-details-btn').addEventListener('click', () => closeModal(gradeDetailsModal));
+document.getElementById('close-details-modal').addEventListener('click', closeDetailsModalAndReset);
+document.getElementById('close-details-btn').addEventListener('click', closeDetailsModalAndReset);
+document.getElementById('cancel-edit-btn').addEventListener('click', () => toggleEditMode(false));
 
 // Header actions
 document.getElementById('add-subject-btn').addEventListener('click', () => {
@@ -1847,6 +2024,20 @@ document.querySelectorAll('#grade-chips .chip-btn').forEach(btn => {
 document.querySelectorAll('#type-chips .chip-btn').forEach(btn => {
     btn.addEventListener('click', () => {
         document.querySelectorAll('#type-chips .chip-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+    });
+});
+
+document.querySelectorAll('#edit-grade-chips .chip-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+        document.querySelectorAll('#edit-grade-chips .chip-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+    });
+});
+
+document.querySelectorAll('#edit-type-chips .chip-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+        document.querySelectorAll('#edit-type-chips .chip-btn').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
     });
 });
@@ -2059,7 +2250,54 @@ subjectsContainer.addEventListener('click', (e) => {
                 detailGradeType.textContent = gradeObj.type === 'TA' ? 'TA' : 'TS';
                 const dateStr = gradeObj.date ? new Date(gradeObj.date).toLocaleDateString('fr-CH', { day: 'numeric', month: 'long', year: 'numeric' }) : 'Non spécifiée';
                 detailGradeDate.textContent = dateStr;
+
+                // Load comments
+                detailCommentContainer.style.display = 'none';
+                detailGradeComment.textContent = '—';
+                if (gradeObj.comment) {
+                    detailGradeComment.textContent = gradeObj.comment;
+                    detailCommentContainer.style.display = 'flex';
+                }
+
+                // Load photos
+                detailPhotoContainer.style.display = 'none';
+                detailGradePhoto.src = '';
+                editGradePhotoPreviewContainer.style.display = 'none';
+                editGradePhotoPreview.src = '';
+                editUploadedPhotoBase64 = null;
+                editPhotoDeleted = false;
+                editOcrText = "";
+                isEditOcrRunning = false;
+                editGradePhoto.value = "";
+
+                if (gradeObj.hasPhoto) {
+                    getPhoto(gradeId).then(photoData => {
+                        if (photoData) {
+                            detailGradePhoto.src = photoData;
+                            detailPhotoContainer.style.display = 'flex';
+                            editGradePhotoPreview.src = photoData;
+                            editGradePhotoPreviewContainer.style.display = 'block';
+                            editUploadedPhotoBase64 = photoData;
+                        }
+                    });
+                }
+
+                // Pre-fill edit inputs
+                const dateISO = gradeObj.date;
+                const dateYMD = dateISO ? dateISO.substring(0, 10) : "";
+                editGradeName.value = gradeObj.name || "";
+                editGradeDate.value = dateYMD;
+                editGradeComment.value = gradeObj.comment || "";
                 
+                // Highlight edit mode active chips
+                document.querySelectorAll('#edit-grade-chips .chip-btn').forEach(btn => {
+                    btn.classList.toggle('active', parseFloat(btn.getAttribute('data-value')) === gradeObj.value);
+                });
+                document.querySelectorAll('#edit-type-chips .chip-btn').forEach(btn => {
+                    btn.classList.toggle('active', btn.getAttribute('data-value') === gradeObj.type);
+                });
+
+                toggleEditMode(false); // Default to view mode
                 openModal(gradeDetailsModal);
             }
         }
@@ -2102,6 +2340,179 @@ if (deleteDetailGradeBtn) {
         }
     });
 }
+// Toggle to edit mode on clicking Edit button inside Details Modal
+document.getElementById('edit-details-btn').addEventListener('click', () => {
+    toggleEditMode(true);
+});
+
+// Save edits inside Details Modal
+document.getElementById('save-edit-btn').addEventListener('click', (e) => {
+    e.preventDefault();
+    if (!selectedSubjectIdForDetails || !selectedGradeIdForDetails) return;
+
+    const currentSubjects = (state.currentYear === 3) ? state.subjectsYear3 : (state.currentYear === 2) ? state.subjectsYear2 : state.subjectsYear1;
+    const subject = currentSubjects.find(s => s.id === selectedSubjectIdForDetails);
+    if (!subject) return;
+
+    const sem = state.currentSemester;
+    if (sem === 'annual') return;
+
+    const name = editGradeName.value.trim() || 'Évaluation';
+    const dateVal = editGradeDate.value;
+    const commentVal = editGradeComment.value.trim() || null;
+
+    const activeGradeBtn = document.querySelector('#edit-grade-chips .chip-btn.active');
+    const activeTypeBtn = document.querySelector('#edit-type-chips .chip-btn.active');
+    const value = activeGradeBtn ? parseFloat(activeGradeBtn.getAttribute('data-value')) : 4.0;
+    const type = activeTypeBtn ? activeTypeBtn.getAttribute('data-value') : 'TS';
+
+    const proceedSavingEdits = () => {
+        const gradeObj = subject.grades[sem].find(g => g.id === selectedGradeIdForDetails);
+        if (gradeObj) {
+            gradeObj.name = name;
+            gradeObj.value = value;
+            gradeObj.type = type;
+            gradeObj.date = dateVal ? new Date(dateVal).toISOString() : null;
+            gradeObj.comment = commentVal;
+            
+            let photoPromise = Promise.resolve();
+            if (editPhotoDeleted) {
+                gradeObj.hasPhoto = false;
+                photoPromise = deletePhoto(selectedGradeIdForDetails);
+            } else if (editUploadedPhotoBase64) {
+                gradeObj.hasPhoto = true;
+                photoPromise = storePhoto(selectedGradeIdForDetails, editUploadedPhotoBase64);
+            }
+
+            photoPromise.finally(() => {
+                saveState();
+                closeDetailsModalAndReset();
+                renderSubjects();
+                updateDashboard();
+            });
+        }
+    };
+
+    // OCR mismatch check on edit
+    if (editUploadedPhotoBase64 && isEditOcrRunning) {
+        if (confirm("L'analyse de l'image est en cours. Voulez-vous enregistrer la note sans vérification ?")) {
+            proceedSavingEdits();
+        }
+    } else if (editUploadedPhotoBase64 && editOcrText) {
+        const isMatch = verifyGradeInText(editOcrText, value);
+        if (!isMatch) {
+            if (confirm(`Alerte : La note modifiée (${value.toFixed(1)}) ne semble pas correspondre à la note détectée sur la photo.\n\nVoulez-vous quand même enregistrer ces modifications?`)) {
+                proceedSavingEdits();
+            }
+        } else {
+            proceedSavingEdits();
+        }
+    } else {
+        proceedSavingEdits();
+    }
+});
+
+// --- Add Grade Photo & OCR Bindings ---
+document.getElementById('grade-photo').addEventListener('change', (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = function(evt) {
+        currentUploadedPhotoBase64 = evt.target.result;
+        document.getElementById('grade-photo-preview').src = currentUploadedPhotoBase64;
+        document.getElementById('grade-photo-preview-container').style.display = 'block';
+        
+        const ocrStatus = document.getElementById('ocr-loading-status');
+        ocrStatus.style.display = 'flex';
+        currentOcrText = "";
+        isOcrRunning = true;
+        
+        try {
+            if (typeof Tesseract === 'undefined') {
+                throw new Error("Tesseract library is not loaded.");
+            }
+            Tesseract.recognize(
+                currentUploadedPhotoBase64,
+                'fra+eng',
+                { logger: m => console.log(m) }
+            ).then(({ data: { text } }) => {
+                currentOcrText = text;
+                console.log("Add Grade OCR result:", text);
+            }).catch(err => {
+                console.error("Add Grade OCR error:", err);
+            }).finally(() => {
+                ocrStatus.style.display = 'none';
+                isOcrRunning = false;
+            });
+        } catch (err) {
+            console.warn("OCR failed to initialize:", err);
+            ocrStatus.style.display = 'none';
+            isOcrRunning = false;
+        }
+    };
+    reader.readAsDataURL(file);
+});
+
+document.getElementById('remove-grade-photo-btn').addEventListener('click', () => {
+    document.getElementById('grade-photo').value = "";
+    document.getElementById('grade-photo-preview').src = "";
+    document.getElementById('grade-photo-preview-container').style.display = 'none';
+    currentUploadedPhotoBase64 = null;
+    currentOcrText = "";
+});
+
+// --- Edit Grade Photo & OCR Bindings ---
+document.getElementById('edit-grade-photo').addEventListener('change', (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = function(evt) {
+        editUploadedPhotoBase64 = evt.target.result;
+        editGradePhotoPreview.src = editUploadedPhotoBase64;
+        editGradePhotoPreviewContainer.style.display = 'block';
+        editPhotoDeleted = false;
+        
+        const ocrStatus = editOcrLoadingStatus;
+        ocrStatus.style.display = 'flex';
+        editOcrText = "";
+        isEditOcrRunning = true;
+        
+        try {
+            if (typeof Tesseract === 'undefined') {
+                throw new Error("Tesseract library is not loaded.");
+            }
+            Tesseract.recognize(
+                editUploadedPhotoBase64,
+                'fra+eng',
+                { logger: m => console.log(m) }
+            ).then(({ data: { text } }) => {
+                editOcrText = text;
+                console.log("Edit Grade OCR result:", text);
+            }).catch(err => {
+                console.error("Edit Grade OCR error:", err);
+            }).finally(() => {
+                ocrStatus.style.display = 'none';
+                isEditOcrRunning = false;
+            });
+        } catch (err) {
+            console.warn("OCR failed to initialize:", err);
+            ocrStatus.style.display = 'none';
+            isEditOcrRunning = false;
+        }
+    };
+    reader.readAsDataURL(file);
+});
+
+document.getElementById('edit-remove-grade-photo-btn').addEventListener('click', () => {
+    editGradePhoto.value = "";
+    editGradePhotoPreview.src = "";
+    editGradePhotoPreviewContainer.style.display = 'none';
+    editUploadedPhotoBase64 = null;
+    editOcrText = "";
+    editPhotoDeleted = true;
+});
 
 // Add Grade form submit - robust try...finally modal closing
 document.getElementById('add-grade-form').addEventListener('submit', (e) => {
@@ -2132,42 +2543,85 @@ document.getElementById('add-grade-form').addEventListener('submit', (e) => {
                 subject.grades.sem2 = [];
             }
 
-            const dateVal = document.getElementById('grade-date').value;
-            const newGrade = {
-                id: 'grade_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5),
-                name,
-                value,
-                type,
-                date: dateVal ? new Date(dateVal).toISOString() : null
+            const proceedSaving = () => {
+                const dateVal = document.getElementById('grade-date').value;
+                const commentVal = document.getElementById('grade-comment').value.trim() || null;
+                const gradeId = 'grade_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5);
+
+                const newGrade = {
+                    id: gradeId,
+                    name,
+                    value,
+                    type,
+                    date: dateVal ? new Date(dateVal).toISOString() : null,
+                    comment: commentVal,
+                    hasPhoto: !!currentUploadedPhotoBase64
+                };
+
+                subject.grades[sem].push(newGrade);
+
+                // If there is a photo, save it to IndexedDB
+                const savePromise = currentUploadedPhotoBase64 ? storePhoto(gradeId, currentUploadedPhotoBase64) : Promise.resolve();
+
+                savePromise.finally(() => {
+                    saveState();
+                    renderSubjects();
+                    updateDashboard();
+
+                    // Celebratory effect for good grades (>= 5.0) or warning for insufficient grades (< 4.0)
+                    if (value >= 5.0) {
+                        startConfetti();
+                        playConfettiSound();
+                    } else if (value < 4.0) {
+                        playFahSound();
+                    }
+
+                    // Reset form and variables
+                    document.getElementById('add-grade-form').reset();
+                    document.getElementById('grade-photo-preview-container').style.display = 'none';
+                    currentUploadedPhotoBase64 = null;
+                    currentOcrText = "";
+
+                    // Reset active chips to defaults (4.0 and TS)
+                    document.querySelectorAll('#grade-chips .chip-btn').forEach(btn => {
+                        btn.classList.toggle('active', btn.getAttribute('data-value') === '4.0');
+                    });
+                    document.querySelectorAll('#type-chips .chip-btn').forEach(btn => {
+                        btn.classList.toggle('active', btn.getAttribute('data-value') === 'TS');
+                    });
+
+                    if (submitBtn) submitBtn.disabled = false;
+                    closeModal(addGradeModal);
+                });
             };
 
-            subject.grades[sem].push(newGrade);
-            saveState();
-            renderSubjects();
-            updateDashboard();
-
-            // Celebratory effect for good grades (>= 5.0) or warning for insufficient grades (< 4.0)
-            if (value >= 5.0) {
-                startConfetti();
-                playConfettiSound();
-            } else if (value < 4.0) {
-                playFahSound();
+            // OCR Mismatch Check
+            if (currentUploadedPhotoBase64 && isOcrRunning) {
+                if (confirm("L'analyse de l'image est en cours. Voulez-vous enregistrer la note sans vérification ?")) {
+                    proceedSaving();
+                } else {
+                    if (submitBtn) submitBtn.disabled = false;
+                }
+            } else if (currentUploadedPhotoBase64 && currentOcrText) {
+                const isMatch = verifyGradeInText(currentOcrText, value);
+                if (!isMatch) {
+                    if (confirm(`Alerte : La note saisie (${value.toFixed(1)}) ne semble pas correspondre à la note détectée sur la photo.\n\nVoulez-vous quand même enregistrer cette note?`)) {
+                        proceedSaving();
+                    } else {
+                        if (submitBtn) submitBtn.disabled = false;
+                    }
+                } else {
+                    proceedSaving();
+                }
+            } else {
+                proceedSaving();
             }
+        } else {
+            if (submitBtn) submitBtn.disabled = false;
+            closeModal(addGradeModal);
         }
     } catch (err) {
         console.error("Error adding grade:", err);
-    } finally {
-        // Guarantee modal close and form state resets
-        document.getElementById('add-grade-form').reset();
-        
-        // Reset active chips to defaults (4.0 and TS)
-        document.querySelectorAll('#grade-chips .chip-btn').forEach(btn => {
-            btn.classList.toggle('active', btn.getAttribute('data-value') === '4.0');
-        });
-        document.querySelectorAll('#type-chips .chip-btn').forEach(btn => {
-            btn.classList.toggle('active', btn.getAttribute('data-value') === 'TS');
-        });
-
         if (submitBtn) submitBtn.disabled = false;
         closeModal(addGradeModal);
     }
