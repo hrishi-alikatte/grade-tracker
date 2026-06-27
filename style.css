@@ -74,7 +74,7 @@ body {
 
 /* App Container */
 .app-container {
-    max-width: 820px;
+    max-width: 1040px;
     margin: 0 auto;
     display: flex;
     flex-direction: column;
@@ -276,6 +276,14 @@ body {
     gap: 1.25rem;
 }
 
+@media (min-width: 769px) {
+    .subjects-list {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1.25rem;
+    }
+}
+
 /* Subject Card */
 .subject-card {
     background-color: color-mix(in srgb, var(--color-bg-surface) 60%, transparent);
@@ -307,9 +315,10 @@ body {
 }
 
 .subject-name {
-    font-size: 1.25rem;
+    font-size: 1.35rem;
     font-weight: 800;
     color: white;
+    letter-spacing: -0.015em;
 }
 
 .oc-edit-btn {
@@ -691,10 +700,11 @@ body {
     cursor: pointer;
     text-align: center;
     position: relative;
-    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1),
-                background-color 0.25s cubic-bezier(0.16, 1, 0.3, 1),
-                border-color 0.25s cubic-bezier(0.16, 1, 0.3, 1),
-                box-shadow 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    will-change: transform;
+    transition: transform 0.15s cubic-bezier(0.2, 1, 0.3, 1),
+                background-color 0.12s ease,
+                border-color 0.12s ease,
+                box-shadow 0.15s ease;
 }
 
 .chip-btn:hover {
