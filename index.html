@@ -55,9 +55,18 @@
         </div>
         
         <div class="nav-tabs">
-            <button class="nav-tab-btn active" id="tab-nav-landing" data-view="view-landing">🏠 Accueil</button>
-            <button class="nav-tab-btn" id="tab-nav-dashboard" data-view="view-dashboard">📊 Mes Notes</button>
-            <button class="nav-tab-btn" id="tab-nav-guide" data-view="view-guide">ℹ️ Guide</button>
+            <button class="nav-tab-btn active" id="tab-nav-landing" data-view="view-landing">
+                <svg class="nav-tab-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+                Accueil
+            </button>
+            <button class="nav-tab-btn" id="tab-nav-dashboard" data-view="view-dashboard">
+                <svg class="nav-tab-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c0 2 2 3 6 3s6-1 6-3v-5"/></svg>
+                Mes Notes
+            </button>
+            <button class="nav-tab-btn" id="tab-nav-guide" data-view="view-guide">
+                <svg class="nav-tab-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                Guide
+            </button>
         </div>
     </nav>
 
@@ -143,6 +152,16 @@
                 </button>
             </div>
         </header>
+
+        <!-- Year Selection Tabs (Grouped directly above Semester Tabs) -->
+        <div class="year-tabs-container" style="display: flex; gap: 0.5rem; margin-bottom: 0.75rem; justify-content: center; width: 100%;">
+            <div class="lang-toggle-container" id="year-selector" style="margin: 0; padding: 2px; width: 100%; display: flex; max-width: 600px; justify-content: space-between;">
+                <button type="button" class="lang-toggle-btn active" data-year="1" style="flex: 1; text-align: center;">1ère année</button>
+                <button type="button" class="lang-toggle-btn" data-year="2" style="flex: 1; text-align: center;">2ème année</button>
+                <button type="button" class="lang-toggle-btn" data-year="3" style="flex: 1; text-align: center;">3ème année</button>
+                <button type="button" class="lang-toggle-btn" data-year="4" style="flex: 1; text-align: center;">Évolution (3 ans)</button>
+            </div>
+        </div>
 
         <!-- Semester Selection Tabs -->
         <div class="semester-tabs-container">

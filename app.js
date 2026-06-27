@@ -2064,7 +2064,19 @@ document.getElementById('add-subject-btn').addEventListener('click', () => {
 });
 
 // --- 11. Tabs and Selector Bindings ---
-
+document.querySelectorAll('#year-selector .lang-toggle-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+        document.querySelectorAll('#year-selector .lang-toggle-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        state.currentYear = parseInt(btn.getAttribute('data-year'));
+        saveState();
+        updateTabVisibility();
+        if (state.currentYear !== 4) {
+            renderSubjects();
+            updateDashboard();
+        }
+    });
+});
 document.querySelectorAll('.semester-tab').forEach(btn => {
     btn.addEventListener('click', () => {
         document.querySelectorAll('.semester-tab').forEach(b => b.classList.remove('active'));
@@ -2766,6 +2778,11 @@ function init() {
         });
     }
     applyTheme();
+
+    // Set Year selector active button on startup
+    document.querySelectorAll('#year-selector .lang-toggle-btn').forEach(btn => {
+        btn.classList.toggle('active', parseInt(btn.getAttribute('data-year')) === state.currentYear);
+    });
 
     // Set Semester selector active button on startup
     document.querySelectorAll('.semester-tab').forEach(btn => {
