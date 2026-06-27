@@ -46,7 +46,7 @@
     <canvas id="confetti-canvas"></canvas>
 
     <!-- Welcoming Landing/Start Page -->
-    <div id="landing-page" class="landing-page-container">
+    <div id="view-landing" class="page-view landing-page-container">
         <div class="landing-card">
             <div class="landing-logo-circle">
                 <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.42 10.922a1 1 0 0 0-.019-1.838L12.83 5.18a2 2 0 0 0-1.66 0L2.6 9.08a1 1 0 0 0 0 1.832l8.57 3.908a2 2 0 0 0 1.66 0z"/><path d="M6 12v5c0 2 2 3 6 3s6-1 6-3v-5"/><path d="M21.5 12v6"/></svg>
@@ -78,13 +78,22 @@
                 </div>
             </div>
             
-            <button type="button" class="btn btn-primary" id="btn-enter-app" style="width: 100%; padding: 1rem; font-size: 1rem; font-weight: bold; border-radius: var(--radius-md); box-shadow: 0 4px 14px rgba(96, 165, 250, 0.4);">
+            <button type="button" class="btn btn-primary" id="btn-enter-app" style="width: 100%; padding: 1rem; font-size: 1rem; font-weight: bold; border-radius: var(--radius-md); box-shadow: 0 4px 14px rgba(96, 165, 250, 0.4); margin-bottom: 1rem;">
                 Accéder au tableau de bord
             </button>
+
+            <!-- App Intro & About Creator Section -->
+            <div class="landing-creator-section" style="margin-top: 0.5rem; text-align: left; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 1rem; width: 100%; font-size: 0.8rem; display: flex; flex-direction: column; gap: 0.5rem; line-height: 1.5;">
+                <p style="color: var(--color-primary); font-weight: bold; font-size: 0.85rem; display: flex; align-items: center; gap: 0.25rem; margin-top: 0.25rem;">🚀 Un mot de l'auteur</p>
+                <p style="color: var(--color-text-primary); font-style: italic;">
+                    "En tant que créateur de GradeVibe, j'ai voulu créer l'outil ultime de gestion scolaire pour tous les gymnasiens vaudois. Fini le stress des calculs mentaux et les incertitudes sur le bilan des points ! Concentrez-vous sur ce qui compte vraiment."
+                </p>
+                <p style="color: var(--color-text-secondary); font-size: 0.75rem; text-align: right; font-weight: 500; margin-top: 0.15rem;">— HA, Développeur de GradeVibe Vaud</p>
+            </div>
         </div>
     </div>
 
-    <div class="app-container" style="display: none;">
+    <div id="view-dashboard" class="page-view app-container" style="display: none;">
         <!-- Header -->
         <header class="header">
             <div class="header-left">
@@ -471,49 +480,136 @@
         </div>
     </div>
 
-    <!-- Help / Guide Modal -->
-    <div class="modal-backdrop" id="guide-modal">
-        <div class="modal-container" style="max-width: 580px;">
-            <button class="modal-close-btn" id="close-guide-modal">&times;</button>
-            <h2 class="modal-title" style="margin-bottom: 1rem; text-align: center;">ℹ️ Guide de Promotion</h2>
-            
-            <div style="max-height: 380px; overflow-y: auto; padding-right: 0.5rem; display: flex; flex-direction: column; gap: 1rem; font-size: 0.85rem; line-height: 1.6;">
-                <section>
-                    <h3 style="color: var(--color-primary); margin-bottom: 0.25rem;">1. Règles de Promotion du Gymnase (Vaud)</h3>
-                    <p>Pour être promu d'une année à l'autre au Gymnase vaudois, vous devez remplir les critères cumulatifs suivants :</p>
-                    <ul style="margin-left: 1.25rem; margin-top: 0.25rem; display: flex; flex-direction: column; gap: 0.25rem;">
-                        <li><strong>Moyenne Générale :</strong> Votre moyenne générale sur l'ensemble des branches doit être d'au moins <strong>4.0</strong>.</li>
-                        <li><strong>Branches Insuffisantes :</strong> Vous ne pouvez pas avoir plus de <strong>4 notes de branche insuffisantes</strong> (inférieures à 4.0) au total.</li>
-                        <li><strong>Bilan des Points (Compensation) :</strong> Le bilan de vos points de compensation doit être supérieur ou égal à <strong>0</strong>. Chaque note au-dessus de 4.0 donne des points de compensation positifs (ex: un 5.0 donne +1.0 point), et chaque note en dessous de 4.0 donne des points négatifs doublés (ex: un 3.5 donne -1.0 point, un 3.0 donne -2.0 points).</li>
-                        <li><strong>Double Compensation (3ème année uniquement) :</strong> Pas de double compensation dans les branches fondamentales.</li>
-                    </ul>
-                </section>
+    <!-- Dedicated Visual Guide Page View -->
+    <div id="view-guide" class="page-view guide-page-container" style="display: none;">
+        <div class="guide-header">
+            <button id="btn-guide-back" class="btn btn-secondary" style="border-radius: var(--radius-full); padding: 0.5rem 1.25rem;">
+                ← Retour
+            </button>
+            <h1 class="guide-page-title">Guide de Promotion & d'Utilisation</h1>
+        </div>
+
+        <div class="guide-content-grid">
+            <!-- 1. Rules Card -->
+            <div class="guide-card main-rules-card">
+                <h2 class="guide-card-title"><span class="icon">⚖️</span> Les 3 Règles d'Or du Gymnase Vaudois</h2>
+                <p class="guide-intro">La promotion au Gymnase vaudois dépend de 3 critères qui doivent être <strong>tous remplis simultanément</strong> à la fin de l'année scolaire :</p>
                 
-                <section>
-                    <h3 style="color: var(--color-primary); margin-bottom: 0.25rem;">2. Fonctionnement de l'Application</h3>
-                    <ul style="margin-left: 1.25rem; margin-top: 0.25rem; display: flex; flex-direction: column; gap: 0.25rem;">
-                        <li><strong>Année en cours :</strong> Basculez d'une année à l'autre dans le titre principal (1ère, 2ème, 3ème année). Le calculateur adapte automatiquement la liste des cours et les règles de compensation.</li>
-                        <li><strong>Aperçu "Évolution" :</strong> Vous montre une vue sur 3 ans pour analyser votre parcours global.</li>
-                        <li><strong>Simulateur de note cible :</strong> Sur chaque carte de branche, cliquez sur le badge d'objectif pour simuler la note requise pour atteindre votre moyenne cible.</li>
-                        <li><strong>Commentaires et photos :</strong> Chaque note affiche une icône 💬 si un commentaire a été rédigé et 📷 si une photo de l'examen a été scannée.</li>
-                    </ul>
-                </section>
+                <div class="rules-visual-list">
+                    <div class="rule-visual-item passed">
+                        <div class="rule-status-check">✓</div>
+                        <div class="rule-details">
+                            <h3>Moyenne Générale >= 4.0</h3>
+                            <p>La somme des moyennes de chaque branche divisée par le nombre de branches.</p>
+                        </div>
+                    </div>
+                    <div class="rule-visual-item passed">
+                        <div class="rule-status-check">✓</div>
+                        <div class="rule-details">
+                            <h3>Bilan des Points >= 0</h3>
+                            <p>Les écarts positifs (ex: un 5.0 donne +1.0) compensent les écarts négatifs qui sont <strong>doublés</strong> (ex: un 3.0 donne -2.0 points de bilan).</p>
+                        </div>
+                    </div>
+                    <div class="rule-visual-item passed">
+                        <div class="rule-status-check">✓</div>
+                        <div class="rule-details">
+                            <h3>Max 4 notes insuffisantes</h3>
+                            <p>Vous ne pouvez pas avoir plus de 4 branches avec une moyenne finale inférieure à 4.0.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2. Examples Card (Visual calculation profiles) -->
+            <div class="guide-card examples-card">
+                <h2 class="guide-card-title"><span class="icon">📊</span> Profils d'Exemples & Calcul du Bilan</h2>
+                <p class="guide-intro">Comprendre le doublement des écarts négatifs et la compensation :</p>
                 
-                <section>
-                    <h3 style="color: var(--color-primary); margin-bottom: 0.25rem;">3. Scanner d'examen avec IA OCR</h3>
-                    <p>Pour assurer la validité de vos notes, vous pouvez cliquer sur <strong>📷 Scanner</strong> dans le formulaire d'ajout ou de modification de note :</p>
-                    <ul style="margin-left: 1.25rem; margin-top: 0.25rem; display: flex; flex-direction: column; gap: 0.25rem;">
-                        <li>La caméra s'allume et vous montre le flux en direct.</li>
-                        <li>Cadrez votre note d'examen et cliquez sur <strong>🔴 Capturer</strong>.</li>
-                        <li>L'intelligence artificielle analyse le texte de la photo (OCR) et extrait la note.</li>
-                        <li>Si la note saisie ne correspond pas à celle de l'image, une alerte de validation vous sera présentée.</li>
-                    </ul>
-                </section>
+                <div class="example-profiles-container">
+                    <!-- Profile 1: Promoted -->
+                    <div class="example-profile-box promoted">
+                        <div class="profile-header-status">
+                            <h4>Profil A : Promu</h4>
+                            <span class="status-badge promoted">PROMU ✅</span>
+                        </div>
+                        <div class="mock-table">
+                            <div class="mock-row"><span>Français</span><span class="val">4.5</span><span class="diff positive">+0.5</span></div>
+                            <div class="mock-row"><span>Maths (fondamental)</span><span class="val">3.5</span><span class="diff negative">-1.0 (doublé)</span></div>
+                            <div class="mock-row"><span>Anglais</span><span class="val">5.0</span><span class="diff positive">+1.0</span></div>
+                            <div class="mock-row"><span>Physique (Y2)</span><span class="val">4.0</span><span class="diff neutral">0.0</span></div>
+                        </div>
+                        <div class="profile-summary-stats">
+                            <div>Moyenne: <strong>4.25</strong></div>
+                            <div>Bilan des Points: <strong class="positive">+0.5</strong></div>
+                            <div>Insuffisances: <strong>1</strong></div>
+                        </div>
+                    </div>
+
+                    <!-- Profile 2: Not Promoted -->
+                    <div class="example-profile-box failed">
+                        <div class="profile-header-status">
+                            <h4>Profil B : Non Promu</h4>
+                            <span class="status-badge failed">NON PROMU ❌</span>
+                        </div>
+                        <div class="mock-table">
+                            <div class="mock-row"><span>Français</span><span class="val">3.5</span><span class="diff negative">-1.0 (doublé)</span></div>
+                            <div class="mock-row"><span>Maths (fondamental)</span><span class="val">3.0</span><span class="diff negative">-2.0 (doublé)</span></div>
+                            <div class="mock-row"><span>Anglais</span><span class="val">5.0</span><span class="diff positive">+1.0</span></div>
+                            <div class="mock-row"><span>Physique (Y2)</span><span class="val">4.0</span><span class="diff neutral">0.0</span></div>
+                        </div>
+                        <div class="profile-summary-stats">
+                            <div>Moyenne: <strong>3.88</strong></div>
+                            <div>Bilan des Points: <strong class="failed">-2.0</strong></div>
+                            <div>Insuffisances: <strong>2</strong></div>
+                        </div>
+                    </div>
+                </div>
             </div>
-            
-            <div style="margin-top: 1.5rem; text-align: center;">
-                <button type="button" class="btn btn-primary" id="btn-close-guide" style="width: 100%;">Compris !</button>
+
+            <!-- 3. Simulator features -->
+            <div class="guide-card simulation-guide-card">
+                <h2 class="guide-card-title"><span class="icon">🎯</span> Simulateur de Note Cible</h2>
+                <p class="guide-intro">Besoin de savoir quelle note obtenir pour sauver votre moyenne ?</p>
+                <div class="simulator-explanation-body">
+                    <p>Sur chaque carte de branche, cliquez sur le badge <strong>Cible: 4.0</strong> ou la note de moyenne de branche pour calculer dynamiquement la note exacte requise lors de votre prochain test afin de sécuriser votre objectif.</p>
+                    <div class="mock-target-pills">
+                        <div class="mock-target-pill">Prochain test requis : <span class="badge-required jetbrains-mono-bold">4.8</span></div>
+                    </div>
+                </div>
             </div>
+
+            <!-- 4. Scanning features -->
+            <div class="guide-card scanning-guide-card">
+                <h2 class="guide-card-title"><span class="icon">📷</span> Scanner d'examens IA (OCR)</h2>
+                <p class="guide-intro">Une preuve photo certifiée pour vos évaluations :</p>
+                <div class="scanning-steps-visual">
+                    <div class="scan-step">
+                        <span class="step-num">1</span>
+                        <h5>Capture</h5>
+                        <p>Cliquez sur "Scanner", cadrez votre test, et prenez la capture.</p>
+                    </div>
+                    <div class="scan-step">
+                        <span class="step-num">2</span>
+                        <h5>Détection</h5>
+                        <p>L'IA Tesseract extrait les chiffres de la photo d'examen.</p>
+                    </div>
+                    <div class="scan-step">
+                        <span class="step-num">3</span>
+                        <h5>Validation</h5>
+                        <p>Si la note saisie diffère de l'OCR, une modale de confirmation s'affiche.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="landing-creator-card" style="margin-top: 2rem; background-color: color-mix(in srgb, var(--color-bg-surface) 50%, transparent); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.05); padding: 1.5rem; border-radius: var(--radius-md); max-width: 800px; margin-left: auto; margin-right: auto; text-align: left; line-height: 1.5;">
+            <h3 style="color: var(--color-primary); font-size: 0.95rem; margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem;">👨‍💻 À propos de GradeVibe Vaud</h3>
+            <p style="color: var(--color-text-primary); font-size: 0.8rem; margin-bottom: 0.5rem;">
+                GradeVibe a été conçu pour résoudre les difficultés de planification académique rencontrées par les élèves durant leur parcours gymnasial. L'algorithme intègre à 100% les directives officielles du Département de la formation, de la jeunesse et de la culture (DFJC) du canton de Vaud.
+            </p>
+            <p style="color: var(--color-text-secondary); font-size: 0.75rem;">
+                Créé par un passionné d'ergonomie et d'outils d'apprentissage intelligents. Pour toute question ou suggestion, n'hésitez pas à vous adresser à l'auteur.
+            </p>
         </div>
     </div>
 

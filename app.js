@@ -2806,19 +2806,43 @@ if (importBtn && importFileInput) {
     });
 }
 
-// --- 14. App Initializer ---
+// --- 14. App Initializer & View Router ---
+const viewLanding = document.getElementById('view-landing');
+const viewGuide = document.getElementById('view-guide');
+const viewDashboard = document.getElementById('view-dashboard');
+
+function switchView(viewId) {
+    // Stop any active camera scanner before leaving views
+    stopScanning(false);
+    stopScanning(true);
+    
+    // Hide all top-level page views
+    if (viewLanding) viewLanding.style.display = 'none';
+    if (viewGuide) viewGuide.style.display = 'none';
+    if (viewDashboard) viewDashboard.style.display = 'none';
+    
+    // Show selected view
+    const selectedView = document.getElementById(viewId);
+    if (selectedView) {
+        if (viewId === 'view-landing') {
+            selectedView.style.display = 'flex';
+        } else {
+            selectedView.style.display = 'block';
+        }
+    }
+    
+    // Scroll to top
+    window.scrollTo({ top: 0, behavior: 'instant' });
+}
+
 function init() {
     loadState();
     
-    // Onboarding Landing page toggle check
-    const landingPage = document.getElementById('landing-page');
-    const appContainer = document.querySelector('.app-container');
+    // View Router toggle on startup
     if (state.hasSeenOnboarding) {
-        landingPage.style.display = 'none';
-        appContainer.style.display = 'flex';
+        switchView('view-dashboard');
     } else {
-        landingPage.style.display = 'flex';
-        appContainer.style.display = 'none';
+        switchView('view-landing');
     }
     
     const themeSelector = document.getElementById('theme-selector');
@@ -2849,35 +2873,43 @@ function init() {
     }
 
     // Onboarding Enter App Button
-    document.getElementById('btn-enter-app').addEventListener('click', () => {
-        state.hasSeenOnboarding = true;
-        saveState();
-        landingPage.style.display = 'none';
-        appContainer.style.display = 'flex';
-    });
+    const btnEnterApp = document.getElementById('btn-enter-app');
+    if (btnEnterApp) {
+        btnEnterApp.addEventListener('click', () => {
+            state.hasSeenOnboarding = true;
+            saveState();
+            switchView('view-dashboard');
+        });
+    }
 
     // Header Home / Landing Button
-    document.getElementById('btn-show-landing').addEventListener('click', () => {
-        // Stop any active camera scanners
-        stopScanning(false);
-        stopScanning(true);
-        state.hasSeenOnboarding = false;
-        saveState();
-        landingPage.style.display = 'flex';
-        appContainer.style.display = 'none';
-    });
+    const btnShowLanding = document.getElementById('btn-show-landing');
+    if (btnShowLanding) {
+        btnShowLanding.addEventListener('click', () => {
+            state.hasSeenOnboarding = false;
+            saveState();
+            switchView('view-landing');
+        });
+    }
 
-    // Guide Modal bindings
-    const guideModal = document.getElementById('guide-modal');
-    document.getElementById('btn-show-guide').addEventListener('click', () => {
-        openModal(guideModal);
-    });
-    document.getElementById('close-guide-modal').addEventListener('click', () => {
-        closeModal(guideModal);
-    });
-    document.getElementById('btn-close-guide').addEventListener('click', () => {
-        closeModal(guideModal);
-    });
+    // Guide view triggers
+    const btnShowGuide = document.getElementById('btn-show-guide');
+    if (btnShowGuide) {
+        btnShowGuide.addEventListener('click', () => {
+            switchView('view-guide');
+        });
+    }
+
+    const btnGuideBack = document.getElementById('btn-guide-back');
+    if (btnGuideBack) {
+        btnGuideBack.addEventListener('click', () => {
+            if (state.hasSeenOnboarding) {
+                switchView('view-dashboard');
+            } else {
+                switchView('view-landing');
+            }
+        });
+    }
 }
 
 window.onload = init;
