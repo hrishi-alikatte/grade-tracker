@@ -97,22 +97,28 @@
                 </h3>
                 
                 <div class="landing-features" style="display: flex; flex-direction: column; gap: 1rem;">
-                    <div style="display: flex; gap: 0.75rem;">
-                        <span style="font-size: 1.25rem;">📷</span>
+                    <div style="display: flex; gap: 0.75rem; align-items: flex-start;">
+                        <span style="color: var(--color-primary); margin-top: 0.2rem;">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+                        </span>
                         <div>
                             <h4 style="font-size: 0.85rem; font-weight: 800; color: white; margin-bottom: 0.15rem;">Numérisation par Caméra</h4>
                             <p style="font-size: 0.75rem; color: var(--color-text-secondary); margin: 0;">Scanner d'examens intégré avec IA OCR pour détecter automatiquement vos notes.</p>
                         </div>
                     </div>
-                    <div style="display: flex; gap: 0.75rem;">
-                        <span style="font-size: 1.25rem;">📊</span>
+                    <div style="display: flex; gap: 0.75rem; align-items: flex-start;">
+                        <span style="color: var(--color-primary); margin-top: 0.2rem;">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+                        </span>
                         <div>
                             <h4 style="font-size: 0.85rem; font-weight: 800; color: white; margin-bottom: 0.15rem;">Statistiques en Temps Réel</h4>
                             <p style="font-size: 0.75rem; color: var(--color-text-secondary); margin: 0;">Moyennes, insuffisances, et écarts négatifs doublés calculés automatiquement.</p>
                         </div>
                     </div>
-                    <div style="display: flex; gap: 0.75rem;">
-                        <span style="font-size: 1.25rem;">🎨</span>
+                    <div style="display: flex; gap: 0.75rem; align-items: flex-start;">
+                        <span style="color: var(--color-primary); margin-top: 0.2rem;">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 14.7255 3.09032 17.1962 4.85857 19H12V22Z"/><circle cx="7.5" cy="10.5" r="1.5"/><circle cx="11.5" cy="7.5" r="1.5"/><circle cx="16.5" cy="9.5" r="1.5"/><circle cx="15.5" cy="14.5" r="1.5"/></svg>
+                        </span>
                         <div>
                             <h4 style="font-size: 0.85rem; font-weight: 800; color: white; margin-bottom: 0.15rem;">Thèmes Premium</h4>
                             <p style="font-size: 0.75rem; color: var(--color-text-secondary); margin: 0;">Changement de thèmes à chaud avec des palettes de couleurs adaptées et élégantes.</p>
@@ -157,16 +163,16 @@
             </div>
             <div class="header-actions">
                 <select id="theme-selector" class="btn btn-secondary" style="padding: 0.5rem 1rem; font-size: 0.8rem; border-radius: var(--radius-full); cursor: pointer;" title="Changer le thème de couleur">
-                    <option value="navy">🎨 Navy</option>
-                    <option value="pink">🌸 Rose</option>
-                    <option value="green">🍃 Vert</option>
-                    <option value="purple">🔮 Violet</option>
+                    <option value="navy">Navy</option>
+                    <option value="pink">Rose</option>
+                    <option value="green">Vert</option>
+                    <option value="purple">Violet</option>
                     <option value="cozy">Sage Cozy</option>
-                    <option value="honey">🍯 Miel</option>
-                    <option value="skyblue">☁️ Sky Blue</option>
-                    <option value="crimson">🍷 Crimson</option>
-                    <option value="mint">🌱 Menthe</option>
-                    <option value="teal">🌊 Teal</option>
+                    <option value="honey">Miel</option>
+                    <option value="skyblue">Sky Blue</option>
+                    <option value="crimson">Crimson</option>
+                    <option value="mint">Menthe</option>
+                    <option value="teal">Teal</option>
                 </select>
                 <button id="add-subject-btn" class="btn btn-primary">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
@@ -371,7 +377,8 @@
                     <label class="form-label">Photo de l'évaluation (preuve)</label>
                     <div style="margin-bottom: 0.5rem;">
                         <button type="button" class="btn btn-secondary" id="btn-start-camera" style="width: 100%; padding: 0.65rem 1rem; font-size: 0.85rem; background-color: var(--color-bg-elevated); border-color: var(--color-border-subtle); display: flex; align-items: center; justify-content: center; gap: 0.5rem; border-radius: var(--radius-md);">
-                            📷 Scanner l'examen (Preuve photo)
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+                            Scanner l'examen (Preuve photo)
                         </button>
                     </div>
                     
@@ -379,7 +386,10 @@
                     <div id="camera-scanner-view" class="camera-scanner-view" style="display: none; margin-bottom: 0.5rem;">
                         <video id="camera-stream" autoplay playsinline muted style="width: 100%; max-height: 200px; object-fit: cover; border-radius: 4px; border: 1px solid var(--color-border-subtle); background-color: black;"></video>
                         <div class="camera-controls" style="display: flex; gap: 0.5rem; margin-top: 0.25rem;">
-                            <button type="button" class="btn btn-primary" id="btn-capture-frame" style="flex: 1; font-size: 0.8rem; padding: 0.4rem; background-color: var(--color-primary); color: var(--color-bg-base); font-weight: 600;">🔴 Capturer</button>
+                            <button type="button" class="btn btn-primary" id="btn-capture-frame" style="flex: 1; font-size: 0.8rem; padding: 0.4rem; background-color: var(--color-primary); color: var(--color-bg-base); font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 0.35rem;">
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/></svg>
+                                Capturer
+                            </button>
                             <button type="button" class="btn btn-secondary" id="btn-close-camera" style="flex: 1; font-size: 0.8rem; padding: 0.4rem;">Fermer la caméra</button>
                         </div>
                     </div>
@@ -481,15 +491,19 @@
                     <label class="form-label">Modifier la photo (optionnel)</label>
                     <div style="margin-bottom: 0.5rem;">
                         <button type="button" class="btn btn-secondary" id="edit-btn-start-camera" style="width: 100%; padding: 0.65rem 1rem; font-size: 0.85rem; background-color: var(--color-bg-elevated); border-color: var(--color-border-subtle); display: flex; align-items: center; justify-content: center; gap: 0.5rem; border-radius: var(--radius-md);">
-                            📷 Scanner l'examen (Preuve photo)
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+                            Scanner l'examen (Preuve photo)
                         </button>
                     </div>
-
+ 
                     <!-- Video Scanner Frame (Hidden by default) -->
                     <div id="edit-camera-scanner-view" class="camera-scanner-view" style="display: none; margin-bottom: 0.5rem;">
                         <video id="edit-camera-stream" autoplay playsinline muted style="width: 100%; max-height: 180px; object-fit: cover; border-radius: 4px; border: 1px solid var(--color-border-subtle); background-color: black;"></video>
                         <div class="camera-controls" style="display: flex; gap: 0.5rem; margin-top: 0.25rem;">
-                            <button type="button" class="btn btn-primary" id="edit-btn-capture-frame" style="flex: 1; font-size: 0.8rem; padding: 0.4rem; background-color: var(--color-primary); color: var(--color-bg-base); font-weight: 600;">🔴 Capturer</button>
+                            <button type="button" class="btn btn-primary" id="edit-btn-capture-frame" style="flex: 1; font-size: 0.8rem; padding: 0.4rem; background-color: var(--color-primary); color: var(--color-bg-base); font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 0.35rem;">
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/></svg>
+                                Capturer
+                            </button>
                             <button type="button" class="btn btn-secondary" id="edit-btn-close-camera" style="flex: 1; font-size: 0.8rem; padding: 0.4rem;">Fermer la caméra</button>
                         </div>
                     </div>
@@ -507,8 +521,14 @@
             
             <!-- View Mode Actions -->
             <div id="grade-details-view-actions" style="display: flex; justify-content: space-between; gap: 0.5rem;">
-                <button type="button" class="btn btn-secondary" id="edit-details-btn" style="flex: 1; background-color: var(--color-bg-elevated); border-color: var(--color-border-subtle);">✏️ Modifier</button>
-                <button type="button" class="btn btn-primary" id="delete-detail-grade-btn" style="flex: 1; background-color: var(--color-failing-bg);">Supprimer</button>
+                <button type="button" class="btn btn-secondary" id="edit-details-btn" style="flex: 1; background-color: var(--color-bg-elevated); border-color: var(--color-border-subtle); display: flex; align-items: center; justify-content: center; gap: 0.35rem;">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
+                    Modifier
+                </button>
+                <button type="button" class="btn btn-primary" id="delete-detail-grade-btn" style="flex: 1; background-color: var(--color-failing-bg); display: flex; align-items: center; justify-content: center; gap: 0.35rem;">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>
+                    Supprimer
+                </button>
                 <button type="button" class="btn btn-secondary" id="close-details-btn" style="flex: 1;">Fermer</button>
             </div>
 
@@ -531,7 +551,10 @@
         <div class="guide-content-grid">
             <!-- 1. Rules Card -->
             <div class="guide-card main-rules-card" style="grid-column: span 2; background-color: color-mix(in srgb, var(--color-bg-surface) 75%, transparent);">
-                <h2 class="guide-card-title" style="font-size: 1.4rem; justify-content: center;"><span class="icon">⚖️</span> Les 3 Règles d'Or du Gymnase Vaudois</h2>
+                <h2 class="guide-card-title" style="font-size: 1.4rem; justify-content: center;">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 0.35rem;"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                    Les 3 Règles d'Or du Gymnase Vaudois
+                </h2>
                 <p class="guide-intro" style="text-align: center; font-size: 0.95rem; margin-bottom: 1rem;">Votre promotion est garantie uniquement si <strong>les 3 critères suivants sont validés simultanément</strong> :</p>
                 
                 <div class="rules-visual-list" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.25rem;">
@@ -564,11 +587,17 @@
 
             <!-- 2. Examples Card (Visual calculation profiles) -->
             <div class="guide-card examples-card" style="grid-column: span 2;">
-                <h2 class="guide-card-title"><span class="icon">📊</span> Comment fonctionne le Bilan des Points ? (Exemples)</h2>
+                <h2 class="guide-card-title">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 0.35rem;"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+                    Comment fonctionne le Bilan des Points ? (Exemples)
+                </h2>
                 
                 <!-- Rule Formula Explainer Box -->
                 <div style="background-color: rgba(0, 0, 0, 0.3); border: 1px dashed var(--color-border-subtle); padding: 1rem; border-radius: var(--radius-md); font-size: 0.8rem; margin-bottom: 0.5rem; line-height: 1.5;">
-                    <strong style="color: white; display: block; margin-bottom: 0.35rem;">💡 Règle de doublement des écarts :</strong>
+                    <strong style="color: white; display: block; margin-bottom: 0.35rem;">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle; margin-right: 0.25rem;"><path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A5 5 0 0 0 8 8c0 1 .3 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/></svg>
+                        Règle de doublement des écarts :
+                    </strong>
                     <ul style="margin-left: 1.25rem; display: flex; flex-direction: column; gap: 0.25rem;">
                         <li>Note de <strong style="color:#10b981;">5.0</strong> : +1.0 point au-dessus de 4.0 = <span style="color:#10b981; font-weight:bold;">+1.0 point de bilan</span>.</li>
                         <li>Note de <strong style="color:#ef4444;">3.5</strong> : -0.5 point en dessous de 4.0 = Écart doublé = <span style="color:#ef4444; font-weight:bold;">-1.0 point de bilan</span>.</li>
@@ -581,7 +610,7 @@
                     <div class="example-profile-box promoted" style="background-color: rgba(16,185,129,0.03); border: 1px solid rgba(16,185,129,0.2);">
                         <div class="profile-header-status">
                             <h4 style="font-size: 0.9rem;">Élève A : Promu</h4>
-                            <span class="status-badge promoted" style="font-size: 0.75rem; padding: 0.25rem 0.6rem;">PROMU ✅</span>
+                            <span class="status-badge promoted" style="font-size: 0.75rem; padding: 0.25rem 0.6rem;">PROMU</span>
                         </div>
                         <div class="mock-table">
                             <div class="mock-row" style="padding: 0.25rem 0; border-bottom: 1px solid rgba(255,255,255,0.03);">
@@ -608,7 +637,7 @@
                     <div class="example-profile-box failed" style="background-color: rgba(239,68,68,0.03); border: 1px solid rgba(239,68,68,0.2);">
                         <div class="profile-header-status">
                             <h4 style="font-size: 0.9rem;">Élève B : Non Promu</h4>
-                            <span class="status-badge failed" style="font-size: 0.75rem; padding: 0.25rem 0.6rem;">NON PROMU ❌</span>
+                            <span class="status-badge failed" style="font-size: 0.75rem; padding: 0.25rem 0.6rem;">NON PROMU</span>
                         </div>
                         <div class="mock-table">
                             <div class="mock-row" style="padding: 0.25rem 0; border-bottom: 1px solid rgba(255,255,255,0.03);">
@@ -635,7 +664,10 @@
 
             <!-- 3. Simulator features -->
             <div class="guide-card simulation-guide-card">
-                <h2 class="guide-card-title"><span class="icon">🎯</span> Simulateur de Note Cible</h2>
+                <h2 class="guide-card-title">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 0.35rem;"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
+                    Simulateur de Note Cible
+                </h2>
                 <p class="guide-intro">Besoin de savoir quelle note obtenir pour sauver votre moyenne ?</p>
                 <div class="simulator-explanation-body">
                     <p>Sur chaque carte de branche, cliquez sur le badge <strong>Cible: 4.0</strong> ou la note de moyenne de branche pour calculer dynamiquement la note exacte requise lors de votre prochain test afin de sécuriser votre objectif.</p>
@@ -647,7 +679,10 @@
 
             <!-- 4. Scanning features -->
             <div class="guide-card scanning-guide-card">
-                <h2 class="guide-card-title"><span class="icon">📷</span> Scanner d'examens IA (OCR)</h2>
+                <h2 class="guide-card-title">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 0.35rem;"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+                    Scanner d'examens IA (OCR)
+                </h2>
                 <p class="guide-intro">Une preuve photo certifiée pour vos évaluations :</p>
                 <div class="scanning-steps-visual">
                     <div class="scan-step">
@@ -670,7 +705,10 @@
         </div>
 
         <div class="landing-creator-card" style="margin-top: 2rem; background-color: color-mix(in srgb, var(--color-bg-surface) 50%, transparent); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.05); padding: 1.5rem; border-radius: var(--radius-md); max-width: 800px; margin-left: auto; margin-right: auto; text-align: left; line-height: 1.5;">
-            <h3 style="color: var(--color-primary); font-size: 0.95rem; margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem;">👨‍💻 À propos de GradeVibe Vaud</h3>
+            <h3 style="color: var(--color-primary); font-size: 0.95rem; margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem;">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                À propos de GradeVibe Vaud
+            </h3>
             <p style="color: var(--color-text-primary); font-size: 0.8rem; margin-bottom: 0.5rem;">
                 GradeVibe a été conçu pour résoudre les difficultés de planification académique rencontrées par les élèves durant leur parcours gymnasial. L'algorithme intègre à 100% les directives officielles du Département de la formation, de la jeunesse et de la culture (DFJC) du canton de Vaud.
             </p>

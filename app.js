@@ -1679,8 +1679,8 @@ function renderSubjects() {
             const isMus = subject.name === 'Musique';
             artToggleHTML = `
                 <div class="lang-toggle-container" style="margin-left: 0.5rem; vertical-align: middle; padding: 1px;">
-                    <button type="button" class="lang-toggle-btn ${isArts ? 'active' : ''}" data-lang="Arts Visuels">🎨 Arts</button>
-                    <button type="button" class="lang-toggle-btn ${isMus ? 'active' : ''}" data-lang="Musique">🎵 Musique</button>
+                    <button type="button" class="lang-toggle-btn ${isArts ? 'active' : ''}" data-lang="Arts Visuels">Arts</button>
+                    <button type="button" class="lang-toggle-btn ${isMus ? 'active' : ''}" data-lang="Musique">Musique</button>
                 </div>
             `;
         }
