@@ -45,7 +45,46 @@
     <!-- Confetti Canvas overlay -->
     <canvas id="confetti-canvas"></canvas>
 
-    <div class="app-container">
+    <!-- Welcoming Landing/Start Page -->
+    <div id="landing-page" class="landing-page-container">
+        <div class="landing-card">
+            <div class="landing-logo-circle">
+                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.42 10.922a1 1 0 0 0-.019-1.838L12.83 5.18a2 2 0 0 0-1.66 0L2.6 9.08a1 1 0 0 0 0 1.832l8.57 3.908a2 2 0 0 0 1.66 0z"/><path d="M6 12v5c0 2 2 3 6 3s6-1 6-3v-5"/><path d="M21.5 12v6"/></svg>
+            </div>
+            <h1 class="landing-title">GradeVibe Vaud</h1>
+            <p class="landing-tagline">Calculez et suivez votre promotion au Gymnase vaudois en toute simplicité.</p>
+            
+            <div class="landing-features">
+                <div class="landing-feature-item">
+                    <span class="feature-icon">📷</span>
+                    <div class="feature-text">
+                        <h3>Scannez vos examens</h3>
+                        <p>Prenez une photo de vos épreuves, notre IA OCR détecte et vérifie automatiquement votre note.</p>
+                    </div>
+                </div>
+                <div class="landing-feature-item">
+                    <span class="feature-icon">📊</span>
+                    <div class="feature-text">
+                        <h3>Promotion en temps réel</h3>
+                        <p>Vérification instantanée de la moyenne générale, du bilan des points et du nombre de notes insuffisantes.</p>
+                    </div>
+                </div>
+                <div class="landing-feature-item">
+                    <span class="feature-icon">🎨</span>
+                    <div class="feature-text">
+                        <h3>10 Thèmes Uniques</h3>
+                        <p>Personnalisez votre interface avec des palettes premium (Miel, Sky Blue, Navy, Vert, Cozy, etc.).</p>
+                    </div>
+                </div>
+            </div>
+            
+            <button type="button" class="btn btn-primary" id="btn-enter-app" style="width: 100%; padding: 1rem; font-size: 1rem; font-weight: bold; border-radius: var(--radius-md); box-shadow: 0 4px 14px rgba(96, 165, 250, 0.4);">
+                Accéder au tableau de bord
+            </button>
+        </div>
+    </div>
+
+    <div class="app-container" style="display: none;">
         <!-- Header -->
         <header class="header">
             <div class="header-left">
@@ -67,6 +106,8 @@
                 </div>
             </div>
             <div class="header-actions">
+                <button id="btn-show-landing" class="btn btn-secondary" style="padding: 0.5rem 1rem; font-size: 0.8rem; border-radius: var(--radius-full);" title="Page d'accueil">🏠 Accueil</button>
+                <button id="btn-show-guide" class="btn btn-secondary" style="padding: 0.5rem 1rem; font-size: 0.8rem; border-radius: var(--radius-full);" title="Comment ça marche ?">❓ Guide</button>
                 <select id="theme-selector" class="btn btn-secondary" style="padding: 0.5rem 1rem; font-size: 0.8rem; border-radius: var(--radius-full); cursor: pointer;" title="Changer le thème de couleur">
                     <option value="navy">🎨 Navy</option>
                     <option value="pink">🌸 Rose</option>
@@ -276,10 +317,11 @@
                 </div>
 
                 <div class="form-group">
-                    <label class="form-label" for="grade-photo">Photo de l'évaluation (preuve)</label>
-                    <div style="display: flex; gap: 0.5rem; margin-bottom: 0.5rem;">
-                        <input type="file" id="grade-photo" class="form-input" accept="image/*" style="flex: 1; margin: 0;">
-                        <button type="button" class="btn btn-secondary" id="btn-start-camera" style="padding: 0.5rem 1rem; font-size: 0.8rem; flex-shrink: 0; background-color: var(--color-bg-elevated); border-color: var(--color-border-subtle); display: flex; align-items: center; gap: 0.25rem;">📷 Scanner</button>
+                    <label class="form-label">Photo de l'évaluation (preuve)</label>
+                    <div style="margin-bottom: 0.5rem;">
+                        <button type="button" class="btn btn-secondary" id="btn-start-camera" style="width: 100%; padding: 0.65rem 1rem; font-size: 0.85rem; background-color: var(--color-bg-elevated); border-color: var(--color-border-subtle); display: flex; align-items: center; justify-content: center; gap: 0.5rem; border-radius: var(--radius-md);">
+                            📷 Scanner l'examen (Preuve photo)
+                        </button>
                     </div>
                     
                     <!-- Video Scanner Frame (Hidden by default) -->
@@ -385,10 +427,11 @@
                     <input type="text" id="edit-grade-comment" class="form-input" placeholder="Ex: Exercice difficile">
                 </div>
                 <div class="form-group" style="margin-bottom: 0.75rem;">
-                    <label class="form-label" for="edit-grade-photo">Modifier la photo (optionnel)</label>
-                    <div style="display: flex; gap: 0.5rem; margin-bottom: 0.5rem;">
-                        <input type="file" id="edit-grade-photo" class="form-input" accept="image/*" style="flex: 1; margin: 0;">
-                        <button type="button" class="btn btn-secondary" id="edit-btn-start-camera" style="padding: 0.5rem 1rem; font-size: 0.8rem; flex-shrink: 0; background-color: var(--color-bg-elevated); border-color: var(--color-border-subtle); display: flex; align-items: center; gap: 0.25rem;">📷 Scanner</button>
+                    <label class="form-label">Modifier la photo (optionnel)</label>
+                    <div style="margin-bottom: 0.5rem;">
+                        <button type="button" class="btn btn-secondary" id="edit-btn-start-camera" style="width: 100%; padding: 0.65rem 1rem; font-size: 0.85rem; background-color: var(--color-bg-elevated); border-color: var(--color-border-subtle); display: flex; align-items: center; justify-content: center; gap: 0.5rem; border-radius: var(--radius-md);">
+                            📷 Scanner l'examen (Preuve photo)
+                        </button>
                     </div>
 
                     <!-- Video Scanner Frame (Hidden by default) -->
@@ -425,6 +468,52 @@
             </div>
         </div>
     </div>
+        </div>
+    </div>
+
+    <!-- Help / Guide Modal -->
+    <div class="modal-backdrop" id="guide-modal">
+        <div class="modal-container" style="max-width: 580px;">
+            <button class="modal-close-btn" id="close-guide-modal">&times;</button>
+            <h2 class="modal-title" style="margin-bottom: 1rem; text-align: center;">ℹ️ Guide de Promotion</h2>
+            
+            <div style="max-height: 380px; overflow-y: auto; padding-right: 0.5rem; display: flex; flex-direction: column; gap: 1rem; font-size: 0.85rem; line-height: 1.6;">
+                <section>
+                    <h3 style="color: var(--color-primary); margin-bottom: 0.25rem;">1. Règles de Promotion du Gymnase (Vaud)</h3>
+                    <p>Pour être promu d'une année à l'autre au Gymnase vaudois, vous devez remplir les critères cumulatifs suivants :</p>
+                    <ul style="margin-left: 1.25rem; margin-top: 0.25rem; display: flex; flex-direction: column; gap: 0.25rem;">
+                        <li><strong>Moyenne Générale :</strong> Votre moyenne générale sur l'ensemble des branches doit être d'au moins <strong>4.0</strong>.</li>
+                        <li><strong>Branches Insuffisantes :</strong> Vous ne pouvez pas avoir plus de <strong>4 notes de branche insuffisantes</strong> (inférieures à 4.0) au total.</li>
+                        <li><strong>Bilan des Points (Compensation) :</strong> Le bilan de vos points de compensation doit être supérieur ou égal à <strong>0</strong>. Chaque note au-dessus de 4.0 donne des points de compensation positifs (ex: un 5.0 donne +1.0 point), et chaque note en dessous de 4.0 donne des points négatifs doublés (ex: un 3.5 donne -1.0 point, un 3.0 donne -2.0 points).</li>
+                        <li><strong>Double Compensation (3ème année uniquement) :</strong> Pas de double compensation dans les branches fondamentales.</li>
+                    </ul>
+                </section>
+                
+                <section>
+                    <h3 style="color: var(--color-primary); margin-bottom: 0.25rem;">2. Fonctionnement de l'Application</h3>
+                    <ul style="margin-left: 1.25rem; margin-top: 0.25rem; display: flex; flex-direction: column; gap: 0.25rem;">
+                        <li><strong>Année en cours :</strong> Basculez d'une année à l'autre dans le titre principal (1ère, 2ème, 3ème année). Le calculateur adapte automatiquement la liste des cours et les règles de compensation.</li>
+                        <li><strong>Aperçu "Évolution" :</strong> Vous montre une vue sur 3 ans pour analyser votre parcours global.</li>
+                        <li><strong>Simulateur de note cible :</strong> Sur chaque carte de branche, cliquez sur le badge d'objectif pour simuler la note requise pour atteindre votre moyenne cible.</li>
+                        <li><strong>Commentaires et photos :</strong> Chaque note affiche une icône 💬 si un commentaire a été rédigé et 📷 si une photo de l'examen a été scannée.</li>
+                    </ul>
+                </section>
+                
+                <section>
+                    <h3 style="color: var(--color-primary); margin-bottom: 0.25rem;">3. Scanner d'examen avec IA OCR</h3>
+                    <p>Pour assurer la validité de vos notes, vous pouvez cliquer sur <strong>📷 Scanner</strong> dans le formulaire d'ajout ou de modification de note :</p>
+                    <ul style="margin-left: 1.25rem; margin-top: 0.25rem; display: flex; flex-direction: column; gap: 0.25rem;">
+                        <li>La caméra s'allume et vous montre le flux en direct.</li>
+                        <li>Cadrez votre note d'examen et cliquez sur <strong>🔴 Capturer</strong>.</li>
+                        <li>L'intelligence artificielle analyse le texte de la photo (OCR) et extrait la note.</li>
+                        <li>Si la note saisie ne correspond pas à celle de l'image, une alerte de validation vous sera présentée.</li>
+                    </ul>
+                </section>
+            </div>
+            
+            <div style="margin-top: 1.5rem; text-align: center;">
+                <button type="button" class="btn btn-primary" id="btn-close-guide" style="width: 100%;">Compris !</button>
+            </div>
         </div>
     </div>
 

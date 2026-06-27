@@ -767,6 +767,7 @@ function loadState() {
             if (!state.currentYear) state.currentYear = 1;
             if (!state.currentSemester) state.currentSemester = 'sem1';
             if (!state.theme) state.theme = 'navy';
+            if (state.hasSeenOnboarding === undefined) state.hasSeenOnboarding = false;
             
             runStateMigrations();
             
@@ -792,7 +793,8 @@ function resetStateToDefault() {
         subjectsYear1: JSON.parse(JSON.stringify(defaultSubjectsYear1)),
         subjectsYear2: JSON.parse(JSON.stringify(defaultSubjectsYear2)),
         subjectsYear3: JSON.parse(JSON.stringify(defaultSubjectsYear3)),
-        theme: 'navy'
+        theme: 'navy',
+        hasSeenOnboarding: false
     };
     saveState();
     applyTheme();
@@ -1933,7 +1935,6 @@ const gradeDetailsEditActions = document.getElementById('grade-details-edit-acti
 const editGradeName = document.getElementById('edit-grade-name');
 const editGradeDate = document.getElementById('edit-grade-date');
 const editGradeComment = document.getElementById('edit-grade-comment');
-const editGradePhoto = document.getElementById('edit-grade-photo');
 const editOcrLoadingStatus = document.getElementById('edit-ocr-loading-status');
 const editGradePhotoPreviewContainer = document.getElementById('edit-grade-photo-preview-container');
 const editGradePhotoPreview = document.getElementById('edit-grade-photo-preview');
@@ -2343,7 +2344,6 @@ subjectsContainer.addEventListener('click', (e) => {
                 editPhotoDeleted = false;
                 editOcrText = "";
                 isEditOcrRunning = false;
-                editGradePhoto.value = "";
 
                 if (gradeObj.hasPhoto) {
                     getPhoto(gradeId).then(photoData => {
@@ -2594,101 +2594,15 @@ if (editBtnCaptureFrame) {
     });
 }
 
-// --- Add Grade Photo & OCR Bindings ---
-document.getElementById('grade-photo').addEventListener('change', (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-
-    const reader = new FileReader();
-    reader.onload = function(evt) {
-        currentUploadedPhotoBase64 = evt.target.result;
-        document.getElementById('grade-photo-preview').src = currentUploadedPhotoBase64;
-        document.getElementById('grade-photo-preview-container').style.display = 'block';
-        
-        const ocrStatus = document.getElementById('ocr-loading-status');
-        ocrStatus.style.display = 'flex';
-        currentOcrText = "";
-        isOcrRunning = true;
-        
-        try {
-            if (typeof Tesseract === 'undefined') {
-                throw new Error("Tesseract library is not loaded.");
-            }
-            Tesseract.recognize(
-                currentUploadedPhotoBase64,
-                'fra+eng',
-                { logger: m => console.log(m) }
-            ).then(({ data: { text } }) => {
-                currentOcrText = text;
-                console.log("Add Grade OCR result:", text);
-            }).catch(err => {
-                console.error("Add Grade OCR error:", err);
-            }).finally(() => {
-                ocrStatus.style.display = 'none';
-                isOcrRunning = false;
-            });
-        } catch (err) {
-            console.warn("OCR failed to initialize:", err);
-            ocrStatus.style.display = 'none';
-            isOcrRunning = false;
-        }
-    };
-    reader.readAsDataURL(file);
-});
-
+// --- Grade Photo Remove Bindings ---
 document.getElementById('remove-grade-photo-btn').addEventListener('click', () => {
-    document.getElementById('grade-photo').value = "";
     document.getElementById('grade-photo-preview').src = "";
     document.getElementById('grade-photo-preview-container').style.display = 'none';
     currentUploadedPhotoBase64 = null;
     currentOcrText = "";
 });
 
-// --- Edit Grade Photo & OCR Bindings ---
-document.getElementById('edit-grade-photo').addEventListener('change', (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-
-    const reader = new FileReader();
-    reader.onload = function(evt) {
-        editUploadedPhotoBase64 = evt.target.result;
-        editGradePhotoPreview.src = editUploadedPhotoBase64;
-        editGradePhotoPreviewContainer.style.display = 'block';
-        editPhotoDeleted = false;
-        
-        const ocrStatus = editOcrLoadingStatus;
-        ocrStatus.style.display = 'flex';
-        editOcrText = "";
-        isEditOcrRunning = true;
-        
-        try {
-            if (typeof Tesseract === 'undefined') {
-                throw new Error("Tesseract library is not loaded.");
-            }
-            Tesseract.recognize(
-                editUploadedPhotoBase64,
-                'fra+eng',
-                { logger: m => console.log(m) }
-            ).then(({ data: { text } }) => {
-                editOcrText = text;
-                console.log("Edit Grade OCR result:", text);
-            }).catch(err => {
-                console.error("Edit Grade OCR error:", err);
-            }).finally(() => {
-                ocrStatus.style.display = 'none';
-                isEditOcrRunning = false;
-            });
-        } catch (err) {
-            console.warn("OCR failed to initialize:", err);
-            ocrStatus.style.display = 'none';
-            isEditOcrRunning = false;
-        }
-    };
-    reader.readAsDataURL(file);
-});
-
 document.getElementById('edit-remove-grade-photo-btn').addEventListener('click', () => {
-    editGradePhoto.value = "";
     editGradePhotoPreview.src = "";
     editGradePhotoPreviewContainer.style.display = 'none';
     editUploadedPhotoBase64 = null;
@@ -2896,6 +2810,17 @@ if (importBtn && importFileInput) {
 function init() {
     loadState();
     
+    // Onboarding Landing page toggle check
+    const landingPage = document.getElementById('landing-page');
+    const appContainer = document.querySelector('.app-container');
+    if (state.hasSeenOnboarding) {
+        landingPage.style.display = 'none';
+        appContainer.style.display = 'flex';
+    } else {
+        landingPage.style.display = 'flex';
+        appContainer.style.display = 'none';
+    }
+    
     const themeSelector = document.getElementById('theme-selector');
     if (themeSelector) {
         themeSelector.value = state.theme || 'navy';
@@ -2922,6 +2847,37 @@ function init() {
         renderSubjects();
         updateDashboard();
     }
+
+    // Onboarding Enter App Button
+    document.getElementById('btn-enter-app').addEventListener('click', () => {
+        state.hasSeenOnboarding = true;
+        saveState();
+        landingPage.style.display = 'none';
+        appContainer.style.display = 'flex';
+    });
+
+    // Header Home / Landing Button
+    document.getElementById('btn-show-landing').addEventListener('click', () => {
+        // Stop any active camera scanners
+        stopScanning(false);
+        stopScanning(true);
+        state.hasSeenOnboarding = false;
+        saveState();
+        landingPage.style.display = 'flex';
+        appContainer.style.display = 'none';
+    });
+
+    // Guide Modal bindings
+    const guideModal = document.getElementById('guide-modal');
+    document.getElementById('btn-show-guide').addEventListener('click', () => {
+        openModal(guideModal);
+    });
+    document.getElementById('close-guide-modal').addEventListener('click', () => {
+        closeModal(guideModal);
+    });
+    document.getElementById('btn-close-guide').addEventListener('click', () => {
+        closeModal(guideModal);
+    });
 }
 
 window.onload = init;
