@@ -1013,3 +1013,132 @@ body {
     text-decoration: none !important;
     opacity: 0.8;
 }
+
+/* --- Themes definitions --- */
+
+/* Pink (Rose / Berry) Theme */
+[data-theme="pink"] {
+    --color-bg-base: #1e111a;          /* Soft dark berry */
+    --color-bg-surface: #3b2233;       /* Lighter berry card bg */
+    --color-bg-elevated: #4e2f45;      /* Elevated berry */
+    --color-border-subtle: #45243b;
+    --color-primary: #ec4899;          /* Pink */
+    --color-primary-hover: #db2777;
+    --color-border-focus: #f472b6;
+}
+
+/* Green (Forest) Theme */
+[data-theme="green"] {
+    --color-bg-base: #0c1a13;          /* Dark forest */
+    --color-bg-surface: #1e382b;       /* Forest card bg */
+    --color-bg-elevated: #2b4f3d;      /* Elevated forest */
+    --color-border-subtle: #244132;
+    --color-primary: #10b981;          /* Green */
+    --color-primary-hover: #059669;
+    --color-border-focus: #34d399;
+}
+
+/* Purple Theme */
+[data-theme="purple"] {
+    --color-bg-base: #120e24;          /* Deep dark violet */
+    --color-bg-surface: #261f47;       /* Violet card bg */
+    --color-bg-elevated: #362c64;      /* Elevated violet */
+    --color-border-subtle: #2d2454;
+    --color-primary: #8b5cf6;          /* Purple */
+    --color-primary-hover: #7c3aed;
+    --color-border-focus: #a78bfa;
+}
+
+/* Cozy Sage / Clay Theme */
+[data-theme="cozy"] {
+    --color-bg-base: #1c1d1a;          /* Charcoal warm grey */
+    --color-bg-surface: #2d302b;       /* Sage dark card bg */
+    --color-bg-elevated: #3f423d;      /* Elevated sage */
+    --color-border-subtle: #343831;
+    --color-primary: #a7bfa4;          /* Soft sage */
+    --color-primary-hover: #8fa68c;
+    --color-border-focus: #c2d6bf;
+}
+
+/* Theme selector custom dropdown arrow styling */
+#theme-selector {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-image: url("data:image/svg+xml;utf8,<svg fill='white' height='24' viewBox='0 0 24 24' width='24' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/><path d='M0 0h24v24H0z' fill='none'/></svg>");
+    background-repeat: no-repeat;
+    background-position: right 8px center;
+    background-size: 16px;
+    padding-right: 1.75rem !important;
+}
+
+/* --- Target Simulator --- */
+.target-simulator {
+    margin-top: 0.75rem;
+    padding: 0.6rem 0.75rem;
+    background-color: rgba(255, 255, 255, 0.03);
+    border: 1px dashed var(--color-border-subtle);
+    border-radius: var(--radius-sm);
+}
+
+.simulator-header {
+    font-size: 0.75rem;
+    color: var(--color-text-secondary);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.simulator-controls {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    margin-top: 0.25rem;
+    flex-wrap: wrap;
+}
+
+.simulator-controls select {
+    background-color: var(--color-bg-elevated);
+    color: white;
+    border: 1px solid var(--color-border-subtle);
+    border-radius: 4px;
+    padding: 2px 4px;
+    font-size: 0.75rem;
+    outline: none;
+    cursor: pointer;
+    font-family: var(--font-family-sans);
+}
+
+.simulator-controls select:focus {
+    border-color: var(--color-border-focus);
+}
+
+.sim-result-badge {
+    font-size: 0.75rem;
+    font-weight: 700;
+    padding: 2px 6px;
+    border-radius: 4px;
+    margin-left: auto;
+    transition: all var(--transition-fast);
+}
+
+.sim-result-badge.passing {
+    background-color: rgba(16, 185, 129, 0.2);
+    color: #10b981;
+}
+
+.sim-result-badge.warning {
+    background-color: rgba(245, 158, 11, 0.2);
+    color: #f59e0b;
+}
+
+.sim-result-badge.failing {
+    background-color: rgba(239, 68, 68, 0.2);
+    color: #ef4444;
+}
+
+.sim-result-badge.impossible {
+    background-color: rgba(239, 68, 68, 0.3);
+    color: #f87171;
+    text-decoration: line-through;
+}

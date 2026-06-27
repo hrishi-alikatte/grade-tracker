@@ -43,6 +43,13 @@
                 </div>
             </div>
             <div class="header-actions">
+                <select id="theme-selector" class="btn btn-secondary" style="padding: 0.5rem 1rem; font-size: 0.8rem; border-radius: var(--radius-full); cursor: pointer;" title="Changer le thème de couleur">
+                    <option value="navy">🎨 Navy</option>
+                    <option value="pink">🌸 Rose</option>
+                    <option value="green">🍃 Vert</option>
+                    <option value="purple">🔮 Violet</option>
+                    <option value="cozy">Sage Cozy</option>
+                </select>
                 <button id="export-btn" class="btn btn-secondary" style="padding: 0.5rem 1rem; font-size: 0.8rem; border-radius: var(--radius-full);" title="Sauvegarder les données">
                     💾 Exporter
                 </button>
@@ -202,6 +209,11 @@
                 <div class="form-group">
                     <label class="form-label" for="grade-name">Nom de l'évaluation</label>
                     <input type="text" id="grade-name" class="form-input" placeholder="Ex: Écrit 1, Test 2...">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="grade-date">Date de l'évaluation (optionnel)</label>
+                    <input type="date" id="grade-date" class="form-input">
                 </div>
                 
                 <div class="form-group">

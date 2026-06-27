@@ -329,6 +329,103 @@ function calculateSubjectDataForSem(subject, sem) {
     };
 }
 
+function calculateRequiredGrade(subject, sem, numTests, typeRemaining) {
+    const grades = (subject.grades && subject.grades[sem]) ? subject.grades[sem] : [];
+    const target = subject.target;
+    const mode = subject.evaluationMode || 'dual';
+    
+    if (mode === 'locked') return null;
+    
+    const reqRaw = target - 0.25;
+    
+    if (mode === 'standard') {
+        const S_curr = grades.reduce((s, g) => s + g.value, 0);
+        const C_curr = grades.length;
+        const reqGrade = (reqRaw * (C_curr + numTests) - S_curr) / numTests;
+        return reqGrade;
+    }
+    
+    // Dual mode
+    const tas = grades.filter(g => g.type === 'TA');
+    const tss = grades.filter(g => g.type === 'TS');
+    
+    if (typeRemaining === 'TS') {
+        let taAvgRounded = null;
+        if (tas.length > 0) {
+            const taSum = tas.reduce((s, g) => s + g.value, 0);
+            taAvgRounded = roundToHalfPoint(taSum / tas.length);
+        }
+        
+        const combined = tss.map(g => g.value);
+        if (taAvgRounded !== null) combined.push(taAvgRounded);
+        
+        const S_curr = combined.reduce((s, val) => s + val, 0);
+        const C_curr = combined.length;
+        
+        const reqGrade = (reqRaw * (C_curr + numTests) - S_curr) / numTests;
+        return reqGrade;
+    } else {
+        // Remaining is TA
+        const N_ts = tss.length;
+        const S_ts = tss.reduce((s, g) => s + g.value, 0);
+        const K_ta = tas.length;
+        const S_ta = tas.reduce((s, g) => s + g.value, 0);
+        
+        if (N_ts === 0 && K_ta === 0) {
+            return target - 0.25;
+        }
+        
+        const reqTaAvgRounded = reqRaw * (N_ts + 1) - S_ts;
+        if (reqTaAvgRounded > 6.0) {
+            return 999.0; // Impossible
+        }
+        
+        const reqTaAvgMin = Math.ceil(reqTaAvgRounded * 2) / 2;
+        const reqGrade = ((reqTaAvgMin - 0.25) * (K_ta + numTests) - S_ta) / numTests;
+        return reqGrade;
+    }
+}
+
+function updateCardSimulatorBadge(card, subject, sem) {
+    const badge = card.querySelector('.sim-result-badge');
+    if (!badge) return;
+    
+    const numTestsSelect = card.querySelector('.sim-num-tests');
+    const typeSelect = card.querySelector('.sim-type');
+    
+    const numTests = parseInt(numTestsSelect.value);
+    const typeRemaining = typeSelect ? typeSelect.value : 'TS';
+    
+    const reqGrade = calculateRequiredGrade(subject, sem, numTests, typeRemaining);
+    
+    badge.className = 'sim-result-badge'; // reset class
+    
+    if (reqGrade === null) {
+        badge.style.display = 'none';
+        return;
+    }
+    
+    if (reqGrade > 6.0) {
+        badge.textContent = 'Imp. ❌';
+        badge.classList.add('impossible');
+        badge.title = 'Impossible d\'atteindre l\'objectif avec ce nombre d\'évaluations.';
+    } else if (reqGrade <= 1.0) {
+        badge.textContent = '≥ 1.0 (garanti)';
+        badge.classList.add('passing');
+        badge.title = 'Objectif déjà atteint ou garanti avec la note minimale.';
+    } else {
+        badge.textContent = `≈ ${reqGrade.toFixed(1)}`;
+        if (reqGrade <= 4.0) {
+            badge.classList.add('passing');
+        } else if (reqGrade <= 5.0) {
+            badge.classList.add('warning');
+        } else {
+            badge.classList.add('failing');
+        }
+        badge.title = `Note moyenne requise sur les évaluations restantes : ${reqGrade.toFixed(2)}`;
+    }
+}
+
 /**
  * Computes Vaud Swiss Gymnase promotion status based on rounded subject averages
  */
@@ -475,7 +572,8 @@ let state = {
     currentSemester: 'sem1',
     subjectsYear1: [],
     subjectsYear2: [],
-    subjectsYear3: []
+    subjectsYear3: [],
+    theme: 'navy'
 };
 
 let activeSubjectFilters = null;
@@ -531,6 +629,13 @@ function runStateMigrations() {
     }
 }
 
+function applyTheme() {
+    const theme = state.theme || 'navy';
+    document.body.setAttribute('data-theme', theme);
+    const themeSelector = document.getElementById('theme-selector');
+    if (themeSelector) themeSelector.value = theme;
+}
+
 function loadState() {
     const saved = localStorage.getItem('gymnase_vaud_state_v5');
     if (saved) {
@@ -539,12 +644,15 @@ function loadState() {
             if (!state.studentName) state.studentName = 'Étudiant';
             if (!state.currentYear) state.currentYear = 1;
             if (!state.currentSemester) state.currentSemester = 'sem1';
+            if (!state.theme) state.theme = 'navy';
             
             runStateMigrations();
             
             state.subjectsYear1.forEach(migrateSubjectGrades);
             state.subjectsYear2.forEach(migrateSubjectGrades);
             state.subjectsYear3.forEach(migrateSubjectGrades);
+            
+            applyTheme();
         } catch(e) {
             console.error("Failed to parse state v5", e);
             resetStateToDefault();
@@ -561,9 +669,11 @@ function resetStateToDefault() {
         currentSemester: 'sem1',
         subjectsYear1: JSON.parse(JSON.stringify(defaultSubjectsYear1)),
         subjectsYear2: JSON.parse(JSON.stringify(defaultSubjectsYear2)),
-        subjectsYear3: JSON.parse(JSON.stringify(defaultSubjectsYear3))
+        subjectsYear3: JSON.parse(JSON.stringify(defaultSubjectsYear3)),
+        theme: 'navy'
     };
     saveState();
+    applyTheme();
 }
 
 function saveState() {
@@ -1579,8 +1689,47 @@ function renderSubjects() {
             `;
         }
 
-        const deleteBtnHTML = (mode === 'locked') ? '' : `<button class="btn-delete-subject" title="Supprimer la branche">&times;</button>`;
+        let osEditHTML = '';
+        if (subject.role === 'os') {
+            osEditHTML = `
+                <button type="button" class="os-edit-btn" title="Modifier le nom de l'OS">
+                    ✏️ modifier
+                </button>
+            `;
+        }
+
+        const isStandardSubject = subject.id.startsWith('y1_') || subject.id.startsWith('y2_') || subject.id.startsWith('y3_');
+        const deleteBtnHTML = isStandardSubject ? '' : `<button class="btn-delete-subject" title="Supprimer la branche">&times;</button>`;
         const drawerHTML = (state.currentYear === 3 && sem === 'annual') ? `<div class="sub-evo-drawer"></div>` : '';
+
+        let simulatorHTML = '';
+        if (mode !== 'locked' && sem !== 'annual') {
+            simulatorHTML = `
+                <div class="target-simulator" data-subject-id="${subject.id}">
+                    <div class="simulator-header">
+                        <span>Cible : <strong style="color: var(--color-primary);">${subject.target.toFixed(1)}</strong></span>
+                        <span style="font-size: 0.7rem; color: var(--color-text-muted);">Simulateur de réussite</span>
+                    </div>
+                    <div class="simulator-controls">
+                        <select class="sim-num-tests">
+                            <option value="1">1 test</option>
+                            <option value="2">2 tests</option>
+                            <option value="3">3 tests</option>
+                            <option value="4">4 tests</option>
+                        </select>
+                        ${mode === 'dual' ? `
+                        <span style="font-size: 0.75rem; color: var(--color-text-muted);">en</span>
+                        <select class="sim-type">
+                            <option value="TS">TS</option>
+                            <option value="TA">TA</option>
+                        </select>
+                        ` : ''}
+                        <span style="font-size: 0.75rem; color: var(--color-text-muted);">req. :</span>
+                        <span class="sim-result-badge">...</span>
+                    </div>
+                </div>
+            `;
+        }
 
         card.innerHTML = `
             ${deleteBtnHTML}
@@ -1589,6 +1738,7 @@ function renderSubjects() {
                     <h3 class="subject-name" style="display: flex; align-items: center; gap: 0.25rem; flex-wrap: wrap;">
                         ${escapeHTML(subject.name)}
                         ${ocEditHTML}
+                        ${osEditHTML}
                         ${langToggleHTML}
                         ${artToggleHTML}
                     </h3>
@@ -1603,11 +1753,15 @@ function renderSubjects() {
             <!-- Lanes or Comparison layout -->
             ${lanesHTML}
 
+            ${simulatorHTML}
             ${footerHTML}
             ${drawerHTML}
         `;
 
         subjectsContainer.appendChild(card);
+        if (mode !== 'locked' && sem !== 'annual') {
+            updateCardSimulatorBadge(card, subject, sem);
+        }
     });
 }
 
@@ -1835,6 +1989,26 @@ subjectsContainer.addEventListener('click', (e) => {
         return;
     }
 
+    // Edit OS choice name
+    const osEditBtn = e.target.closest('.os-edit-btn');
+    if (osEditBtn) {
+        const newName = prompt("Entrez le nom de votre Option Spécifique (OS) :", subject.name);
+        if (newName && newName.trim() !== "") {
+            const nameVal = newName.trim();
+            subject.name = nameVal;
+            
+            // Propagate OS name to all years
+            state.subjectsYear1.forEach(s => { if (s.role === 'os') s.name = nameVal; });
+            state.subjectsYear2.forEach(s => { if (s.role === 'os') s.name = nameVal; });
+            state.subjectsYear3.forEach(s => { if (s.role === 'os') s.name = nameVal; });
+            
+            saveState();
+            renderSubjects();
+            updateDashboard();
+        }
+        return;
+    }
+
     // Toggle L2 Language or Art/Musique inside the card
     const toggleBtn = e.target.closest('.lang-toggle-btn');
     if (toggleBtn) {
@@ -1883,12 +2057,25 @@ subjectsContainer.addEventListener('click', (e) => {
                 detailGradeName.textContent = gradeObj.name || 'Évaluation';
                 detailGradeValue.textContent = gradeObj.value.toFixed(1);
                 detailGradeType.textContent = gradeObj.type === 'TA' ? 'TA' : 'TS';
-                
-                const dateStr = gradeObj.date ? new Date(gradeObj.date).toLocaleDateString('fr-CH', { day: 'numeric', month: 'long', year: 'numeric' }) : 'Inconnue';
+                const dateStr = gradeObj.date ? new Date(gradeObj.date).toLocaleDateString('fr-CH', { day: 'numeric', month: 'long', year: 'numeric' }) : 'Non spécifiée';
                 detailGradeDate.textContent = dateStr;
                 
                 openModal(gradeDetailsModal);
             }
+        }
+    }
+});
+
+// Listener for target simulator changes
+subjectsContainer.addEventListener('change', (e) => {
+    const simControl = e.target.closest('.simulator-controls select');
+    if (simControl) {
+        const card = e.target.closest('.subject-card');
+        const subId = card.getAttribute('data-id');
+        const currentSubjects = (state.currentYear === 3) ? state.subjectsYear3 : (state.currentYear === 2) ? state.subjectsYear2 : state.subjectsYear1;
+        const subject = currentSubjects.find(s => s.id === subId);
+        if (subject) {
+            updateCardSimulatorBadge(card, subject, state.currentSemester);
         }
     }
 });
@@ -1945,12 +2132,13 @@ document.getElementById('add-grade-form').addEventListener('submit', (e) => {
                 subject.grades.sem2 = [];
             }
 
+            const dateVal = document.getElementById('grade-date').value;
             const newGrade = {
                 id: 'grade_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5),
                 name,
                 value,
                 type,
-                date: new Date().toISOString()
+                date: dateVal ? new Date(dateVal).toISOString() : null
             };
 
             subject.grades[sem].push(newGrade);
@@ -2042,6 +2230,7 @@ if (importBtn && importFileInput) {
                     state.subjectsYear3.forEach(migrateSubjectGrades);
                     
                     saveState();
+                    applyTheme();
                     
                     // Sync active UI buttons
                     document.querySelectorAll('#year-selector .lang-toggle-btn').forEach(btn => {
@@ -2071,6 +2260,17 @@ if (importBtn && importFileInput) {
 function init() {
     loadState();
     
+    const themeSelector = document.getElementById('theme-selector');
+    if (themeSelector) {
+        themeSelector.value = state.theme || 'navy';
+        themeSelector.addEventListener('change', (e) => {
+            state.theme = e.target.value;
+            saveState();
+            applyTheme();
+        });
+    }
+    applyTheme();
+
     // Set Year selector active button on startup
     document.querySelectorAll('#year-selector .lang-toggle-btn').forEach(btn => {
         btn.classList.toggle('active', parseInt(btn.getAttribute('data-year')) === state.currentYear);
