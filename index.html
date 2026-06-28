@@ -27,17 +27,7 @@
         <div class="glow-blob blob-3"></div>
     </div>
 
-    <!-- SVG Displacement Filter for organic distortion -->
-    <svg style="position: absolute; width: 0; height: 0; pointer-events: none;">
-        <defs>
-            <filter id="ethereal-shadow-filter">
-                <feTurbulence type="fractalNoise" baseFrequency="0.015 0.025" numOctaves="3" result="noise">
-                    <animate attributeName="seed" values="1;150;1" dur="40s" repeatCount="indefinite" />
-                </feTurbulence>
-                <feDisplacementMap in="SourceGraphic" in2="noise" scale="80" xChannelSelector="R" yChannelSelector="G" />
-            </filter>
-        </defs>
-    </svg>
+
 
     <!-- Film Grain overlay for physical tactile texture -->
     <div id="film-grain-overlay"></div>
@@ -70,7 +60,7 @@
         </div>
     </nav>    <!-- Welcoming Landing/Start Page -->
     <div id="view-landing" class="page-view landing-page-container" style="display: none;">
-        <div class="guide-header" style="margin-bottom: 1.5rem;">
+        <div class="guide-header">
             <h1 class="guide-page-title" style="font-size: 1.8rem; letter-spacing: -0.03em;">Bienvenue sur GradeVibe Vaud</h1>
         </div>
 
@@ -182,7 +172,7 @@
         </header>
 
         <!-- Year Selection Tabs (Grouped directly above Semester Tabs) -->
-        <div class="year-tabs-container" style="display: flex; gap: 0.5rem; margin-bottom: 0.75rem; justify-content: center; width: 100%;">
+        <div class="year-tabs-container" style="display: flex; gap: 0.5rem; justify-content: center; width: 100%;">
             <div class="lang-toggle-container" id="year-selector" style="margin: 0; padding: 2px; width: 100%; display: flex; max-width: 600px; justify-content: space-between;">
                 <button type="button" class="lang-toggle-btn active" data-year="1" style="flex: 1; text-align: center;">1ère année</button>
                 <button type="button" class="lang-toggle-btn" data-year="2" style="flex: 1; text-align: center;">2ème année</button>
@@ -199,7 +189,7 @@
         </div>
 
         <!-- PWA Install Banner -->
-        <div id="pwa-install-banner" class="promo-dashboard-container" style="background-color: var(--color-bg-surface); border: 1px solid var(--color-border-subtle); display: none; margin-bottom: 1rem; align-items: center; justify-content: space-between; flex-direction: row; gap: 1rem;">
+        <div id="pwa-install-banner" class="promo-dashboard-container" style="background-color: var(--color-bg-surface); border: 1px solid var(--color-border-subtle); display: none; align-items: center; justify-content: space-between; flex-direction: row; gap: 1rem;">
             <div style="display:flex; align-items:center; gap:0.75rem;">
                 <span style="font-size: 1.5rem;">📱</span>
                 <div>
@@ -263,7 +253,7 @@
         </main>
 
         <!-- Bilan par groupe Section -->
-        <section class="bilan-section" style="margin-top: 1rem; margin-bottom: 2rem;">
+        <section class="bilan-section">
             <h2 style="font-size: 1.4rem; font-weight: 800; margin-bottom: 1rem; color: white; border-bottom: 1px solid var(--color-border-subtle); padding-bottom: 0.5rem;">Bilan par groupe</h2>
             
             <div class="bilan-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
@@ -595,7 +585,7 @@
             <div class="guide-card examples-card" style="grid-column: span 2;">
                 <h2 class="guide-card-title">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 0.35rem;"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
-                    Comment fonctionne le Bilan des Points ? (Exemple)
+                    Comment fonctionne le Bilan des Points ?
                 </h2>
                 
                 <!-- Rule Formula Explainer Box -->
@@ -611,7 +601,7 @@
                     </ul>
                 </div>
 
-                <div class="example-profiles-container" style="display: grid; grid-template-columns: 1fr; max-width: 480px; margin: 0.5rem auto 0 auto; gap: 1.5rem;">
+                <div class="example-profiles-container" style="max-width: 800px; margin: 0.5rem auto 0 auto;">
                     <!-- Profile 1: Promoted -->
                     <div class="example-profile-box promoted" style="background-color: rgba(16,185,129,0.03); border: 1px solid rgba(16,185,129,0.2);">
                         <div class="profile-header-status">
@@ -633,9 +623,36 @@
                             </div>
                         </div>
                         <div class="profile-summary-stats" style="background-color: rgba(0,0,0,0.2); padding: 0.75rem; border-radius: var(--radius-sm); border-top: none; margin-top: 0.5rem;">
-                            <div style="display:flex; justify-content:space-between;"><span>Moyenne générale:</span><strong>4.25 (>= 4.0)</strong></div>
-                            <div style="display:flex; justify-content:space-between;"><span>Bilan des points:</span><strong class="positive">+0.5 (>= 0)</strong></div>
-                            <div style="display:flex; justify-content:space-between;"><span>Insuffisances:</span><strong>1 (<= 4)</strong></div>
+                            <div style="display:flex; justify-content:space-between;"><span>Moyenne générale:</span><strong>4.25 (&gt;= 4.0)</strong></div>
+                            <div style="display:flex; justify-content:space-between;"><span>Bilan des points:</span><strong class="positive">+0.5 (&gt;= 0)</strong></div>
+                            <div style="display:flex; justify-content:space-between;"><span>Insuffisances:</span><strong>1 (&lt;= 4)</strong></div>
+                        </div>
+                    </div>
+
+                    <!-- Profile 2: Not Promoted -->
+                    <div class="example-profile-box failed" style="background-color: rgba(239,68,68,0.03); border: 1px solid rgba(239,68,68,0.2);">
+                        <div class="profile-header-status">
+                            <h4 style="font-size: 0.9rem;">Élève B : Non Promu</h4>
+                            <span class="status-badge failed" style="font-size: 0.75rem; padding: 0.25rem 0.6rem;">NON PROMU</span>
+                        </div>
+                        <div class="mock-table">
+                            <div class="mock-row" style="padding: 0.25rem 0; border-bottom: 1px solid rgba(255,255,255,0.03);">
+                                <span>Français</span><span class="val">3.5</span><span class="diff negative" style="font-weight:bold;">-1.0 (doublé)</span>
+                            </div>
+                            <div class="mock-row" style="padding: 0.25rem 0; border-bottom: 1px solid rgba(255,255,255,0.03);">
+                                <span>Mathématiques</span><span class="val">3.0</span><span class="diff negative" style="font-weight:bold;">-2.0 (doublé)</span>
+                            </div>
+                            <div class="mock-row" style="padding: 0.25rem 0; border-bottom: 1px solid rgba(255,255,255,0.03);">
+                                <span>Anglais</span><span class="val">5.0</span><span class="diff positive">+1.0</span>
+                            </div>
+                            <div class="mock-row" style="padding: 0.25rem 0;">
+                                <span>Physique</span><span class="val">4.0</span><span class="diff neutral">0.0</span>
+                            </div>
+                        </div>
+                        <div class="profile-summary-stats" style="background-color: rgba(0,0,0,0.2); padding: 0.75rem; border-radius: var(--radius-sm); border-top: none; margin-top: 0.5rem;">
+                            <div style="display:flex; justify-content:space-between;"><span>Moyenne générale:</span><strong>3.88 (&lt; 4.0)</strong></div>
+                            <div style="display:flex; justify-content:space-between;"><span>Bilan des points:</span><strong class="failed">-2.0 (&lt; 0)</strong></div>
+                            <div style="display:flex; justify-content:space-between;"><span>Insuffisances:</span><strong>2 (&lt;= 4)</strong></div>
                         </div>
                     </div>
                 </div>

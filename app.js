@@ -699,6 +699,7 @@ let state = {
 };
 
 let activeSubjectFilters = null;
+let animateCards = false;
 
 function migrateSubjectGrades(subject) {
     if (Array.isArray(subject.grades)) {
@@ -1592,7 +1593,7 @@ function renderSubjects() {
 
         // Subject Card container
         const card = document.createElement('div');
-        card.className = 'subject-card slide-up';
+        card.className = animateCards ? 'subject-card slide-up' : 'subject-card';
         card.setAttribute('data-id', subject.id);
 
         // Circular badge average
@@ -1638,7 +1639,7 @@ function renderSubjects() {
             if (list.length === 0) return '<span style="font-size:0.75rem; color:var(--color-text-muted); font-style:italic;">—</span>';
             return list.map(g => {
                 const statusClass = getStatusClass(g.value);
-                const commentIndicator = g.comment ? '<svg class="grade-indicator-icon" style="margin-left:2px;" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>' : '';
+                const commentIndicator = '';
                 const photoIndicator = g.hasPhoto ? '<svg class="grade-indicator-icon" style="margin-left:2px;" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>' : '';
                 const indicators = (commentIndicator || photoIndicator) ? `<span style="display:inline-flex; align-items:center; vertical-align:middle; margin-left:0.15rem; gap:1px; opacity:0.85;">${commentIndicator}${photoIndicator}</span>` : '';
                 return `
@@ -1900,6 +1901,7 @@ function renderSubjects() {
             updateCardSimulatorBadge(card, subject, sem);
         }
     });
+    animateCards = false;
 }
 
 function escapeHTML(str) {
@@ -2072,6 +2074,7 @@ document.querySelectorAll('#year-selector .lang-toggle-btn').forEach(btn => {
         saveState();
         updateTabVisibility();
         if (state.currentYear !== 4) {
+            animateCards = true;
             renderSubjects();
             updateDashboard();
         }
@@ -2083,6 +2086,7 @@ document.querySelectorAll('.semester-tab').forEach(btn => {
         btn.classList.add('active');
         state.currentSemester = btn.getAttribute('data-sem');
         saveState();
+        animateCards = true;
         renderSubjects();
         updateDashboard();
     });
@@ -2754,6 +2758,7 @@ function switchView(viewId) {
         btn.classList.toggle('active', btn.getAttribute('data-view') === viewId);
     });
     
+    animateCards = true;
     // Scroll to top
     window.scrollTo({ top: 0, behavior: 'instant' });
 }
@@ -2761,6 +2766,7 @@ function switchView(viewId) {
 function init() {
     loadState();
     
+    animateCards = true;
     // View Router toggle on startup
     if (state.hasSeenOnboarding) {
         switchView('view-dashboard');

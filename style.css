@@ -47,6 +47,7 @@
     --radius-md: 12px;
     --radius-lg: 16px;
     --radius-full: 9999px;
+    --section-gap: 1.5rem;
     
     --transition-fast: 0.15s ease;
     --transition-normal: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
@@ -78,7 +79,7 @@ body {
     margin: 0 auto;
     display: flex;
     flex-direction: column;
-    gap: 1.5rem;
+    gap: var(--section-gap);
 }
 
 /* Main Header */
@@ -755,7 +756,7 @@ body {
 .semester-tabs-container {
     display: flex;
     gap: 0.4rem;
-    margin-bottom: 0.25rem;
+    margin-bottom: 0;
     background-color: var(--color-bg-surface);
     border: 1px solid var(--color-border-subtle);
     padding: 4px;
@@ -1262,7 +1263,7 @@ body {
 .glow-blob {
     position: absolute;
     border-radius: 50%;
-    filter: url(#ethereal-shadow-filter) blur(85px);
+    filter: blur(85px);
     opacity: 0.18;
     mix-blend-mode: screen;
     transition: background-color var(--transition-normal);
@@ -1388,6 +1389,9 @@ body {
     max-width: 1200px;
     margin: 0 auto;
     padding: 0 1.5rem 1.5rem 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: var(--section-gap);
 }
 
 .landing-card {
@@ -1490,13 +1494,16 @@ body {
     margin: 0 auto;
     padding: 2rem 1.5rem;
     animation: landingFadeIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    display: flex;
+    flex-direction: column;
+    gap: var(--section-gap);
 }
 
 .guide-header {
     display: flex;
     align-items: center;
     gap: 1.5rem;
-    margin-bottom: 2.5rem;
+    margin-bottom: 0;
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
     padding-bottom: 1.5rem;
 }
@@ -1873,7 +1880,7 @@ body {
     display: flex;
     justify-content: center;
     width: 100%;
-    margin-bottom: 0.75rem;
+    margin-bottom: 0;
 }
 
 .year-tabs-container .lang-toggle-container {
