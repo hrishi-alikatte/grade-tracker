@@ -1951,23 +1951,6 @@ function openSubjectDetailsModal(subject) {
     openModal(document.getElementById('subject-details-modal'));
 }
 
-function getPokerCardDetails(index) {
-    const cards = [
-        { rank: 'A', suit: 'spades', symbol: '♠' },    // 0: Maths
-        { rank: 'K', suit: 'hearts', symbol: '♥' },    // 1: Français
-        { rank: 'Q', suit: 'diamonds', symbol: '♦' },  // 2: OS
-        { rank: 'J', suit: 'clubs', symbol: '♣' },     // 3: Anglais
-        { rank: '10', suit: 'hearts', symbol: '♥' },   // 4: Allemand
-        { rank: 'K', suit: 'diamonds', symbol: '♦' },  // 5: Économie
-        { rank: '9', suit: 'clubs', symbol: '♣' },     // 6: Chimie
-        { rank: '8', suit: 'spades', symbol: '♠' },    // 7: Physique
-        { rank: 'Q', suit: 'hearts', symbol: '♥' },    // 8: Arts
-        { rank: 'J', suit: 'spades', symbol: '♠' },    // 9: Informatique
-        { rank: 'A', suit: 'clubs', symbol: '♣' }      // 10: Histoire
-    ];
-    return cards[index % cards.length];
-}
-
 function renderSubjects() {
     subjectsContainer.innerHTML = '';
     const currentSubjects = (state.currentYear === 3) ? state.subjectsYear3 : (state.currentYear === 2) ? state.subjectsYear2 : state.subjectsYear1;
@@ -1993,40 +1976,24 @@ function renderSubjects() {
             const isStandardSubject = subject.id.startsWith('y1_') || subject.id.startsWith('y2_') || subject.id.startsWith('y3_');
             const deleteBtnHTML = isStandardSubject ? '' : `<button class="btn-delete-gem" data-id="${subject.id}" title="Supprimer la branche">&times;</button>`;
 
-            const cardInfo = getPokerCardDetails(index);
             const item = document.createElement('div');
             item.className = 'gem-item';
             item.setAttribute('data-id', subject.id);
             item.innerHTML = `
                 ${deleteBtnHTML}
-                <div class="poker-card suit-${cardInfo.suit} ${statusClass}">
-                    <div class="card-corner top-left">
-                        <span class="card-rank">${cardInfo.rank}</span>
-                        <span class="card-suit-icon">${cardInfo.symbol}</span>
-                    </div>
-                    
-                    <div class="card-center">
-                        <span class="card-center-suit">${cardInfo.symbol}</span>
-                        <span class="card-average">${displayAvg}</span>
-                    </div>
-                    
-                    <div class="card-corner bottom-right">
-                        <span class="card-rank">${cardInfo.rank}</span>
-                        <span class="card-suit-icon">${cardInfo.symbol}</span>
-                    </div>
+                <div class="gem-sphere gem-${gemClass} ${statusClass}">
+                    <div class="gem-texture"></div>
+                    <span class="gem-sphere-average">${displayAvg}</span>
                 </div>
+                <div class="gem-sphere-shadow"></div>
                 <div class="gem-subject-name">${escapeHTML(subject.name)}</div>
                 <div class="gem-type-name">${gemDisplayName}</div>
             `;
-            
-            // Direct card click listener
-            item.addEventListener('click', (e) => {
-                if (e.target.closest('.btn-delete-gem')) return;
-                openSubjectDetailsModal(subject);
-            });
-            
             subjectsContainer.appendChild(item);
         });
+
+        // Initialize rotation dragging physics on the new spheres
+        initGemstoneRotation();
 
         // If there is an active details subject modal open, re-render it
         if (activeDetailsSubjectId) {

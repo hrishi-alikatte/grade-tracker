@@ -2078,7 +2078,7 @@ body {
     }
 }
 
-/* Poker Card Item Wrapper */
+/* Gemstone Item Wrapper */
 .gem-item {
     display: flex;
     flex-direction: column;
@@ -2089,132 +2089,58 @@ body {
     transition: transform var(--transition-fast);
 }
 
-/* Poker Card Container */
-.poker-card {
+.gem-item:hover {
+    transform: translateY(-8px);
+}
+
+/* Gemstone Sphere Container */
+.gem-sphere {
     width: 140px;
-    height: 196px;
-    border-radius: 12px;
-    background: #faf9f6; /* Premium off-white/cream paper playing card background */
-    border: 1px solid rgba(0, 0, 0, 0.15);
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    padding: 0.8rem;
+    height: 140px;
+    border-radius: 50%;
     position: relative;
-    cursor: pointer;
-    transition: transform var(--transition-fast), border-color var(--transition-fast), box-shadow var(--transition-fast);
+    overflow: hidden;
+    cursor: grab;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     /* Mirror Reflection */
     -webkit-box-reflect: below 2px linear-gradient(transparent, transparent 75%, rgba(255, 255, 255, 0.08));
-    box-shadow: none !important;
+    /* Minimal contact shadow (floor shadow does the rest) */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
+    transition: box-shadow var(--transition-fast);
 }
 
-/* Hover effect */
-.gem-item:hover .poker-card {
-    transform: translateY(-8px) rotate(2deg);
+.gem-sphere:active {
+    cursor: grabbing;
 }
 
-/* Color codes based on Vaud Promotion Status */
-.poker-card.status-promoted {
-    border: 2.5px solid #2e7d32 !important; /* Elegant dark green for passing */
+.gem-sphere:hover {
+    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.35);
 }
 
-.poker-card.status-failing {
-    border: 2.5px solid #c62828 !important; /* Elegant dark red for failing */
-}
-
-.poker-card.empty {
-    border: 1px solid rgba(0, 0, 0, 0.15) !important;
-}
-
-/* Card color schemes for Suits */
-.poker-card.suit-spades,
-.poker-card.suit-clubs {
-    color: #1a1a1a; /* Dark charcoal/black suit color */
-}
-
-.poker-card.suit-hearts,
-.poker-card.suit-diamonds {
-    color: #d32f2f; /* Deep card red suit color */
-}
-
-/* Corners showing rank and suit symbol */
-.card-corner {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    line-height: 1.1;
-    font-family: 'Montserrat', 'Outfit', -apple-system, sans-serif;
-    font-weight: 800;
-    font-size: 1.15rem;
-    pointer-events: none;
-}
-
-.card-corner.top-left {
-    align-self: flex-start;
-}
-
-.card-corner.bottom-right {
-    align-self: flex-end;
-    transform: rotate(180deg);
-}
-
-/* Card Center Area */
-.card-center {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    flex: 1;
-    position: relative;
-    pointer-events: none;
-}
-
-.card-center-suit {
-    font-size: 3.5rem;
-    opacity: 0.15;
+/* Realistic Floor Drop Shadow for Spheres - Hidden by default, visible when hovered/rotated */
+.gem-sphere-shadow {
     position: absolute;
-    top: 52%;
+    width: 120px;
+    height: 12px;
+    background: radial-gradient(ellipse at center, rgba(0, 0, 0, 0.85) 0%, rgba(0, 0, 0, 0.45) 45%, rgba(0, 0, 0, 0) 70%);
+    bottom: 2.3rem; /* Positioned exactly under the sphere resting contact point */
     left: 50%;
-    transform: translate(-50%, -50%);
+    transform: translateX(-50%) scale(0.5);
     pointer-events: none;
+    z-index: 0;
+    opacity: 0;
+    transition: opacity var(--transition-fast), transform var(--transition-fast);
 }
 
-/* Card Average Value inside the center */
-.card-average {
-    font-size: 2.2rem;
-    font-weight: 900;
-    font-family: 'Montserrat', 'Outfit', -apple-system, sans-serif;
-    letter-spacing: -0.04em;
-    z-index: 2;
-    color: inherit; /* Matches suit color (red or black) */
-    pointer-events: none;
+.gem-item:hover .gem-sphere-shadow,
+.gem-item.is-rotating .gem-sphere-shadow {
+    transform: translateX(-50%) scale(0.85);
+    opacity: 0.65; /* Softens and shrinks slightly when sphere floats up */
 }
 
-/* Empty Average grade formatting */
-.poker-card.empty .card-average {
-    color: rgba(0, 0, 0, 0.25) !important;
-}
-
-/* Subject Name under the Card */
-.gem-subject-name {
-    font-size: 0.72rem;
-    font-weight: 600;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    text-align: center;
-    color: var(--color-text-secondary);
-    margin-top: 1rem;
-    max-width: 130px;
-    word-wrap: break-word;
-    height: 2.2rem;
-    display: flex;
-    align-items: flex-start;
-    justify-content: center;
-    pointer-events: none;
-    font-family: 'Montserrat', 'Outfit', -apple-system, sans-serif;
-}
-
-/* Reveal Card Name on Hover */
+/* Reveal Gemstone Name under Subject Name on Hover */
 .gem-type-name {
     font-size: 0.6rem;
     font-weight: 500;
@@ -2235,10 +2161,138 @@ body {
     transform: translateY(0);
 }
 
+/* Fixed Glassy Highlight and Inner Depth Overlay */
+.gem-sphere::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    z-index: 3;
+    pointer-events: none;
+    box-shadow: 
+        inset -20px -20px 40px rgba(0, 0, 0, 0.9),       /* Deep bottom-right shadow */
+        inset 0 -8px 20px rgba(0, 0, 0, 0.5),            /* Ambient bottom shade */
+        inset 12px 12px 20px rgba(255, 255, 255, 0.45),   /* Sharp top-left light leak */
+        inset 0 4px 8px rgba(255, 255, 255, 0.2);        /* Secondary highlight */
+    background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.65) 0%, rgba(255, 255, 255, 0) 55%);
+}
+
+/* Rotatable Gemstone Texture Layer */
+.gem-texture {
+    position: absolute;
+    width: 196px;
+    height: 196px;
+    top: -28px;
+    left: -28px;
+    z-index: 1;
+    pointer-events: none;
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
+    transition: transform 0.1s ease-out; /* Smooth slide-back/momentum shift */
+}
+
+/* Average Label on the Sphere */
+.gem-sphere-average {
+    font-size: 1.8rem;
+    font-weight: 800;
+    color: #000000 !important;
+    z-index: 4;
+    pointer-events: none;
+    font-family: 'Montserrat', 'Outfit', -apple-system, sans-serif;
+    letter-spacing: -0.02em;
+}
+
+/* Subject Name under the Sphere */
+.gem-subject-name {
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    text-align: center;
+    color: var(--color-text-secondary);
+    margin-top: 1rem;
+    max-width: 130px;
+    word-wrap: break-word;
+    height: 2.2rem;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    pointer-events: none;
+    font-family: 'Montserrat', 'Outfit', -apple-system, sans-serif;
+}
+
 /* Stack other modals on top of subject-details-modal */
 #add-grade-modal, #grade-details-modal {
     z-index: 1100 !important;
 }
+
+/* ==========================================================================
+   Gemstone Texture Definitions (Highly Realistic & Organic)
+   ========================================================================== */
+
+.gem-texture {
+    display: none !important;
+}
+
+/* 1. Maths - Slate Blue */
+.gem-ruby-zoisite {
+    background: radial-gradient(circle at 30% 30%, #7d91ab 0%, #4a576c 60%, #202733 100%) !important;
+}
+
+/* 2. Français - Dusty Blue */
+.gem-red-jasper {
+    background: radial-gradient(circle at 30% 30%, #b2c3d9 0%, #7d91ab 60%, #404c5c 100%) !important;
+}
+
+/* 3. OS - Cool Gray */
+.gem-ocean-jasper {
+    background: radial-gradient(circle at 30% 30%, #ffffff 0%, #cfcfd1 60%, #858587 100%) !important;
+}
+
+/* 4. Anglais - Warm Beige */
+.gem-rainbow-moonstone {
+    background: radial-gradient(circle at 30% 30%, #c9bfae 0%, #958a7b 60%, #524b41 100%) !important;
+}
+
+/* 5. Allemand - Deep Brown */
+.gem-selenite {
+    background: radial-gradient(circle at 30% 30%, #7d5a4c 0%, #462e24 60%, #1e110b 100%) !important;
+}
+
+/* 6. Sodalite - Dark Charcoal */
+.gem-sodalite {
+    background: radial-gradient(circle at 30% 30%, #5b5e66 0%, #2f3136 60%, #141517 100%) !important;
+}
+
+/* 7. Serpentine - Slate-to-Dusty Gradient */
+.gem-serpentine {
+    background: radial-gradient(circle at 30% 30%, #95aacf 0%, #637591 60%, #2b3545 100%) !important;
+}
+
+/* 8. Rose Quartz - Dusty-to-Gray Gradient */
+.gem-rose-quartz {
+    background: radial-gradient(circle at 30% 30%, #d8e5f5 0%, #a4b4ca 60%, #5b687a 100%) !important;
+}
+
+/* 9. Labradorite - Beige-to-Brown Gradient */
+.gem-labradorite {
+    background: radial-gradient(circle at 30% 30%, #a28b78 0%, #6a5747 60%, #30241b 100%) !important;
+}
+
+/* 10. Picture Jasper - Slate-to-Charcoal Gradient */
+.gem-picture-jasper {
+    background: radial-gradient(circle at 30% 30%, #6f7f98 0%, #3a4556 60%, #171d26 100%) !important;
+}
+
+/* 11. Amazonite - Beige-to-Gray Gradient */
+.gem-amazonite {
+    background: radial-gradient(circle at 30% 30%, #eae5df 0%, #b2aba1 60%, #6a645b 100%) !important;
+}
+
 
 /* Visual Gauge View styles */
 .promo-gauge-view {
