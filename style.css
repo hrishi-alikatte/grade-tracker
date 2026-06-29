@@ -2452,11 +2452,12 @@ body {
 
 /* Dashboard Hero Section */
 .dashboard-hero {
-    min-height: 80vh;
+    min-height: 70vh;
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    justify-content: flex-start;
     gap: 1.5rem;
+    padding-top: 1rem;
     padding-bottom: 2rem;
 }
 
