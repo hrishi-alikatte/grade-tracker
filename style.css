@@ -54,7 +54,7 @@
 }
 
 body {
-    background-image: url('background.jpg') !important;
+    background-image: url('background.png') !important;
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
