@@ -2449,3 +2449,13 @@ body {
     background-color: var(--color-primary);
     transition: background-color 0s;
 }
+
+/* Dashboard Hero Section */
+.dashboard-hero {
+    min-height: 85vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 1.5rem;
+    padding-bottom: 2rem;
+}

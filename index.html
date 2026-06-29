@@ -114,85 +114,88 @@
     </div>
 
     <div id="view-dashboard" class="page-view app-container" style="display: none;">
-        <!-- Header -->
-        <header class="header">
-            <div class="header-left">
-                <div class="logo-circle">
-                    <!-- Graduation cap icon -->
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.42 10.922a1 1 0 0 0-.019-1.838L12.83 5.18a2 2 0 0 0-1.66 0L2.6 9.08a1 1 0 0 0 0 1.832l8.57 3.908a2 2 0 0 0 1.66 0z"/><path d="M6 12v5c0 2 2 3 6 3s6-1 6-3v-5"/><path d="M21.5 12v6"/></svg>
-                </div>
-                <div class="header-text">
-                    <h1 id="title-container">Suivi des notes de <span id="student-name" contenteditable="true" title="Cliquez pour modifier le nom" style="border-bottom: 2px dashed rgba(255,255,255,0.4); outline: none;">Étudiant</span></h1>
-                    <div style="display: flex; align-items: center; gap: 0.75rem; margin-top: 0.25rem;">
-                        <span class="header-subtitle">Gymnase · barème 1 à 6</span>
+        <!-- Hero Section -->
+        <div class="dashboard-hero">
+            <!-- Header -->
+            <header class="header">
+                <div class="header-left">
+                    <div class="logo-circle">
+                        <!-- Graduation cap icon -->
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.42 10.922a1 1 0 0 0-.019-1.838L12.83 5.18a2 2 0 0 0-1.66 0L2.6 9.08a1 1 0 0 0 0 1.832l8.57 3.908a2 2 0 0 0 1.66 0z"/><path d="M6 12v5c0 2 2 3 6 3s6-1 6-3v-5"/><path d="M21.5 12v6"/></svg>
+                    </div>
+                    <div class="header-text">
+                        <h1 id="title-container">Suivi des notes de <span id="student-name" contenteditable="true" title="Cliquez pour modifier le nom" style="border-bottom: 2px dashed rgba(255,255,255,0.4); outline: none;">Étudiant</span></h1>
+                        <div style="display: flex; align-items: center; gap: 0.75rem; margin-top: 0.25rem;">
+                            <span class="header-subtitle">Gymnase · barème 1 à 6</span>
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div class="header-actions">
-                <select id="theme-selector" class="btn btn-secondary" style="padding: 0.5rem 1rem; font-size: 0.8rem; border-radius: var(--radius-full); cursor: pointer;" title="Changer le thème de couleur">
-                    <option value="navy">Navy</option>
-                    <option value="pink">Rose</option>
-                    <option value="green">Vert</option>
-                    <option value="purple">Violet</option>
-                    <option value="cozy">Sage Cozy</option>
-                    <option value="honey">Miel</option>
-                    <option value="skyblue">Sky Blue</option>
-                    <option value="crimson">Crimson</option>
-                    <option value="mint">Menthe</option>
-                    <option value="teal">Teal</option>
-                </select>
-                <button id="add-subject-btn" class="btn btn-primary">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
-                    Ajouter une branche
-                </button>
-            </div>
-        </header>
-
-        <!-- Year Selection Tabs (Grouped directly above Semester Tabs) -->
-        <div class="year-tabs-container" style="display: flex; gap: 0.5rem; justify-content: center; width: 100%;">
-            <div class="lang-toggle-container" id="year-selector" style="margin: 0; padding: 2px; width: 100%; display: flex; max-width: 600px; justify-content: space-between;">
-                <button type="button" class="lang-toggle-btn active" data-year="1" style="flex: 1; text-align: center;">1ère année</button>
-                <button type="button" class="lang-toggle-btn" data-year="2" style="flex: 1; text-align: center;">2ème année</button>
-                <button type="button" class="lang-toggle-btn" data-year="3" style="flex: 1; text-align: center;">3ème année</button>
-                <button type="button" class="lang-toggle-btn" data-year="4" style="flex: 1; text-align: center;">Évolution (3 ans)</button>
-            </div>
-        </div>
-
-        <!-- Semester Selection Tabs -->
-        <div class="semester-tabs-container">
-            <button class="semester-tab active" data-sem="sem1">1er Semestre</button>
-            <button class="semester-tab" data-sem="sem2">2ème Semestre</button>
-            <button class="semester-tab" data-sem="annual">Annuel (Combiné)</button>
-        </div>
-
-        <!-- PWA Install Banner -->
-        <div id="pwa-install-banner" class="promo-dashboard-container" style="background-color: var(--color-bg-surface); border: 1px solid var(--color-border-subtle); display: none; align-items: center; justify-content: space-between; flex-direction: row; gap: 1rem;">
-            <div style="display:flex; align-items:center; gap:0.75rem;">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--color-primary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-                <div>
-                    <h3 style="font-size:1rem;font-weight:800;color:white;">Installer l'application</h3>
-                    <p style="font-size:0.75rem;color:var(--color-text-secondary);margin:0;">Ajoutez GradeVibe à votre écran d'accueil pour l'utiliser hors-ligne.</p>
+                <div class="header-actions">
+                    <select id="theme-selector" class="btn btn-secondary" style="padding: 0.5rem 1rem; font-size: 0.8rem; border-radius: var(--radius-full); cursor: pointer;" title="Changer le thème de couleur">
+                        <option value="navy">Navy</option>
+                        <option value="pink">Rose</option>
+                        <option value="green">Vert</option>
+                        <option value="purple">Violet</option>
+                        <option value="cozy">Sage Cozy</option>
+                        <option value="honey">Miel</option>
+                        <option value="skyblue">Sky Blue</option>
+                        <option value="crimson">Crimson</option>
+                        <option value="mint">Menthe</option>
+                        <option value="teal">Teal</option>
+                    </select>
+                    <button id="add-subject-btn" class="btn btn-primary">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                        Ajouter une branche
+                    </button>
                 </div>
-            </div>
-            <button id="pwa-install-btn" class="btn btn-primary" style="padding: 6px 12px; font-size:0.8rem;">Installer</button>
-        </div>
+            </header>
 
-        <!-- Promotion Dashboard Banner -->
-        <section class="promo-dashboard-container" id="promo-dashboard">
-            <div class="promo-header">
-                <div class="promo-status-badge" id="promo-status-badge">
-                    <div class="promo-3d-graphic">
-                        <div class="slice slice-1"></div>
-                        <div class="slice slice-2"></div>
-                        <div class="slice slice-3"></div>
+            <!-- PWA Install Banner -->
+            <div id="pwa-install-banner" class="promo-dashboard-container" style="background-color: var(--color-bg-surface); border: 1px solid var(--color-border-subtle); display: none; align-items: center; justify-content: space-between; flex-direction: row; gap: 1rem;">
+                <div style="display:flex; align-items:center; gap:0.75rem;">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--color-primary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                    <div>
+                        <h3 style="font-size:1rem;font-weight:800;color:white;">Installer l'application</h3>
+                        <p style="font-size:0.75rem;color:var(--color-text-secondary);margin:0;">Ajoutez GradeVibe à votre écran d'accueil pour l'utiliser hors-ligne.</p>
                     </div>
                 </div>
-                <div class="promo-text-summary" style="flex: 1;">
-                    <h2 id="promo-title">En route pour réussir l'année</h2>
-                    <p id="promo-subtitle">Moyenne générale 4.5 sur 0 branches.</p>
+                <button id="pwa-install-btn" class="btn btn-primary" style="padding: 6px 12px; font-size:0.8rem;">Installer</button>
+            </div>
+
+            <!-- Promotion Dashboard Banner -->
+            <section class="promo-dashboard-container" id="promo-dashboard">
+                <div class="promo-header">
+                    <div class="promo-status-badge" id="promo-status-badge">
+                        <div class="promo-3d-graphic">
+                            <div class="slice slice-1"></div>
+                            <div class="slice slice-2"></div>
+                            <div class="slice slice-3"></div>
+                        </div>
+                    </div>
+                    <div class="promo-text-summary" style="flex: 1;">
+                        <h2 id="promo-title">En route pour réussir l'année</h2>
+                        <p id="promo-subtitle">Moyenne générale 4.5 sur 0 branches.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Year Selection Tabs (Grouped directly under Promotion Box) -->
+            <div class="year-tabs-container" style="display: flex; gap: 0.5rem; justify-content: center; width: 100%;">
+                <div class="lang-toggle-container" id="year-selector" style="margin: 0; padding: 2px; width: 100%; display: flex; max-width: 600px; justify-content: space-between;">
+                    <button type="button" class="lang-toggle-btn active" data-year="1" style="flex: 1; text-align: center;">1ère année</button>
+                    <button type="button" class="lang-toggle-btn" data-year="2" style="flex: 1; text-align: center;">2ème année</button>
+                    <button type="button" class="lang-toggle-btn" data-year="3" style="flex: 1; text-align: center;">3ème année</button>
+                    <button type="button" class="lang-toggle-btn" data-year="4" style="flex: 1; text-align: center;">Évolution (3 ans)</button>
                 </div>
             </div>
-        </section>
+
+            <!-- Semester Selection Tabs -->
+            <div class="semester-tabs-container">
+                <button class="semester-tab active" data-sem="sem1">1er Semestre</button>
+                <button class="semester-tab" data-sem="sem2">2ème Semestre</button>
+                <button class="semester-tab" data-sem="annual">Annuel (Combiné)</button>
+            </div>
+        </div>
 
         <!-- Evolution Slide Container -->
         <section id="evolution-slide-container" style="display: none; flex-direction: column; gap: 1.5rem;"></section>
