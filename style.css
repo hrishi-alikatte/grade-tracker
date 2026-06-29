@@ -2405,3 +2405,15 @@ body {
     background-color: #dc2626;
     transform: scale(1.15);
 }
+
+/* Remove all shadows as requested by the user */
+* {
+    box-shadow: none !important;
+    text-shadow: none !important;
+}
+.gem-sphere-shadow {
+    display: none !important;
+}
+.promo-3d-graphic, .bilan-3d-icon {
+    filter: none !important;
+}

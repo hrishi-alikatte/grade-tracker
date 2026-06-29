@@ -613,12 +613,20 @@ function checkVaudPromotion(subjects, semester) {
 
     const overallAverage = activeSubjectsCount > 0 ? (roundedAveragesSum / activeSubjectsCount) : null;
     const requiredCompensation = (state.currentYear === 3) ? (2 * pointsManquants) : 0;
-    const isPromoted = activeSubjectsCount > 0 && 
-                       overallAverage >= 4.0 && 
-                       insuffisances <= 4 && 
-                       pointsEnPlus >= requiredCompensation &&
-                       pointsManquants <= 3.0 &&
-                       coreSumPassed;
+    let isPromoted = false;
+    if (state.currentYear === 1 || state.currentYear === 2) {
+        isPromoted = activeSubjectsCount > 0 &&
+                     coreSumPassed &&
+                     overallAverage >= 4.0 &&
+                     insuffisances <= 4;
+    } else {
+        isPromoted = activeSubjectsCount > 0 && 
+                     overallAverage >= 4.0 && 
+                     insuffisances <= 4 && 
+                     pointsEnPlus >= requiredCompensation &&
+                     pointsManquants <= 3.0 &&
+                     coreSumPassed;
+    }
 
     return {
         overallAverage: overallAverage !== null ? Math.round(overallAverage * 100) / 100 : null,
