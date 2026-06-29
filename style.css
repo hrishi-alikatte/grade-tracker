@@ -2206,12 +2206,11 @@ body {
 /* Average Label on the Sphere */
 .gem-sphere-average {
     font-size: 1.8rem;
-    font-weight: 700;
-    color: #ffffff;
-    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.95), 0 0 4px rgba(0, 0, 0, 0.7);
+    font-weight: 800;
+    color: #000000 !important;
     z-index: 4;
     pointer-events: none;
-    font-family: var(--font-family-mono);
+    font-family: 'Montserrat', 'Outfit', -apple-system, sans-serif;
     letter-spacing: -0.02em;
 }
 
