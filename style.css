@@ -2234,63 +2234,59 @@ body {
    Gemstone Texture Definitions (Highly Realistic & Organic)
    ========================================================================== */
 
-.gem-texture {
-    display: none !important;
+/* 1. Ruby Zoisite */
+.gem-ruby-zoisite .gem-texture {
+    background-image: url('assets/ruby-zoisite.png');
 }
 
-/* 1. Maths - Slate Blue */
-.gem-ruby-zoisite {
-    background: radial-gradient(circle at 30% 30%, #7d91ab 0%, #4a576c 60%, #202733 100%) !important;
+/* 2. Red Jasper */
+.gem-red-jasper .gem-texture {
+    background-image: url('assets/red-jasper.png');
 }
 
-/* 2. Français - Dusty Blue */
-.gem-red-jasper {
-    background: radial-gradient(circle at 30% 30%, #b2c3d9 0%, #7d91ab 60%, #404c5c 100%) !important;
+/* 3. Ocean Jasper */
+.gem-ocean-jasper .gem-texture {
+    background-image: url('assets/ocean-jasper.png');
 }
 
-/* 3. OS - Cool Gray */
-.gem-ocean-jasper {
-    background: radial-gradient(circle at 30% 30%, #ffffff 0%, #cfcfd1 60%, #858587 100%) !important;
+/* 4. Rainbow Moonstone */
+.gem-rainbow-moonstone .gem-texture {
+    background-image: url('assets/rainbow-moonstone.png');
 }
 
-/* 4. Anglais - Warm Beige */
-.gem-rainbow-moonstone {
-    background: radial-gradient(circle at 30% 30%, #c9bfae 0%, #958a7b 60%, #524b41 100%) !important;
+/* 5. Selenite */
+.gem-selenite .gem-texture {
+    background-image: url('assets/selenite.png');
 }
 
-/* 5. Allemand - Deep Brown */
-.gem-selenite {
-    background: radial-gradient(circle at 30% 30%, #7d5a4c 0%, #462e24 60%, #1e110b 100%) !important;
+/* 6. Sodalite */
+.gem-sodalite .gem-texture {
+    background-image: url('assets/sodalite.png');
 }
 
-/* 6. Sodalite - Dark Charcoal */
-.gem-sodalite {
-    background: radial-gradient(circle at 30% 30%, #5b5e66 0%, #2f3136 60%, #141517 100%) !important;
+/* 7. Serpentine */
+.gem-serpentine .gem-texture {
+    background-image: url('assets/serpentine.png');
 }
 
-/* 7. Serpentine - Slate-to-Dusty Gradient */
-.gem-serpentine {
-    background: radial-gradient(circle at 30% 30%, #95aacf 0%, #637591 60%, #2b3545 100%) !important;
+/* 8. Rose Quartz */
+.gem-rose-quartz .gem-texture {
+    background-image: url('assets/rose-quartz.png');
 }
 
-/* 8. Rose Quartz - Dusty-to-Gray Gradient */
-.gem-rose-quartz {
-    background: radial-gradient(circle at 30% 30%, #d8e5f5 0%, #a4b4ca 60%, #5b687a 100%) !important;
+/* 9. Labradorite */
+.gem-labradorite .gem-texture {
+    background-image: url('assets/labradorite.png');
 }
 
-/* 9. Labradorite - Beige-to-Brown Gradient */
-.gem-labradorite {
-    background: radial-gradient(circle at 30% 30%, #a28b78 0%, #6a5747 60%, #30241b 100%) !important;
+/* 10. Picture Jasper */
+.gem-picture-jasper .gem-texture {
+    background-image: url('assets/picture-jasper.png');
 }
 
-/* 10. Picture Jasper - Slate-to-Charcoal Gradient */
-.gem-picture-jasper {
-    background: radial-gradient(circle at 30% 30%, #6f7f98 0%, #3a4556 60%, #171d26 100%) !important;
-}
-
-/* 11. Amazonite - Beige-to-Gray Gradient */
-.gem-amazonite {
-    background: radial-gradient(circle at 30% 30%, #eae5df 0%, #b2aba1 60%, #6a645b 100%) !important;
+/* 11. Amazonite */
+.gem-amazonite .gem-texture {
+    background-image: url('assets/amazonite.png');
 }
 
 
