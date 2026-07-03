@@ -2992,8 +2992,8 @@ document.getElementById('add-grade-form').addEventListener('submit', (e) => {
                     renderSubjects();
                     updateDashboard();
 
-                    // Celebratory effect for good grades (>= 5.0) or warning for insufficient grades (< 4.0)
-                    if (value >= 5.0) {
+                    // Celebratory effect for perfect grade (=== 6.0) or warning for insufficient grades (< 4.0)
+                    if (value === 6.0) {
                         startConfetti();
                         playConfettiSound();
                     } else if (value < 4.0) {
