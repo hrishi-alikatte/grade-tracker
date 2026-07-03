@@ -3036,7 +3036,14 @@ document.getElementById('add-grade-form').addEventListener('submit', (e) => {
                     } else if (value < 4.0) {
                         playFahSound();
                         if (value < 3.0) {
-                            showSidebarToast("bruh");
+                            const badGradeMessages = [
+                                "t'a revisé ou ...",
+                                "bruh",
+                                "rappelle toi de ton objective!",
+                                "bye."
+                            ];
+                            const randomMsg = badGradeMessages[Math.floor(Math.random() * badGradeMessages.length)];
+                            showSidebarToast(randomMsg);
                         }
                     }
 
