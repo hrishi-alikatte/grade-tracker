@@ -3069,12 +3069,17 @@ function switchView(viewId) {
     if (viewDashboard) viewDashboard.style.display = 'none';
     
     // Show selected view
-    const selectedView = document.getElementById(viewId);
-    if (selectedView) {
-        if (viewId === 'view-landing' || viewId === 'view-guide') {
-            selectedView.style.display = 'flex';
-        } else {
-            selectedView.style.display = 'block';
+    if (viewId === 'view-landing') {
+        if (viewLanding) viewLanding.style.display = 'flex';
+        if (viewDashboard) viewDashboard.style.display = 'block';
+    } else {
+        const selectedView = document.getElementById(viewId);
+        if (selectedView) {
+            if (viewId === 'view-guide') {
+                selectedView.style.display = 'flex';
+            } else {
+                selectedView.style.display = 'block';
+            }
         }
     }
     
@@ -3138,15 +3143,18 @@ function init() {
         updateDashboard();
     }
 
-    // Onboarding Enter App Button
-    const btnEnterApp = document.getElementById('btn-enter-app');
-    if (btnEnterApp) {
-        btnEnterApp.addEventListener('click', () => {
-            state.hasSeenOnboarding = true;
-            saveState();
-            switchView('view-dashboard');
-        });
-    }
+    // Onboarding Enter App Buttons
+    const enterButtons = ['btn-enter-app', 'btn-enter-app-bottom'];
+    enterButtons.forEach(id => {
+        const btn = document.getElementById(id);
+        if (btn) {
+            btn.addEventListener('click', () => {
+                state.hasSeenOnboarding = true;
+                saveState();
+                switchView('view-dashboard');
+            });
+        }
+    });
 
     // Bind Top Navigation Tabs
     document.querySelectorAll('.nav-tab-btn').forEach(btn => {

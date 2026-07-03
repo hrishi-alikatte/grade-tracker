@@ -57,60 +57,164 @@
             </button>
         </div>
     </nav>    <!-- Welcoming Landing/Start Page -->
-    <div id="view-landing" class="page-view landing-page-container" style="display: none; justify-content: center; align-items: center; min-height: 80vh; padding: 2rem 1.5rem;">
-        <div class="landing-card" style="margin: 0 auto; display: flex; flex-direction: column; align-items: center; text-align: center; width: 100%;">
-            <div class="landing-logo-circle" style="width: 80px; height: 80px; border-radius: 50%; background-color: var(--color-primary); color: var(--color-bg-base); display: flex; align-items: center; justify-content: center; margin-bottom: 1.5rem; box-shadow: 0 8px 24px rgba(96, 165, 250, 0.3);">
-                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.42 10.922a1 1 0 0 0-.019-1.838L12.83 5.18a2 2 0 0 0-1.66 0L2.6 9.08a1 1 0 0 0 0 1.832l8.57 3.908a2 2 0 0 0 1.66 0z"/><path d="M6 12v5c0 2 2 3 6 3s6-1 6-3v-5"/><path d="M21.5 12v6"/></svg>
+    <div id="view-landing" class="page-view landing-page-container" style="display: none; flex-direction: column;">
+        <!-- SECTION 1: HERO (Plein écran) -->
+        <section class="landing-hero-section">
+            <div class="landing-logo-circle">
+                <svg width="46" height="46" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.42 10.922a1 1 0 0 0-.019-1.838L12.83 5.18a2 2 0 0 0-1.66 0L2.6 9.08a1 1 0 0 0 0 1.832l8.57 3.908a2 2 0 0 0 1.66 0z"/><path d="M6 12v5c0 2 2 3 6 3s6-1 6-3v-5"/><path d="M21.5 12v6"/></svg>
             </div>
-            <h1 class="landing-title" style="font-size: 2.2rem; font-weight: 800; color: white; letter-spacing: -0.03em; margin-bottom: 0.5rem;">GradeVibe Vaud</h1>
-            <p class="landing-tagline" style="font-size: 0.95rem; color: var(--color-text-secondary); margin-bottom: 2rem; max-width: 400px; line-height: 1.5;">Calculez et suivez votre promotion au Gymnase vaudois en toute simplicité.</p>
+            <h1 class="landing-title">GradeVibe Vaud</h1>
+            <p class="landing-tagline">
+                Prenez le contrôle de votre parcours scolaire. Calculez vos moyennes, suivez vos points de promotion et simulez vos cibles en toute simplicité.
+            </p>
             
-            <div class="landing-features" style="width: 100%; display: flex; flex-direction: column; gap: 1.25rem; margin-bottom: 2.5rem; text-align: left;">
-                <!-- Feature 1 -->
-                <div class="landing-feature-item" style="display: flex; gap: 1rem; align-items: flex-start; background-color: rgba(0, 0, 0, 0.15); padding: 0.85rem 1rem; border-radius: var(--radius-md); border: 1px solid rgba(255, 255, 255, 0.03);">
-                    <span style="color: var(--color-primary); display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; background: rgba(96,165,250,0.1); border-radius: var(--radius-md); flex-shrink: 0; margin-top: 0.1rem;">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
-                    </span>
-                    <div class="feature-text">
-                        <h3 style="font-size: 0.95rem; font-weight: 800; color: white; margin: 0 0 0.15rem 0;">Scannez vos examens</h3>
-                        <p style="font-size: 0.75rem; color: var(--color-text-secondary); margin: 0; line-height: 1.4;">Prenez une photo de vos épreuves, notre IA OCR détecte et vérifie automatiquement votre note.</p>
-                    </div>
-                </div>
-                <!-- Feature 2 -->
-                <div class="landing-feature-item" style="display: flex; gap: 1rem; align-items: flex-start; background-color: rgba(0, 0, 0, 0.15); padding: 0.85rem 1rem; border-radius: var(--radius-md); border: 1px solid rgba(255, 255, 255, 0.03);">
-                    <span style="color: var(--color-primary); display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; background: rgba(96,165,250,0.1); border-radius: var(--radius-md); flex-shrink: 0; margin-top: 0.1rem;">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
-                    </span>
-                    <div class="feature-text">
-                        <h3 style="font-size: 0.95rem; font-weight: 800; color: white; margin: 0 0 0.15rem 0;">Promotion en temps réel</h3>
-                        <p style="font-size: 0.75rem; color: var(--color-text-secondary); margin: 0; line-height: 1.4;">Moyennes, insuffisances, et écarts négatifs doublés calculés automatiquement.</p>
-                    </div>
-                </div>
-                <!-- Feature 3 -->
-                <div class="landing-feature-item" style="display: flex; gap: 1rem; align-items: flex-start; background-color: rgba(0, 0, 0, 0.15); padding: 0.85rem 1rem; border-radius: var(--radius-md); border: 1px solid rgba(255, 255, 255, 0.03);">
-                    <span style="color: var(--color-primary); display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; background: rgba(96,165,250,0.1); border-radius: var(--radius-md); flex-shrink: 0; margin-top: 0.1rem;">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 14.7255 3.09032 17.1962 4.85857 19H12V22Z"/><circle cx="7.5" cy="10.5" r="1.5"/><circle cx="11.5" cy="7.5" r="1.5"/><circle cx="16.5" cy="9.5" r="1.5"/><circle cx="15.5" cy="14.5" r="1.5"/></svg>
-                    </span>
-                    <div class="feature-text">
-                        <h3 style="font-size: 0.95rem; font-weight: 800; color: white; margin: 0 0 0.15rem 0;">Thèmes Premium</h3>
-                        <p style="font-size: 0.75rem; color: var(--color-text-secondary); margin: 0; line-height: 1.4;">Changement de thèmes à chaud avec des palettes de couleurs adaptées et élégantes.</p>
-                    </div>
-                </div>
+            <div style="display: flex; flex-direction: column; gap: 1rem; width: 100%; max-width: 320px; z-index: 10;">
+                <button type="button" class="btn btn-primary btn-enter-app" id="btn-enter-app" style="width: 100%; padding: 1.2rem; font-size: 1.1rem; font-weight: 800; border-radius: var(--radius-md); box-shadow: 0 8px 24px rgba(96, 165, 250, 0.35);">
+                    Accéder au tableau de bord
+                </button>
             </div>
-            
-            <button type="button" class="btn btn-primary" id="btn-enter-app" style="width: 100%; padding: 1rem; font-size: 1rem; font-weight: bold; border-radius: var(--radius-md); box-shadow: 0 4px 14px rgba(96, 165, 250, 0.4); margin-bottom: 1rem;">
-                Accéder au tableau de bord
-            </button>
 
-            <!-- App Intro & About Creator Section -->
-            <div class="landing-creator-section" style="margin-top: 0.5rem; text-align: left; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 1rem; width: 100%; font-size: 0.8rem; display: flex; flex-direction: column; gap: 0.5rem; line-height: 1.5;">
-                <p style="color: var(--color-primary); font-weight: bold; font-size: 0.85rem; display: flex; align-items: center; gap: 0.25rem; margin-top: 0.25rem; margin-bottom: 0;">🚀 Un mot de l'auteur</p>
-                <p style="color: var(--color-text-primary); font-style: italic; margin: 0;">
-                    "En tant que créateur de GradeVibe, j'ai voulu créer l'outil ultime de gestion scolaire pour tous les gymnasiens vaudois. Fini le stress des calculs mentaux et les incertitudes sur le bilan des points ! Concentrez-vous sur ce qui compte vraiment."
-                </p>
-                <p style="color: var(--color-text-secondary); font-size: 0.75rem; text-align: right; font-weight: 500; margin: 0.15rem 0 0 0;">— HA, Développeur de GradeVibe Vaud</p>
+            <!-- Animated Scroll Down Indicator -->
+            <div class="scroll-down-indicator" onclick="document.getElementById('landing-features').scrollIntoView({ behavior: 'smooth' });">
+                <span>Faites défiler pour découvrir</span>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
             </div>
-        </div>
+        </section>
+
+        <!-- SECTION 2: FEATURES -->
+        <section id="landing-features" class="landing-section" style="border-top: 1px solid rgba(255, 255, 255, 0.05);">
+            <div style="text-align: center; margin-bottom: 4rem;">
+                <h2 style="font-size: clamp(1.8rem, 4vw, 2.5rem); font-weight: 800; color: white; letter-spacing: -0.02em; margin-bottom: 1rem;">Fonctionnalités Clés</h2>
+                <p style="color: var(--color-text-secondary); max-width: 500px; margin: 0 auto; font-size: 0.95rem;">Tout ce dont vous avez besoin pour naviguer sereinement dans votre scolarité.</p>
+            </div>
+            
+            <div class="landing-features-grid">
+                <!-- Feature 1: OCR -->
+                <div class="landing-feature-card">
+                    <div style="color: var(--color-primary); display: flex; align-items: center; justify-content: center; width: 48px; height: 48px; background: rgba(96,165,250,0.1); border-radius: var(--radius-md);">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+                    </div>
+                    <div>
+                        <h3 style="font-size: 1.15rem; font-weight: 800; color: white; margin-bottom: 0.5rem;">Scanner d'examens (OCR)</h3>
+                        <p style="font-size: 0.85rem; color: var(--color-text-secondary); line-height: 1.5; margin: 0;">Prenez en photo vos épreuves papier. Notre intelligence artificielle détecte automatiquement votre note et la pré-remplit.</p>
+                    </div>
+                </div>
+                
+                <!-- Feature 2: Real-time Promo -->
+                <div class="landing-feature-card">
+                    <div style="color: var(--color-primary); display: flex; align-items: center; justify-content: center; width: 48px; height: 48px; background: rgba(96,165,250,0.1); border-radius: var(--radius-md);">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+                    </div>
+                    <div>
+                        <h3 style="font-size: 1.15rem; font-weight: 800; color: white; margin-bottom: 0.5rem;">Promotion en temps réel</h3>
+                        <p style="font-size: 0.85rem; color: var(--color-text-secondary); line-height: 1.5; margin: 0;">L'algorithme calcule vos moyennes annuelles, vos insuffisances, et applique la règle officielle du bilan des points doublés.</p>
+                    </div>
+                </div>
+                
+                <!-- Feature 3: Target Grade -->
+                <div class="landing-feature-card">
+                    <div style="color: var(--color-primary); display: flex; align-items: center; justify-content: center; width: 48px; height: 48px; background: rgba(96,165,250,0.1); border-radius: var(--radius-md);">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
+                    </div>
+                    <div>
+                        <h3 style="font-size: 1.15rem; font-weight: 800; color: white; margin-bottom: 0.5rem;">Simulateur de cible</h3>
+                        <p style="font-size: 0.85rem; color: var(--color-text-secondary); line-height: 1.5; margin: 0;">Sachez exactement quelle note obtenir lors de votre prochain examen pour atteindre ou conserver votre objectif de moyenne.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 3: PROMOTION RULES DEEP DIVE -->
+        <section id="landing-rules" class="landing-section" style="border-top: 1px solid rgba(255, 255, 255, 0.05);">
+            <div style="text-align: center; margin-bottom: 3rem;">
+                <h2 style="font-size: clamp(1.8rem, 4vw, 2.5rem); font-weight: 800; color: white; letter-spacing: -0.02em; margin-bottom: 1rem;">Les 3 Règles de Promotion</h2>
+                <p style="color: var(--color-text-secondary); max-width: 600px; margin: 0 auto; font-size: 0.95rem;">
+                    GradeVibe intègre à 100% les exigences du Gymnase vaudois pour déterminer votre réussite.
+                </p>
+            </div>
+
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; max-width: 1000px; margin: 0 auto 3rem auto; width: 100%;">
+                <!-- Rule 1 -->
+                <div style="background: rgba(0,0,0,0.2); border-left: 4px solid var(--color-primary); padding: 1.5rem; border-radius: var(--radius-md);">
+                    <h3 style="font-size: 1.1rem; color: white; font-weight: 800; margin: 0 0 0.5rem 0; display: flex; align-items: center; gap: 0.5rem;">
+                        <span style="font-size: 1.25rem;">①</span> Moyenne Générale >= 4.0
+                    </h3>
+                    <p style="font-size: 0.8rem; color: var(--color-text-secondary); line-height: 1.5; margin: 0;">
+                        La moyenne arithmétique globale de l'ensemble de vos branches doit être supérieure ou égale à 4.0.
+                    </p>
+                </div>
+                <!-- Rule 2 -->
+                <div style="background: rgba(0,0,0,0.2); border-left: 4px solid #10b981; padding: 1.5rem; border-radius: var(--radius-md);">
+                    <h3 style="font-size: 1.1rem; color: white; font-weight: 800; margin: 0 0 0.5rem 0; display: flex; align-items: center; gap: 0.5rem;">
+                        <span style="font-size: 1.25rem; color: #10b981;">②</span> Bilan des points >= 0
+                    </h3>
+                    <p style="font-size: 0.8rem; color: var(--color-text-secondary); line-height: 1.5; margin: 0;">
+                        La somme de vos écarts par rapport à 4.0 doit être positive. Les notes insuffisantes comptent double dans la balance !
+                    </p>
+                </div>
+                <!-- Rule 3 -->
+                <div style="background: rgba(0,0,0,0.2); border-left: 4px solid #f59e0b; padding: 1.5rem; border-radius: var(--radius-md);">
+                    <h3 style="font-size: 1.1rem; color: white; font-weight: 800; margin: 0 0 0.5rem 0; display: flex; align-items: center; gap: 0.5rem;">
+                        <span style="font-size: 1.25rem; color: #f59e0b;">③</span> Max 4 Insuffisances
+                    </h3>
+                    <p style="font-size: 0.8rem; color: var(--color-text-secondary); line-height: 1.5; margin: 0;">
+                        Vous ne pouvez pas avoir plus de 4 branches avec une moyenne annuelle inférieure à 4.0.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Double Gap Explainer Box -->
+            <div style="background-color: rgba(96, 165, 250, 0.03); border: 1px dashed rgba(96, 165, 250, 0.2); padding: 1.5rem; border-radius: var(--radius-lg); max-width: 800px; margin: 0 auto; width: 100%;">
+                <h4 style="font-size: 1rem; color: white; font-weight: 800; margin: 0 0 0.75rem 0; display: flex; align-items: center; gap: 0.5rem;">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--color-primary)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                    Comprendre le doublement des écarts négatifs
+                </h4>
+                <p style="font-size: 0.85rem; color: var(--color-text-secondary); line-height: 1.5; margin: 0 0 1rem 0;">
+                    Pour encourager la régularité, le règlement du Gymnase pénalise lourdement les faiblesses. Chaque demi-point en dessous de 4.0 requiert un point entier au-dessus de 4.0 pour être compensé :
+                </p>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; font-size: 0.8rem; font-family: var(--font-family-mono);">
+                    <div style="background: rgba(16, 185, 129, 0.05); padding: 0.75rem; border-radius: var(--radius-sm); border: 1px solid rgba(16, 185, 129, 0.1); text-align: center;">
+                        Moyenne <span style="color: #10b981; font-weight: bold;">5.0</span> (+1.0) <br>
+                        ➔ <span style="color: #10b981; font-weight: bold;">+1.0 pt</span> de bilan
+                    </div>
+                    <div style="background: rgba(239, 68, 68, 0.05); padding: 0.75rem; border-radius: var(--radius-sm); border: 1px solid rgba(239, 68, 68, 0.1); text-align: center;">
+                        Moyenne <span style="color: #ef4444; font-weight: bold;">3.5</span> (-0.5) <br>
+                        ➔ <span style="color: #ef4444; font-weight: bold;">-1.0 pt</span> (doublé !)
+                    </div>
+                    <div style="background: rgba(239, 68, 68, 0.05); padding: 0.75rem; border-radius: var(--radius-sm); border: 1px solid rgba(239, 68, 68, 0.1); text-align: center;">
+                        Moyenne <span style="color: #ef4444; font-weight: bold;">3.0</span> (-1.0) <br>
+                        ➔ <span style="color: #ef4444; font-weight: bold;">-2.0 pts</span> (doublé !)
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 4: ABOUT & MOT DE L'AUTEUR -->
+        <section id="landing-creator" class="landing-section" style="border-top: 1px solid rgba(255, 255, 255, 0.05);">
+            <div style="max-width: 650px; margin: 0 auto; width: 100%; display: flex; flex-direction: column; gap: 2.5rem;">
+                <div class="creator-word-box">
+                    <span style="color: var(--color-primary); font-size: 3rem; font-family: Georgia, serif; line-height: 1; position: absolute; top: 1rem; left: 1.5rem; opacity: 0.3;">“</span>
+                    <h3 style="font-size: 1.15rem; color: var(--color-primary); font-weight: 800; margin: 0 0 1rem 0; z-index: 1; position: relative;">🚀 Le mot du développeur</h3>
+                    <p style="color: var(--color-text-primary); font-style: italic; font-size: 1rem; line-height: 1.6; margin: 0 0 1.5rem 0; z-index: 1; position: relative;">
+                        "En tant que créateur de GradeVibe, j'ai voulu concevoir l'outil ultime de gestion scolaire pour tous les gymnasiens vaudois. Fini le stress des calculs manuels et les incertitudes sur le bilan des points ! Concentrez-vous sur ce qui compte vraiment : vos apprentissages."
+                    </p>
+                    <div style="text-align: right; z-index: 1; position: relative;">
+                        <strong style="color: white; font-size: 0.9rem;">— HA</strong>
+                        <span style="color: var(--color-text-secondary); font-size: 0.8rem; display: block;">Développeur de GradeVibe Vaud</span>
+                    </div>
+                </div>
+
+                <div style="text-align: center; display: flex; flex-direction: column; align-items: center; gap: 1rem;">
+                    <h4 style="font-size: 1.25rem; font-weight: 800; color: white; margin: 0;">Prêt à suivre vos notes ?</h4>
+                    <p style="color: var(--color-text-secondary); font-size: 0.85rem; max-width: 450px; margin: 0 0 1rem 0;">
+                        Vous pouvez continuer à faire défiler pour voir et modifier vos notes ci-dessous, ou cliquer directement sur le bouton pour activer le mode tableau de bord.
+                    </p>
+                    <button type="button" class="btn btn-primary btn-enter-app" id="btn-enter-app-bottom" style="padding: 1rem 2.5rem; font-size: 1.1rem; font-weight: 800; border-radius: var(--radius-md); box-shadow: 0 8px 24px rgba(96, 165, 250, 0.3);">
+                        Lancer le tableau de bord
+                    </button>
+                </div>
+            </div>
+        </section>
     </div>
 
     <div id="view-dashboard" class="page-view app-container" style="display: none;">
