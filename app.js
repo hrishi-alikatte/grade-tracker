@@ -2998,6 +2998,9 @@ document.getElementById('add-grade-form').addEventListener('submit', (e) => {
                         playConfettiSound();
                     } else if (value < 4.0) {
                         playFahSound();
+                        if (value < 3.0) {
+                            alert("bruh");
+                        }
                     }
 
                     // Reset form and variables
