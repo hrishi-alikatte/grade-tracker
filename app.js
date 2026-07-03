@@ -3069,17 +3069,12 @@ function switchView(viewId) {
     if (viewDashboard) viewDashboard.style.display = 'none';
     
     // Show selected view
-    if (viewId === 'view-landing') {
-        if (viewLanding) viewLanding.style.display = 'flex';
-        if (viewDashboard) viewDashboard.style.display = 'block';
-    } else {
-        const selectedView = document.getElementById(viewId);
-        if (selectedView) {
-            if (viewId === 'view-guide') {
-                selectedView.style.display = 'flex';
-            } else {
-                selectedView.style.display = 'block';
-            }
+    const selectedView = document.getElementById(viewId);
+    if (selectedView) {
+        if (viewId === 'view-landing' || viewId === 'view-guide') {
+            selectedView.style.display = 'flex';
+        } else {
+            selectedView.style.display = 'block';
         }
     }
     
