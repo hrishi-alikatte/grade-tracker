@@ -984,13 +984,15 @@ function updateDashboard() {
         if (results.insuffisances > 4) {
             reasons.push(`Vous avez ${results.insuffisances} branches insuffisantes (maximum 4 autorisées)`);
         }
-        if (results.pointsManquants > 3.0) {
-            const diff = (results.pointsManquants - 3.0).toFixed(1);
-            reasons.push(`Votre déficit total de branches insuffisantes (${results.pointsManquants.toFixed(1)}) dépasse de ${diff} point(s) la limite autorisée (3.0)`);
-        }
-        if (results.pointsEnPlus < results.requiredCompensation) {
-            const diff = (results.requiredCompensation - results.pointsEnPlus).toFixed(1);
-            reasons.push(`Il vous manque ${diff} point(s) de compensation (le surplus au-dessus de 4.0 doit combler le double du déficit)`);
+        if (state.currentYear === 3) {
+            if (results.pointsManquants > 3.0) {
+                const diff = (results.pointsManquants - 3.0).toFixed(1);
+                reasons.push(`Votre déficit total de branches insuffisantes (${results.pointsManquants.toFixed(1)}) dépasse de ${diff} point(s) la limite autorisée (3.0)`);
+            }
+            if (results.pointsEnPlus < results.requiredCompensation) {
+                const diff = (results.requiredCompensation - results.pointsEnPlus).toFixed(1);
+                reasons.push(`Il vous manque ${diff} point(s) de compensation (le surplus au-dessus de 4.0 doit combler le double du déficit)`);
+            }
         }
         
         promoSubtitle.innerHTML = reasons.join('<br>');
