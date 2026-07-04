@@ -651,9 +651,6 @@ function checkVaudPromotion(subjects, semester) {
     const overallAverage = activeSubjectsCount > 0 ? (roundedAveragesSum / activeSubjectsCount) : null;
     const requiredCompensation = (state.currentYear === 3) ? (2 * pointsManquants) : 0;
     let isPromoted = false;
-    const is3Msem = (state.currentYear === 3 && sem !== 'annual');
-    const overallAvgPassed = !is3Msem || (overallAverage >= 4.0);
-
     if (state.currentYear === 1 || state.currentYear === 2) {
         isPromoted = activeSubjectsCount > 0 &&
                      coreSumPassed &&
@@ -661,7 +658,7 @@ function checkVaudPromotion(subjects, semester) {
                      insuffisances <= 4;
     } else {
         isPromoted = activeSubjectsCount > 0 && 
-                     overallAvgPassed &&
+                     overallAverage >= 4.0 && 
                      roundedAveragesSum >= activeSubjectsCount * 4.0 &&
                      insuffisances <= 4 && 
                      pointsEnPlus >= requiredCompensation &&
@@ -962,7 +959,7 @@ function updateDashboard() {
         if (promoDashboard) promoDashboard.className = 'promo-dashboard-container status-promoted';
         promoTitle.textContent = "Promotion garantie";
         const periodLabel = state.currentSemester === 'sem1' ? 'du 1er semestre' : state.currentSemester === 'sem2' ? 'du 2ème semestre' : 'annuelle (combinée)';
-        if (state.currentYear === 3 && state.currentSemester !== 'annual') {
+        if (state.currentYear === 3) {
             promoSubtitle.textContent = `Félicitations, vous remplissez toutes les conditions de promotion avec une moyenne générale arithmétique de ${results.overallAverage.toFixed(2)} (${periodLabel}) !`;
         } else {
             promoSubtitle.textContent = `Félicitations, vous remplissez toutes les conditions de promotion (${periodLabel}) !`;
@@ -974,7 +971,7 @@ function updateDashboard() {
         const reasons = [];
         if (results.g2Sum < results.g2Min) {
             const diff = (results.g2Min - results.g2Sum).toFixed(1);
-            if (state.currentYear === 3 && state.currentSemester !== 'annual') {
+            if (state.currentYear === 3) {
                 reasons.push(`Votre moyenne générale arithmétique (${results.overallAverage.toFixed(2)}) est inférieure à 4.0 (il vous manque ${diff} point(s) pour atteindre les ${results.g2Min.toFixed(1)} points requis dans le Groupe 2)`);
             } else {
                 reasons.push(`Il vous manque ${diff} point(s) pour atteindre les ${results.g2Min.toFixed(1)} points requis dans le Groupe 2 (toutes les disciplines)`);
