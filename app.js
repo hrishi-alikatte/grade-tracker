@@ -674,7 +674,9 @@ function checkVaudPromotion(subjects, semester) {
         requiredCompensation,
         isPromoted,
         g1Sum,
-        coreSumPassed
+        coreSumPassed,
+        g2Sum: roundedAveragesSum,
+        g2Min: activeSubjectsCount * 4.0
     };
 }
 
@@ -962,9 +964,9 @@ function updateDashboard() {
         promoTitle.textContent = "Promotion insuffisante";
         
         const reasons = [];
-        if (results.overallAverage < 4.0) {
-            const diff = (results.pointsManquants - results.pointsEnPlus).toFixed(1);
-            reasons.push(`Il vous manque ${diff} point(s) pour atteindre la moyenne de 4.0 dans le Groupe 2 (toutes les disciplines)`);
+        if (results.g2Sum < results.g2Min) {
+            const diff = (results.g2Min - results.g2Sum).toFixed(1);
+            reasons.push(`Il vous manque ${diff} point(s) pour atteindre les ${results.g2Min.toFixed(1)} points requis dans le Groupe 2 (toutes les disciplines)`);
         }
         if (!results.coreSumPassed) {
             const diff = (16.0 - results.g1Sum).toFixed(1);
