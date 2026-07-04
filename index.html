@@ -133,37 +133,37 @@
                 <!-- Rule 1 -->
                 <div style="background: rgba(0,0,0,0.2); border-left: 4px solid var(--color-primary); padding: 1.5rem; border-radius: var(--radius-md);">
                     <h3 style="font-size: 1.1rem; color: white; font-weight: 800; margin: 0 0 0.5rem 0; display: flex; align-items: center; gap: 0.5rem;">
-                        <span style="font-size: 1.25rem;">①</span> Moyenne Générale >= 4.0
-                    </h3>
-                    <p style="font-size: 0.8rem; color: var(--color-text-secondary); line-height: 1.5; margin: 0;">
-                        La moyenne arithmétique globale de l'ensemble de vos branches doit être supérieure ou égale à 4.0.
-                    </p>
-                </div>
-                <!-- Rule 2 -->
-                <div style="background: rgba(0,0,0,0.2); border-left: 4px solid #8b5cf6; padding: 1.5rem; border-radius: var(--radius-md);">
-                    <h3 style="font-size: 1.1rem; color: white; font-weight: 800; margin: 0 0 0.5rem 0; display: flex; align-items: center; gap: 0.5rem;">
-                        <span style="font-size: 1.25rem; color: #a78bfa;">②</span> Points Groupes 1 & 2
+                        <span style="font-size: 1.25rem;">①</span> Points Groupes 1 & 2
                     </h3>
                     <p style="font-size: 0.8rem; color: var(--color-text-secondary); line-height: 1.5; margin: 0;">
                         Obtenir au minimum 16.0 points dans le Groupe 1 (branches fondamentales) et un total suffisant dans le Groupe 2.
                     </p>
                 </div>
-                <!-- Rule 3 -->
+                <!-- Rule 2 -->
                 <div style="background: rgba(0,0,0,0.2); border-left: 4px solid #f59e0b; padding: 1.5rem; border-radius: var(--radius-md);">
                     <h3 style="font-size: 1.1rem; color: white; font-weight: 800; margin: 0 0 0.5rem 0; display: flex; align-items: center; gap: 0.5rem;">
-                        <span style="font-size: 1.25rem; color: #f59e0b;">③</span> Max 4 Insuffisances
+                        <span style="font-size: 1.25rem; color: #f59e0b;">②</span> Max 4 Insuffisances
                     </h3>
                     <p style="font-size: 0.8rem; color: var(--color-text-secondary); line-height: 1.5; margin: 0;">
                         Vous ne pouvez pas avoir plus de 4 branches avec une moyenne annuelle inférieure à 4.0.
                     </p>
                 </div>
-                <!-- Rule 4 -->
+                <!-- Rule 3 -->
                 <div style="background: rgba(0,0,0,0.2); border-left: 4px solid #10b981; padding: 1.5rem; border-radius: var(--radius-md);">
                     <h3 style="font-size: 1.1rem; color: white; font-weight: 800; margin: 0 0 0.5rem 0; display: flex; align-items: center; gap: 0.5rem;">
-                        <span style="font-size: 1.25rem; color: #10b981;">④</span> Bilan des points >= 0 (3M)
+                        <span style="font-size: 1.25rem; color: #10b981;">③</span> Bilan des points >= 0 (3M)
                     </h3>
                     <p style="font-size: 0.8rem; color: var(--color-text-secondary); line-height: 1.5; margin: 0;">
                         Règle de la <strong>double compensation</strong> pour les filières gymnasiales en 3 ans (3M). La somme des écarts doit être positive, les insuffisances comptant double.
+                    </p>
+                </div>
+                <!-- Rule 4 -->
+                <div style="background: rgba(0,0,0,0.2); border-left: 4px solid #8b5cf6; padding: 1.5rem; border-radius: var(--radius-md);">
+                    <h3 style="font-size: 1.1rem; color: white; font-weight: 800; margin: 0 0 0.5rem 0; display: flex; align-items: center; gap: 0.5rem;">
+                        <span style="font-size: 1.25rem; color: #a78bfa;">④</span> Moyenne Générale >= 4.0 (3M)
+                    </h3>
+                    <p style="font-size: 0.8rem; color: var(--color-text-secondary); line-height: 1.5; margin: 0;">
+                        La moyenne générale arithmétique doit être d'au moins 4.0. Concerne uniquement les filières gymnasiales en 3 ans (3M) aux semestres 1 et 2.
                     </p>
                 </div>
             </div>
@@ -642,27 +642,17 @@
                         <div class="rule-status-check" style="margin-top: 0.25rem;">✓</div>
                         <div class="rule-details" style="display: flex; flex-direction: column; justify-content: space-between; flex-grow: 1; height: 100%;">
                             <div>
-                                <h3 style="margin-top: 0;">1. Moyenne Générale >= 4.0</h3>
-                                <p style="font-size: 0.8rem; color: var(--color-text-secondary); margin-bottom: 0.5rem;">Moyenne arithmétique de toutes les branches.</p>
-                            </div>
-                            <span style="display:inline-block; font-size: 0.7rem; background: rgba(96,165,250,0.15); color: var(--color-primary); padding: 2px 6px; border-radius: 4px; font-weight: bold; align-self: flex-start; margin-top: auto;">Éliminatoire si &lt; 4.0</span>
-                        </div>
-                    </div>
-                    <div class="rule-visual-item passed" style="border-top: 4px solid #8b5cf6; background-color: rgba(0,0,0,0.25); display: flex; align-items: stretch; height: 100%;">
-                        <div class="rule-status-check" style="margin-top: 0.25rem;">✓</div>
-                        <div class="rule-details" style="display: flex; flex-direction: column; justify-content: space-between; flex-grow: 1; height: 100%;">
-                            <div>
-                                <h3 style="margin-top: 0;">2. Points des Groupes 1 & 2</h3>
+                                <h3 style="margin-top: 0;">1. Points des Groupes 1 & 2</h3>
                                 <p style="font-size: 0.8rem; color: var(--color-text-secondary); margin-bottom: 0.5rem;">Au moins 16.0 points dans le Groupe 1 et total suffisant dans le Groupe 2.</p>
                             </div>
-                            <span style="display:inline-block; font-size: 0.7rem; background: rgba(139,92,246,0.15); color: #a78bfa; padding: 2px 6px; border-radius: 4px; font-weight: bold; align-self: flex-start; margin-top: auto;">Éliminatoire si insuffisant</span>
+                            <span style="display:inline-block; font-size: 0.7rem; background: rgba(96,165,250,0.15); color: var(--color-primary); padding: 2px 6px; border-radius: 4px; font-weight: bold; align-self: flex-start; margin-top: auto;">Éliminatoire si insuffisant</span>
                         </div>
                     </div>
                     <div class="rule-visual-item passed" style="border-top: 4px solid #f59e0b; background-color: rgba(0,0,0,0.25); display: flex; align-items: stretch; height: 100%;">
                         <div class="rule-status-check" style="margin-top: 0.25rem;">✓</div>
                         <div class="rule-details" style="display: flex; flex-direction: column; justify-content: space-between; flex-grow: 1; height: 100%;">
                             <div>
-                                <h3 style="margin-top: 0;">3. Max 4 Insuffisances</h3>
+                                <h3 style="margin-top: 0;">2. Max 4 Insuffisances</h3>
                                 <p style="font-size: 0.8rem; color: var(--color-text-secondary); margin-bottom: 0.5rem;">Maximum 4 branches avec une moyenne annuelle inférieure à 4.0.</p>
                             </div>
                             <span style="display:inline-block; font-size: 0.7rem; background: rgba(245,158,11,0.15); color: #f59e0b; padding: 2px 6px; border-radius: 4px; font-weight: bold; align-self: flex-start; margin-top: auto;">Éliminatoire si &gt; 4</span>
@@ -672,10 +662,20 @@
                         <div class="rule-status-check" style="margin-top: 0.25rem;">✓</div>
                         <div class="rule-details" style="display: flex; flex-direction: column; justify-content: space-between; flex-grow: 1; height: 100%;">
                             <div>
-                                <h3 style="margin-top: 0;">4. Bilan des Points (Maturité 3M)</h3>
+                                <h3 style="margin-top: 0;">3. Bilan des Points (Maturité 3M)</h3>
                                 <p style="font-size: 0.8rem; color: var(--color-text-secondary); margin-bottom: 0.5rem;">Somme des écarts : règle de la <strong>double compensation</strong> (les notes inférieures à 4.0 comptent négativement et sont doublées). Concerne uniquement la filière gymnasiale en 3 ans (3M).</p>
                             </div>
                             <span style="display:inline-block; font-size: 0.7rem; background: rgba(16,185,129,0.15); color: #10b981; padding: 2px 6px; border-radius: 4px; font-weight: bold; align-self: flex-start; margin-top: auto;">Éliminatoire si &lt; 0 (3M)</span>
+                        </div>
+                    </div>
+                    <div class="rule-visual-item passed" style="border-top: 4px solid #8b5cf6; background-color: rgba(0,0,0,0.25); display: flex; align-items: stretch; height: 100%;">
+                        <div class="rule-status-check" style="margin-top: 0.25rem;">✓</div>
+                        <div class="rule-details" style="display: flex; flex-direction: column; justify-content: space-between; flex-grow: 1; height: 100%;">
+                            <div>
+                                <h3 style="margin-top: 0;">4. Moyenne Générale >= 4.0 (3M)</h3>
+                                <p style="font-size: 0.8rem; color: var(--color-text-secondary); margin-bottom: 0.5rem;">La moyenne générale arithmétique de l'ensemble des branches doit être supérieure ou égale à 4.0. Concerne uniquement la filière 3M (semestres 1 et 2).</p>
+                            </div>
+                            <span style="display:inline-block; font-size: 0.7rem; background: rgba(139,92,246,0.15); color: #a78bfa; padding: 2px 6px; border-radius: 4px; font-weight: bold; align-self: flex-start; margin-top: auto;">Éliminatoire si &lt; 4.0 (3M)</span>
                         </div>
                     </div>
                 </div>
