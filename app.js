@@ -995,7 +995,13 @@ function updateDashboard() {
             }
         }
         
-        promoSubtitle.innerHTML = reasons.join('<br>');
+        if (reasons.length > 0) {
+            promoSubtitle.innerHTML = `<ul style="margin: 0.5rem auto 0 auto; display: inline-flex; flex-direction: column; gap: 0.35rem; list-style-type: disc; text-align: left; max-width: max-content; padding-left: 1.25rem;">
+                ${reasons.map(r => `<li>${r}</li>`).join('')}
+            </ul>`;
+        } else {
+            promoSubtitle.textContent = "";
+        }
     }
 
     // Update Bilan lists
