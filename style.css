@@ -2821,7 +2821,7 @@ body.theme-light .bilan-list li {
 }
 
 body.theme-light .bilan-list strong {
-    color: var(--color-text-primary) !important;
+    color: var(--color-text-primary);
 }
 
 body.theme-light .creator-word-box {
