@@ -3019,3 +3019,8 @@ body.theme-light #theme-toggle-btn:hover {
     background-color: rgba(0, 0, 0, 0.06) !important;
 }
 
+/* Hide theme-selector dropdown color option in light mode */
+body.theme-light #theme-selector {
+    display: none !important;
+}
+
