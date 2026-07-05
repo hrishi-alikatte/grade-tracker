@@ -1101,9 +1101,9 @@ function updateGroupsBilan() {
         const valText = val !== null ? val.toFixed(1) : '—';
         let color = 'inherit';
         if (val !== null) {
-            if (val > 4.0) color = '#10b981';
-            else if (val === 4.0) color = '#f59e0b';
-            else color = '#ef4444';
+            if (val > 4.0) color = 'var(--color-passing-bg)';
+            else if (val === 4.0) color = 'var(--color-warning-bg)';
+            else color = 'var(--color-failing-bg)';
         }
         
         li.innerHTML = `
