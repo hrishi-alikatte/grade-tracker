@@ -6,6 +6,55 @@
 }
 
 :root {
+    /* Slightly lighter, premium Navy Blue palette as requested */
+    --color-bg-base: #0f172a;          /* Lighter midnight navy (slate-900) */
+    --color-bg-surface: #273a5a;       /* Lighter navy card background (slate-800 adjusted) */
+    --color-bg-elevated: #334155;      /* Lighter elevated background (slate-700) */
+    
+    --color-border-subtle: #2e3b5e;    /* Slate-blue border */
+    --color-border-focus: #60a5fa;     /* Bright blue focus */
+    
+    /* Text */
+    --color-text-primary: #f8fafc;
+    --color-text-secondary: #94a3b8;
+    --color-text-muted: #64748b;
+    
+    /* Buttons in lighter, higher visibility shades of blue */
+    --color-primary: #60a5fa;          /* Sky/Light Blue button */
+    --color-primary-hover: #3b82f6;
+    
+    /* Grades status */
+    --color-passing-bg: #10b981;       /* Emerald Green */
+    --color-failing-bg: #ef4444;       /* Rose Red */
+    --color-warning-bg: #f59e0b;       /* Amber Yellow for exactly 4.0 */
+    
+    --color-avg-passing-bg: rgba(16, 185, 129, 0.15);
+    --color-avg-passing-text: #10b981;
+    
+    --color-avg-failing-bg: rgba(239, 68, 68, 0.15);
+    --color-avg-failing-text: #ef4444;
+    
+    --color-avg-warning-bg: rgba(245, 158, 11, 0.15);
+    --color-avg-warning-text: #f59e0b;
+    
+    --color-avg-neutral-bg: rgba(148, 163, 184, 0.15);
+    --color-avg-neutral-text: #94a3b8;
+
+    /* Fonts & Radii */
+    --font-family-sans: 'Montserrat', 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    --font-family-serif: 'Playfair Display', Georgia, 'Times New Roman', serif;
+    --font-family-mono: 'JetBrains Mono', monospace;
+    --radius-sm: 8px;
+    --radius-md: 12px;
+    --radius-lg: 16px;
+    --radius-full: 9999px;
+    --section-gap: 1.5rem;
+    
+    --transition-fast: 0.15s ease;
+    --transition-normal: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+body.theme-light {
     /* Premium modern light-editorial aesthetic as requested */
     --color-bg-base: #fcfbf9;          /* Warm, elegant soft off-white background */
     --color-bg-surface: #ffffff;       /* Pure white card and element background */
@@ -42,16 +91,11 @@
 
     /* Fonts & Radii */
     --font-family-sans: 'Plus Jakarta Sans', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    --font-family-serif: 'Playfair Display', Georgia, 'Times New Roman', serif;
-    --font-family-mono: 'JetBrains Mono', monospace;
     --radius-sm: 6px;                  /* Sharper, more premium modern editorial radii */
     --radius-md: 10px;
     --radius-lg: 14px;
     --radius-full: 9999px;
     --section-gap: 2rem;
-    
-    --transition-fast: 0.15s ease;
-    --transition-normal: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 body {
@@ -2611,42 +2655,70 @@ body {
    ========================================================================== */
 
 /* Font family assignments */
-body, .btn, .nav-tab-btn, .semester-tab, .form-input, .form-label, .node-label, .pill-dot, .toast-sidebar-container {
+body.theme-light, 
+body.theme-light .btn, 
+body.theme-light .nav-tab-btn, 
+body.theme-light .semester-tab, 
+body.theme-light .form-input, 
+body.theme-light .form-label, 
+body.theme-light .node-label, 
+body.theme-light .pill-dot, 
+body.theme-light .toast-sidebar-container {
     font-family: var(--font-family-sans) !important;
 }
 
-h1, h2, h3, .landing-title, .guide-page-title, .guide-card-title, .guide-section-title, .subject-name, .promo-text-summary h2, .creator-word-box h3, .bilan-section h2 {
+body.theme-light h1, 
+body.theme-light h2, 
+body.theme-light h3, 
+body.theme-light .landing-title, 
+body.theme-light .guide-page-title, 
+body.theme-light .guide-card-title, 
+body.theme-light .guide-section-title, 
+body.theme-light .subject-name, 
+body.theme-light .promo-text-summary h2, 
+body.theme-light .creator-word-box h3, 
+body.theme-light .bilan-section h2 {
     font-family: var(--font-family-serif) !important;
     font-weight: 800 !important;
 }
 
 /* Force light text overrides on hardcoded elements */
-h1, h2, h3, .subject-name, .top-nav-brand strong, .creator-word-box h3, .guide-card-title, .guide-intro strong, .dashboard-hero h2, .creator-word-box p, .guide-content-grid strong {
+body.theme-light h1, 
+body.theme-light h2, 
+body.theme-light h3, 
+body.theme-light .subject-name, 
+body.theme-light .top-nav-brand strong, 
+body.theme-light .creator-word-box h3, 
+body.theme-light .guide-card-title, 
+body.theme-light .guide-intro strong, 
+body.theme-light .dashboard-hero h2, 
+body.theme-light .creator-word-box p, 
+body.theme-light .guide-content-grid strong {
     color: var(--color-text-primary) !important;
 }
 
 /* Base modifications */
-body {
+body.theme-light {
     background-color: var(--color-bg-base) !important;
 }
 
-.paper-texture {
+body.theme-light.paper-texture {
     /* Physical paper finish texture overlay background */
     background: radial-gradient(circle at 50% 50%, #fdfdfc 0%, #fcfbf9 100%) !important;
 }
 
 /* App Header brand styling */
-.top-nav-brand strong {
+body.theme-light .top-nav-brand strong {
     font-family: var(--font-family-sans) !important;
     font-weight: 800 !important;
 }
 
 /* Landing Page Hero and Scroll Indicator */
-.landing-hero-section {
+body.theme-light .landing-hero-section {
     min-height: calc(100vh - 120px);
 }
 
-.landing-title {
+body.theme-light .landing-title {
     background: none !important;
     -webkit-background-clip: unset !important;
     -webkit-text-fill-color: initial !important;
@@ -2656,12 +2728,12 @@ body {
     letter-spacing: -0.03em !important;
 }
 
-.landing-logo-circle {
+body.theme-light .landing-logo-circle {
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05) !important;
 }
 
 /* Feature Cards matching the clean editorial design */
-.landing-feature-card {
+body.theme-light .landing-feature-card {
     background: transparent !important;
     backdrop-filter: none !important;
     -webkit-backdrop-filter: none !important;
@@ -2671,13 +2743,13 @@ body {
     border-radius: 0 !important;
 }
 
-.landing-feature-card:hover {
+body.theme-light .landing-feature-card:hover {
     transform: none !important;
     box-shadow: none !important;
     border-top-color: var(--color-text-primary) !important;
 }
 
-.landing-feature-card > div:first-child {
+body.theme-light .landing-feature-card > div:first-child {
     background: transparent !important;
     border-radius: 0 !important;
     width: auto !important;
@@ -2687,12 +2759,12 @@ body {
     margin-bottom: 0.25rem;
 }
 
-.landing-feature-card svg {
+body.theme-light .landing-feature-card svg {
     color: var(--color-text-primary) !important;
 }
 
 /* Subject Card Styles */
-.subject-card {
+body.theme-light .subject-card {
     background-color: var(--color-bg-surface) !important;
     border: 1px solid rgba(0, 0, 0, 0.07) !important;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.015) !important;
@@ -2700,19 +2772,19 @@ body {
     -webkit-backdrop-filter: none !important;
 }
 
-.subject-card:hover {
+body.theme-light .subject-card:hover {
     border-color: var(--color-text-primary) !important;
     box-shadow: 0 8px 30px rgba(0, 0, 0, 0.035) !important;
 }
 
-.subject-average-badge.empty {
+body.theme-light .subject-average-badge.empty {
     background-color: var(--color-avg-neutral-bg) !important;
     color: var(--color-avg-neutral-text) !important;
     border-color: rgba(0,0,0,0.05) !important;
 }
 
 /* Guide Card Styles */
-.guide-card {
+body.theme-light .guide-card {
     background-color: var(--color-bg-surface) !important;
     border: 1px solid rgba(0, 0, 0, 0.07) !important;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.015) !important;
@@ -2720,14 +2792,14 @@ body {
     -webkit-backdrop-filter: none !important;
 }
 
-.guide-card:hover {
+body.theme-light .guide-card:hover {
     border-color: var(--color-text-primary) !important;
     transform: translateY(-2px) !important;
     box-shadow: 0 8px 30px rgba(0, 0, 0, 0.035) !important;
 }
 
 /* Landing rules cards */
-div[style*="repeat(auto-fit, minmax(220px, 1fr))"] > div {
+body.theme-light div[style*="repeat(auto-fit, minmax(220px, 1fr))"] > div {
     background: var(--color-bg-surface) !important;
     border: 1px solid rgba(0, 0, 0, 0.06) !important;
     border-left-width: 4px !important;
@@ -2735,7 +2807,7 @@ div[style*="repeat(auto-fit, minmax(220px, 1fr))"] > div {
 }
 
 /* Guide rules cards */
-.rule-visual-item {
+body.theme-light .rule-visual-item {
     background-color: var(--color-bg-surface) !important;
     border: 1px solid rgba(0, 0, 0, 0.06) !important;
     border-top-width: 4px !important;
@@ -2743,16 +2815,16 @@ div[style*="repeat(auto-fit, minmax(220px, 1fr))"] > div {
 }
 
 /* Bilan Par Groupe list elements */
-.bilan-list li {
+body.theme-light .bilan-list li {
     border-bottom: 1px dashed rgba(0, 0, 0, 0.06) !important;
     color: var(--color-text-secondary) !important;
 }
 
-.bilan-list strong {
+body.theme-light .bilan-list strong {
     color: var(--color-text-primary) !important;
 }
 
-.creator-word-box {
+body.theme-light .creator-word-box {
     background-color: var(--color-bg-surface) !important;
     border: 1px solid rgba(0, 0, 0, 0.07) !important;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.015) !important;
@@ -2761,67 +2833,70 @@ div[style*="repeat(auto-fit, minmax(220px, 1fr))"] > div {
 }
 
 /* Secondary Button Overrides */
-.btn-secondary {
+body.theme-light .btn-secondary {
     background-color: transparent !important;
     color: var(--color-text-secondary) !important;
     border: 1px solid rgba(0, 0, 0, 0.15) !important;
 }
 
-.btn-secondary:hover {
+body.theme-light .btn-secondary:hover {
     background-color: rgba(0, 0, 0, 0.04) !important;
     color: var(--color-text-primary) !important;
 }
 
 /* Semester tabs */
-.semester-tab:hover {
+body.theme-light .semester-tab:hover {
     color: var(--color-text-primary) !important;
     background-color: var(--color-bg-elevated) !important;
 }
 
-.semester-tabs-container {
+body.theme-light .semester-tabs-container {
     background-color: rgba(0, 0, 0, 0.03) !important;
     border: 1px solid rgba(0, 0, 0, 0.05) !important;
 }
 
-.nav-tabs {
+body.theme-light .nav-tabs {
     background-color: rgba(0, 0, 0, 0.03) !important;
     border: 1px solid rgba(0, 0, 0, 0.05) !important;
 }
 
-.nav-tab-btn:hover {
+body.theme-light .nav-tab-btn:hover {
     color: var(--color-text-primary) !important;
     background-color: rgba(0, 0, 0, 0.03) !important;
 }
 
 /* SVGs interactive graphs style adjustments */
-.evolution-graph-svg text, #multi-subject-svg text {
+body.theme-light .evolution-graph-svg text, 
+body.theme-light #multi-subject-svg text {
     fill: var(--color-text-secondary) !important;
 }
 
-.evolution-graph-svg .node-text, #multi-subject-svg .node-text {
+body.theme-light .evolution-graph-svg .node-text, 
+body.theme-light #multi-subject-svg .node-text {
     fill: var(--color-text-primary) !important;
 }
 
-.evolution-graph-svg line, #multi-subject-svg line {
+body.theme-light .evolution-graph-svg line, 
+body.theme-light #multi-subject-svg line {
     stroke: rgba(0, 0, 0, 0.05) !important;
 }
 
-#multi-subject-svg .graph-line-group {
+body.theme-light #multi-subject-svg .graph-line-group {
     opacity: 0.6;
 }
 
-#multi-subject-svg:hover .graph-line-group,
-#multi-subject-svg.has-highlight .graph-line-group {
+body.theme-light #multi-subject-svg:hover .graph-line-group,
+body.theme-light #multi-subject-svg.has-highlight .graph-line-group {
     opacity: 0.12;
 }
 
-#multi-subject-svg .graph-line-group:hover,
-#multi-subject-svg .graph-line-group.highlighted {
+body.theme-light #multi-subject-svg .graph-line-group:hover,
+body.theme-light #multi-subject-svg .graph-line-group.highlighted {
     opacity: 1;
 }
 
 /* Toast styling matching the warm light palette */
-.toast-sidebar-container {
+body.theme-light .toast-sidebar-container {
     background: rgba(255, 255, 255, 0.9) !important;
     border: 1px solid rgba(0, 0, 0, 0.08) !important;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08) !important;
@@ -2829,96 +2904,118 @@ div[style*="repeat(auto-fit, minmax(220px, 1fr))"] > div {
     backdrop-filter: blur(16px) !important;
 }
 
-.sidebar-toast {
+body.theme-light .sidebar-toast {
     background-color: var(--color-bg-surface) !important;
     border: 1px solid rgba(0, 0, 0, 0.06) !important;
     border-left: 5px solid var(--color-failing-bg) !important;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06) !important;
 }
 
-.toast-message {
+body.theme-light .toast-message {
     color: var(--color-text-primary) !important;
 }
 
-.toast-close-btn {
+body.theme-light .toast-close-btn {
     color: var(--color-text-muted) !important;
 }
 
-.toast-close-btn:hover {
+body.theme-light .toast-close-btn:hover {
     color: var(--color-text-primary) !important;
 }
 
-.sidebar-toast-title {
+body.theme-light .sidebar-toast-title {
     color: var(--color-failing-bg) !important;
 }
 
-.sidebar-toast-body {
+body.theme-light .sidebar-toast-body {
     color: var(--color-text-secondary) !important;
 }
 
 /* Modals overlays & close buttons styling */
-.modal-content {
+body.theme-light .modal-content {
     background-color: var(--color-bg-surface) !important;
     border: 1px solid rgba(0, 0, 0, 0.08) !important;
     box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08) !important;
     color: var(--color-text-primary) !important;
 }
 
-.modal-header h2 {
+body.theme-light .modal-header h2 {
     color: var(--color-text-primary) !important;
 }
 
-.close-btn {
+body.theme-light .close-btn {
     color: var(--color-text-muted) !important;
 }
 
-.close-btn:hover {
+body.theme-light .close-btn:hover {
     color: var(--color-text-primary) !important;
 }
 
 /* Promotion dashboard banner card styling */
-.promo-dashboard-container {
+body.theme-light .promo-dashboard-container {
     background-color: var(--color-bg-surface) !important;
     border: 1px solid rgba(0, 0, 0, 0.07) !important;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.015) !important;
     color: var(--color-text-primary) !important;
 }
 
-.promo-dashboard-container.status-promoted {
+body.theme-light .promo-dashboard-container.status-promoted {
     background-color: rgba(43, 103, 71, 0.04) !important;
     border-color: rgba(43, 103, 71, 0.15) !important;
 }
 
-.promo-dashboard-container.status-failing {
+body.theme-light .promo-dashboard-container.status-failing {
     background-color: rgba(155, 44, 44, 0.04) !important;
     border-color: rgba(155, 44, 44, 0.15) !important;
 }
 
-.promo-dashboard-container.status-promoted h2,
-.promo-dashboard-container.status-promoted p,
-.promo-dashboard-container.status-promoted li {
+body.theme-light .promo-dashboard-container.status-promoted h2,
+body.theme-light .promo-dashboard-container.status-promoted p,
+body.theme-light .promo-dashboard-container.status-promoted li {
     color: #2b6747 !important;
 }
 
-.promo-dashboard-container.status-failing h2,
-.promo-dashboard-container.status-failing p,
-.promo-dashboard-container.status-failing li {
+body.theme-light .promo-dashboard-container.status-failing h2,
+body.theme-light .promo-dashboard-container.status-failing p,
+body.theme-light .promo-dashboard-container.status-failing li {
     color: #9b2c2c !important;
 }
 
-.top-nav-brand span {
+body.theme-light .top-nav-brand span {
     color: var(--color-text-muted) !important;
 }
 
 /* Background grid cell borders override */
-.box-cell {
+body.theme-light .box-cell {
     border-right: 1px solid rgba(0, 0, 0, 0.03) !important;
     border-bottom: 1px solid rgba(0, 0, 0, 0.03) !important;
 }
-.box-cell:hover {
+body.theme-light .box-cell:hover {
     background-color: rgba(0, 0, 0, 0.02) !important;
 }
-.background-boxes-mask {
+body.theme-light .background-boxes-mask {
     background: radial-gradient(circle at center, transparent 30%, var(--color-bg-base) 90%) !important;
+}
+
+/* Theme switch button overrides */
+#theme-toggle-btn {
+    background-color: rgba(255, 255, 255, 0.05) !important;
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
+    color: var(--color-text-primary) !important;
+    cursor: pointer;
+    transition: all var(--transition-fast) !important;
+}
+#theme-toggle-btn:hover {
+    background-color: rgba(255, 255, 255, 0.1) !important;
+    transform: scale(1.05);
+}
+
+body.theme-light #theme-toggle-btn {
+    background-color: rgba(0, 0, 0, 0.03) !important;
+    border: 1px solid rgba(0, 0, 0, 0.06) !important;
+    color: var(--color-text-primary) !important;
+}
+body.theme-light #theme-toggle-btn:hover {
+    background-color: rgba(0, 0, 0, 0.06) !important;
 }
 
