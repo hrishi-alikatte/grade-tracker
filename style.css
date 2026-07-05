@@ -6,48 +6,49 @@
 }
 
 :root {
-    /* Slightly lighter, premium Navy Blue palette as requested */
-    --color-bg-base: #0f172a;          /* Lighter midnight navy (slate-900) */
-    --color-bg-surface: #273a5a;       /* Lighter navy card background (slate-800 adjusted) */
-    --color-bg-elevated: #334155;      /* Lighter elevated background (slate-700) */
+    /* Premium modern light-editorial aesthetic as requested */
+    --color-bg-base: #fcfbf9;          /* Warm, elegant soft off-white background */
+    --color-bg-surface: #ffffff;       /* Pure white card and element background */
+    --color-bg-elevated: #f4f2ee;      /* Soft beige-gray elevated background */
     
-    --color-border-subtle: #2e3b5e;    /* Slate-blue border */
-    --color-border-focus: #60a5fa;     /* Bright blue focus */
+    --color-border-subtle: rgba(0, 0, 0, 0.06); /* Thin clean gray border */
+    --color-border-focus: #1c1917;     /* Solid charcoal black border */
     
     /* Text */
-    --color-text-primary: #f8fafc;
-    --color-text-secondary: #94a3b8;
-    --color-text-muted: #64748b;
+    --color-text-primary: #1c1917;     /* Solid stone-900 (charcoal black) */
+    --color-text-secondary: #57534e;   /* stone-700 description text */
+    --color-text-muted: #8c8a85;       /* stone-500 muted subtext */
     
-    /* Buttons in lighter, higher visibility shades of blue */
-    --color-primary: #60a5fa;          /* Sky/Light Blue button */
-    --color-primary-hover: #3b82f6;
+    /* Buttons in solid editorial black/charcoal */
+    --color-primary: #1c1917;          /* Solid stone-900 primary actions */
+    --color-primary-hover: #44403c;    /* stone-800 hover */
     
-    /* Grades status */
-    --color-passing-bg: #10b981;       /* Emerald Green */
-    --color-failing-bg: #ef4444;       /* Rose Red */
-    --color-warning-bg: #f59e0b;       /* Amber Yellow for exactly 4.0 */
+    /* Grades status - beautiful organic desaturated tones */
+    --color-passing-bg: #2b6747;       /* Elegant deep forest sage green */
+    --color-failing-bg: #9b2c2c;       /* Elegant rich crimson red */
+    --color-warning-bg: #b7791f;       /* Elegant warm ochre yellow */
     
-    --color-avg-passing-bg: rgba(16, 185, 129, 0.15);
-    --color-avg-passing-text: #10b981;
+    --color-avg-passing-bg: rgba(43, 103, 71, 0.06);
+    --color-avg-passing-text: #2b6747;
     
-    --color-avg-failing-bg: rgba(239, 68, 68, 0.15);
-    --color-avg-failing-text: #ef4444;
+    --color-avg-failing-bg: rgba(155, 44, 44, 0.06);
+    --color-avg-failing-text: #9b2c2c;
     
-    --color-avg-warning-bg: rgba(245, 158, 11, 0.15);
-    --color-avg-warning-text: #f59e0b;
+    --color-avg-warning-bg: rgba(183, 121, 31, 0.06);
+    --color-avg-warning-text: #b7791f;
     
-    --color-avg-neutral-bg: rgba(148, 163, 184, 0.15);
-    --color-avg-neutral-text: #94a3b8;
+    --color-avg-neutral-bg: rgba(140, 138, 133, 0.06);
+    --color-avg-neutral-text: #8c8a85;
 
     /* Fonts & Radii */
-    --font-family-sans: 'Montserrat', 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    --font-family-sans: 'Plus Jakarta Sans', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    --font-family-serif: 'Playfair Display', Georgia, 'Times New Roman', serif;
     --font-family-mono: 'JetBrains Mono', monospace;
-    --radius-sm: 8px;
-    --radius-md: 12px;
-    --radius-lg: 16px;
+    --radius-sm: 6px;                  /* Sharper, more premium modern editorial radii */
+    --radius-md: 10px;
+    --radius-lg: 14px;
     --radius-full: 9999px;
-    --section-gap: 1.5rem;
+    --section-gap: 2rem;
     
     --transition-fast: 0.15s ease;
     --transition-normal: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
@@ -805,7 +806,7 @@ body {
     background-color: var(--color-bg-elevated);
     border: 1px solid var(--color-border-subtle);
     border-radius: var(--radius-sm);
-    color: white;
+    color: var(--color-text-primary);
     padding: 0.75rem 1rem;
     font-family: var(--font-family-sans);
     font-size: 16px;              /* Prevent iOS auto-zoom on input focus */
@@ -2604,3 +2605,305 @@ body {
         transform: translateX(100px) scale(0.9);
     }
 }
+
+/* ==========================================================================
+   PREMIUM EDITORIAL LIGHT MODE OVERRIDES
+   ========================================================================== */
+
+/* Font family assignments */
+body, .btn, .nav-tab-btn, .semester-tab, .form-input, .form-label, .node-label, .pill-dot, .toast-sidebar-container {
+    font-family: var(--font-family-sans) !important;
+}
+
+h1, h2, h3, .landing-title, .guide-page-title, .guide-card-title, .guide-section-title, .subject-name, .promo-text-summary h2, .creator-word-box h3, .bilan-section h2 {
+    font-family: var(--font-family-serif) !important;
+    font-weight: 800 !important;
+}
+
+/* Force light text overrides on hardcoded elements */
+h1, h2, h3, .subject-name, .top-nav-brand strong, .creator-word-box h3, .guide-card-title, .guide-intro strong, .dashboard-hero h2, .creator-word-box p, .guide-content-grid strong {
+    color: var(--color-text-primary) !important;
+}
+
+/* Base modifications */
+body {
+    background-color: var(--color-bg-base) !important;
+}
+
+.paper-texture {
+    /* Physical paper finish texture overlay background */
+    background: radial-gradient(circle at 50% 50%, #fdfdfc 0%, #fcfbf9 100%) !important;
+}
+
+/* App Header brand styling */
+.top-nav-brand strong {
+    font-family: var(--font-family-sans) !important;
+    font-weight: 800 !important;
+}
+
+/* Landing Page Hero and Scroll Indicator */
+.landing-hero-section {
+    min-height: calc(100vh - 120px);
+}
+
+.landing-title {
+    background: none !important;
+    -webkit-background-clip: unset !important;
+    -webkit-text-fill-color: initial !important;
+    color: var(--color-text-primary) !important;
+    margin-bottom: 2rem !important;
+    font-size: clamp(2.8rem, 6vw, 4.5rem) !important;
+    letter-spacing: -0.03em !important;
+}
+
+.landing-logo-circle {
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05) !important;
+}
+
+/* Feature Cards matching the clean editorial design */
+.landing-feature-card {
+    background: transparent !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    border: none !important;
+    border-top: 1px solid rgba(0, 0, 0, 0.08) !important;
+    padding: 1.5rem 0 1rem 0 !important;
+    border-radius: 0 !important;
+}
+
+.landing-feature-card:hover {
+    transform: none !important;
+    box-shadow: none !important;
+    border-top-color: var(--color-text-primary) !important;
+}
+
+.landing-feature-card > div:first-child {
+    background: transparent !important;
+    border-radius: 0 !important;
+    width: auto !important;
+    height: auto !important;
+    justify-content: flex-start !important;
+    padding: 0 !important;
+    margin-bottom: 0.25rem;
+}
+
+.landing-feature-card svg {
+    color: var(--color-text-primary) !important;
+}
+
+/* Subject Card Styles */
+.subject-card {
+    background-color: var(--color-bg-surface) !important;
+    border: 1px solid rgba(0, 0, 0, 0.07) !important;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.015) !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+}
+
+.subject-card:hover {
+    border-color: var(--color-text-primary) !important;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.035) !important;
+}
+
+.subject-average-badge.empty {
+    background-color: var(--color-avg-neutral-bg) !important;
+    color: var(--color-avg-neutral-text) !important;
+    border-color: rgba(0,0,0,0.05) !important;
+}
+
+/* Guide Card Styles */
+.guide-card {
+    background-color: var(--color-bg-surface) !important;
+    border: 1px solid rgba(0, 0, 0, 0.07) !important;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.015) !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+}
+
+.guide-card:hover {
+    border-color: var(--color-text-primary) !important;
+    transform: translateY(-2px) !important;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.035) !important;
+}
+
+/* Landing rules cards */
+div[style*="repeat(auto-fit, minmax(220px, 1fr))"] > div {
+    background: var(--color-bg-surface) !important;
+    border: 1px solid rgba(0, 0, 0, 0.06) !important;
+    border-left-width: 4px !important;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.015) !important;
+}
+
+/* Guide rules cards */
+.rule-visual-item {
+    background-color: var(--color-bg-surface) !important;
+    border: 1px solid rgba(0, 0, 0, 0.06) !important;
+    border-top-width: 4px !important;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.015) !important;
+}
+
+/* Bilan Par Groupe list elements */
+.bilan-list li {
+    border-bottom: 1px dashed rgba(0, 0, 0, 0.06) !important;
+    color: var(--color-text-secondary) !important;
+}
+
+.bilan-list strong {
+    color: var(--color-text-primary) !important;
+}
+
+.creator-word-box {
+    background-color: var(--color-bg-surface) !important;
+    border: 1px solid rgba(0, 0, 0, 0.07) !important;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.015) !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+}
+
+/* Secondary Button Overrides */
+.btn-secondary {
+    background-color: transparent !important;
+    color: var(--color-text-secondary) !important;
+    border: 1px solid rgba(0, 0, 0, 0.15) !important;
+}
+
+.btn-secondary:hover {
+    background-color: rgba(0, 0, 0, 0.04) !important;
+    color: var(--color-text-primary) !important;
+}
+
+/* Semester tabs */
+.semester-tab:hover {
+    color: var(--color-text-primary) !important;
+    background-color: var(--color-bg-elevated) !important;
+}
+
+.semester-tabs-container {
+    background-color: rgba(0, 0, 0, 0.03) !important;
+    border: 1px solid rgba(0, 0, 0, 0.05) !important;
+}
+
+.nav-tabs {
+    background-color: rgba(0, 0, 0, 0.03) !important;
+    border: 1px solid rgba(0, 0, 0, 0.05) !important;
+}
+
+.nav-tab-btn:hover {
+    color: var(--color-text-primary) !important;
+    background-color: rgba(0, 0, 0, 0.03) !important;
+}
+
+/* SVGs interactive graphs style adjustments */
+.evolution-graph-svg text, #multi-subject-svg text {
+    fill: var(--color-text-secondary) !important;
+}
+
+.evolution-graph-svg .node-text, #multi-subject-svg .node-text {
+    fill: var(--color-text-primary) !important;
+}
+
+.evolution-graph-svg line, #multi-subject-svg line {
+    stroke: rgba(0, 0, 0, 0.05) !important;
+}
+
+#multi-subject-svg .graph-line-group {
+    opacity: 0.6;
+}
+
+#multi-subject-svg:hover .graph-line-group,
+#multi-subject-svg.has-highlight .graph-line-group {
+    opacity: 0.12;
+}
+
+#multi-subject-svg .graph-line-group:hover,
+#multi-subject-svg .graph-line-group.highlighted {
+    opacity: 1;
+}
+
+/* Toast styling matching the warm light palette */
+.toast-sidebar-container {
+    background: rgba(255, 255, 255, 0.9) !important;
+    border: 1px solid rgba(0, 0, 0, 0.08) !important;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08) !important;
+    color: var(--color-text-primary) !important;
+    backdrop-filter: blur(16px) !important;
+}
+
+.sidebar-toast {
+    border-left: 4px solid var(--color-failing-bg) !important;
+}
+
+.sidebar-toast-title {
+    color: var(--color-failing-bg) !important;
+}
+
+.sidebar-toast-body {
+    color: var(--color-text-secondary) !important;
+}
+
+/* Modals overlays & close buttons styling */
+.modal-content {
+    background-color: var(--color-bg-surface) !important;
+    border: 1px solid rgba(0, 0, 0, 0.08) !important;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08) !important;
+    color: var(--color-text-primary) !important;
+}
+
+.modal-header h2 {
+    color: var(--color-text-primary) !important;
+}
+
+.close-btn {
+    color: var(--color-text-muted) !important;
+}
+
+.close-btn:hover {
+    color: var(--color-text-primary) !important;
+}
+
+/* Promotion dashboard banner card styling */
+.promo-dashboard-container {
+    background-color: var(--color-bg-surface) !important;
+    border: 1px solid rgba(0, 0, 0, 0.07) !important;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.015) !important;
+    color: var(--color-text-primary) !important;
+}
+
+.promo-dashboard-container.status-promoted {
+    background-color: rgba(43, 103, 71, 0.04) !important;
+    border-color: rgba(43, 103, 71, 0.15) !important;
+}
+
+.promo-dashboard-container.status-failing {
+    background-color: rgba(155, 44, 44, 0.04) !important;
+    border-color: rgba(155, 44, 44, 0.15) !important;
+}
+
+.promo-dashboard-container.status-promoted h2,
+.promo-dashboard-container.status-promoted p,
+.promo-dashboard-container.status-promoted li {
+    color: #2b6747 !important;
+}
+
+.promo-dashboard-container.status-failing h2,
+.promo-dashboard-container.status-failing p,
+.promo-dashboard-container.status-failing li {
+    color: #9b2c2c !important;
+}
+
+.top-nav-brand span {
+    color: var(--color-text-muted) !important;
+}
+
+/* Background grid cell borders override */
+.box-cell {
+    border-right: 1px solid rgba(0, 0, 0, 0.03) !important;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.03) !important;
+}
+.box-cell:hover {
+    background-color: rgba(0, 0, 0, 0.02) !important;
+}
+.background-boxes-mask {
+    background: radial-gradient(circle at center, transparent 30%, var(--color-bg-base) 90%) !important;
+}
+

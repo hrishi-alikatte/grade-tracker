@@ -1198,8 +1198,8 @@ function renderSubjectEvolutionChart(subject, drawer) {
     }
 
     const circlesHTML = points.map(p => `
-        <circle cx="${p.x}" cy="${p.y}" r="4" fill="#0f172a" stroke="var(--color-primary)" stroke-width="2" />
-        <text x="${p.x}" y="${p.y - 10}" text-anchor="middle" font-size="10" font-weight="bold" fill="white">${p.avg.toFixed(1)}</text>
+        <circle cx="${p.x}" cy="${p.y}" r="4" fill="var(--color-bg-surface)" stroke="var(--color-primary)" stroke-width="2" />
+        <text x="${p.x}" y="${p.y - 10}" text-anchor="middle" font-size="10" font-weight="bold" fill="var(--color-text-primary)" stroke="var(--color-bg-surface)" stroke-width="3" paint-order="stroke fill">${p.avg.toFixed(1)}</text>
     `).join('');
 
     const thresholdY = 85 - (4.0 - 1.0) * (70 / 5.0); // 43
@@ -1209,7 +1209,7 @@ function renderSubjectEvolutionChart(subject, drawer) {
             <span>📈 Évolution de ${escapeHTML(subject.name)}</span>
             <span style="font-weight: normal; font-size: 0.75rem; color: var(--color-text-muted);">Seuil de promotion: 4.0</span>
         </div>
-        <div style="background: rgba(0,0,0,0.2); border-radius: var(--radius-md); padding: 0.5rem; display: flex; justify-content: center;">
+        <div style="background: rgba(0,0,0,0.03); border-radius: var(--radius-md); padding: 0.5rem; display: flex; justify-content: center;">
             <svg viewBox="0 0 360 100" width="100%" height="100" style="max-width: 360px; overflow: visible;">
                 <!-- Promotion Threshold Line -->
                 <line x1="20" y1="${thresholdY}" x2="340" y2="${thresholdY}" stroke="#ef4444" stroke-width="1.2" stroke-dasharray="3,3" opacity="0.6" />
@@ -1219,11 +1219,11 @@ function renderSubjectEvolutionChart(subject, drawer) {
                 <text x="60" y="98" font-size="9" fill="var(--color-text-muted)" text-anchor="middle">1ère année</text>
                 <text x="180" y="98" font-size="9" fill="var(--color-text-muted)" text-anchor="middle">2ème année</text>
                 <text x="300" y="98" font-size="9" fill="var(--color-text-muted)" text-anchor="middle">3ème année</text>
-
+ 
                 <!-- Grid lines for years -->
-                <line x1="60" y1="15" x2="60" y2="85" stroke="rgba(255,255,255,0.05)" stroke-width="1" />
-                <line x1="180" y1="15" x2="180" y2="85" stroke="rgba(255,255,255,0.05)" stroke-width="1" />
-                <line x1="300" y1="15" x2="300" y2="85" stroke="rgba(255,255,255,0.05)" stroke-width="1" />
+                <line x1="60" y1="15" x2="60" y2="85" stroke="rgba(0,0,0,0.05)" stroke-width="1" />
+                <line x1="180" y1="15" x2="180" y2="85" stroke="rgba(0,0,0,0.05)" stroke-width="1" />
+                <line x1="300" y1="15" x2="300" y2="85" stroke="rgba(0,0,0,0.05)" stroke-width="1" />
 
                 <!-- Trend Line and circles -->
                 ${pathHTML}
@@ -1447,12 +1447,15 @@ function renderMultiSubjectGraph() {
         let pathHTML = '';
         if (points.length > 1) {
             const pathData = points.map((p, i) => `${i === 0 ? 'M' : 'L'} ${p.x} ${p.y}`).join(' ');
-            pathHTML = `<path d="${pathData}" fill="none" stroke="${sub.color}" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" />`;
+            pathHTML = `
+                <path d="${pathData}" fill="none" stroke="${sub.color}" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" />
+                <path class="graph-hover-helper" d="${pathData}" fill="none" stroke="transparent" stroke-width="16" stroke-linecap="round" stroke-linejoin="round" style="cursor: pointer;" />
+            `;
         }
 
         let markersHTML = points.map(p => `
-            <circle cx="${p.x}" cy="${p.y}" r="5" fill="#0f172a" stroke="${sub.color}" stroke-width="2" />
-            <text class="node-text" x="${p.x}" y="${p.y - 10}" text-anchor="middle" font-size="9.5" font-weight="bold" fill="white" stroke="#0f172a" stroke-width="3" paint-order="stroke fill">${p.val.toFixed(1)}</text>
+            <circle cx="${p.x}" cy="${p.y}" r="5" fill="var(--color-bg-surface)" stroke="${sub.color}" stroke-width="2" />
+            <text class="node-text" x="${p.x}" y="${p.y - 10}" text-anchor="middle" font-size="9.5" font-weight="bold" fill="var(--color-text-primary)" stroke="var(--color-bg-surface)" stroke-width="3" paint-order="stroke fill">${p.val.toFixed(1)}</text>
         `).join('');
 
         graphGroupsHTML += `
@@ -1653,7 +1656,7 @@ function renderEvolutionGraph() {
                         <circle cx="${pt.x}" cy="${pt.y}" r="3" fill="white"/>
                         
                         <!-- Value label above node -->
-                        <text class="node-text" x="${pt.x}" y="${pt.y - 12}" fill="white" font-family="var(--font-family-sans)" font-size="11" font-weight="800" text-anchor="middle">
+                        <text class="node-text" x="${pt.x}" y="${pt.y - 12}" fill="var(--color-text-primary)" stroke="var(--color-bg-surface)" stroke-width="3" paint-order="stroke fill" font-family="var(--font-family-sans)" font-size="11" font-weight="800" text-anchor="middle">
                             ${pt.val.toFixed(2)}
                         </text>
                         
