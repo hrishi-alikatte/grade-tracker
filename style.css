@@ -285,6 +285,7 @@ body {
     width: 100%;
     height: 100%;
     border-radius: 50%;
+    transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 /* Volumetric shading overlay */
 .promo-3d-graphic .slice::after {
@@ -302,20 +303,42 @@ body {
 /* Top slice */
 .promo-3d-graphic .slice-1 {
     clip-path: polygon(0 0, 100% 0, 100% 33%, 0 33%);
-    transform: translate(3px, -3px);
     z-index: 3;
 }
 /* Middle slice */
 .promo-3d-graphic .slice-2 {
     clip-path: polygon(0 34%, 100% 34%, 100% 66%, 0 66%);
-    transform: translate(0, 0);
     z-index: 2;
 }
 /* Bottom slice */
 .promo-3d-graphic .slice-3 {
     clip-path: polygon(0 67%, 100% 67%, 100% 100%, 0 100%);
-    transform: translate(-3px, 3px);
     z-index: 1;
+}
+
+/* Normal state (Passing / Promoted or Neutral) */
+.status-promoted .promo-3d-graphic .slice-1,
+.status-neutral .promo-3d-graphic .slice-1 {
+    transform: translate(0, 0) rotate(0deg);
+}
+.status-promoted .promo-3d-graphic .slice-2,
+.status-neutral .promo-3d-graphic .slice-2 {
+    transform: translate(0, 0) rotate(0deg);
+}
+.status-promoted .promo-3d-graphic .slice-3,
+.status-neutral .promo-3d-graphic .slice-3 {
+    transform: translate(0, 0) rotate(0deg);
+}
+
+/* Broken state (Failing / Not Passing) */
+.status-failing .promo-3d-graphic .slice-1 {
+    transform: translate(9px, -12px) rotate(14deg);
+}
+.status-failing .promo-3d-graphic .slice-2 {
+    transform: translate(-5px, 2px) rotate(-10deg);
+}
+.status-failing .promo-3d-graphic .slice-3 {
+    transform: translate(-9px, 10px) rotate(6deg);
 }
 
 /* 3D Graphic Gradient Themes */
@@ -3140,5 +3163,101 @@ body.theme-light .filter-pill.active {
 
 body.theme-light .filter-pill:hover {
     color: var(--color-text-primary) !important;
+}
+
+/* ==========================================================================
+   Mobile & Responsive Optimizations (Smoother transitions & native feeling)
+   ========================================================================== */
+
+/* Active tap feedback for buttons and pills */
+.btn:active, .chip-btn:active, .filter-pill:active, .lang-toggle-btn:active, .semester-tab:active {
+    transform: scale(0.96);
+    transition: transform 0.1s ease;
+}
+
+@media (max-width: 768px) {
+    body {
+        padding: 0.75rem;
+    }
+    .app-container {
+        gap: 1.25rem;
+    }
+    .header {
+        padding-bottom: 0.25rem;
+        gap: 0.75rem;
+    }
+    .logo-circle {
+        width: 42px;
+        height: 42px;
+    }
+    .header-text h1 {
+        font-size: 1.3rem;
+    }
+    .promo-dashboard-container {
+        padding: 1.25rem;
+    }
+}
+
+@media (max-width: 520px) {
+    /* Dynamic year selector scroll layout for many repeated attempts */
+    .year-tabs-container .lang-toggle-container {
+        overflow-x: auto;
+        white-space: nowrap;
+        justify-content: flex-start;
+        gap: 0.3rem;
+        padding: 4px 6px;
+        scrollbar-width: none; 
+        -ms-overflow-style: none;
+    }
+    .year-tabs-container .lang-toggle-container::-webkit-scrollbar {
+        display: none;
+    }
+    .year-tabs-container .lang-toggle-btn {
+        flex: 0 0 auto;
+        min-width: 90px;
+        padding: 0.55rem 0.35rem;
+        font-size: 0.75rem;
+    }
+}
+
+@media (max-width: 480px) {
+    /* Modals size limits & scrolling overlays on very small screens */
+    .modal-container {
+        padding: 1.25rem;
+        margin: 0.5rem;
+        max-height: 92vh;
+        overflow-y: auto;
+        border-radius: var(--radius-lg);
+    }
+    .modal-title {
+        font-size: 1.2rem;
+        margin-bottom: 0.75rem;
+    }
+    
+    /* Target Simulator layouts wrap */
+    .simulator-controls {
+        flex-wrap: wrap;
+        gap: 0.4rem;
+        justify-content: flex-start;
+    }
+    
+    /* Visual view spheres dimensions scaling for small portrait widths */
+    .subjects-list.gemstone-mode {
+        gap: 2.25rem 1.25rem !important;
+        padding: 1rem 0 !important;
+    }
+    .gem-sphere {
+        width: 72px;
+        height: 72px;
+    }
+    .gem-sphere-average {
+        font-size: 0.85rem;
+    }
+    .gem-subject-name {
+        font-size: 0.75rem;
+    }
+    .gem-type-name {
+        font-size: 0.6rem;
+    }
 }
 
