@@ -926,6 +926,14 @@ function getCurrentSubjects() {
     return state.subjectsYear1;
 }
 
+function isCurrentYearLocked() {
+    const cy = state.currentYear;
+    if (cy === 1 && state.repeatingYears && state.repeatingYears[1]) return true;
+    if (cy === 2 && state.repeatingYears && state.repeatingYears[2]) return true;
+    if (cy === 3 && state.repeatingYears && state.repeatingYears[3]) return true;
+    return false;
+}
+
 function renderYearSelector() {
     const container = document.getElementById('year-tabs-container');
     if (!container) return;
@@ -1297,15 +1305,60 @@ function getAnnualAverageForSubjectInYear(yearNum, refSubject) {
     return data.rawAverage !== null ? data.roundedAverage : null;
 }
 
-function renderSubjectEvolutionChart(subject, drawer) {
-    const points = [];
-    const xCoords = { 1: 60, 2: 180, 3: 300 };
+function getAnnualAverageForSubjectInYearKey(yearKey, refSubject) {
+    let list = [];
+    if (yearKey === 1) list = state.subjectsYear1;
+    else if (yearKey === 1.5) list = state.subjectsYear1_rep;
+    else if (yearKey === 2) list = state.subjectsYear2;
+    else if (yearKey === 2.5) list = state.subjectsYear2_rep;
+    else if (yearKey === 3) list = state.subjectsYear3;
+    else if (yearKey === 3.5) list = state.subjectsYear3_rep;
+
+    if (yearKey === 3 || yearKey === 3.5) {
+        if (refSubject.role === 'art_y2') {
+            return getYear2ArtAverage();
+        }
+        if (refSubject.role === 'physique_y2') {
+            return getYear2SubjectAverage('physique');
+        }
+        if (refSubject.role === 'chimie_y2') {
+            return getYear2SubjectAverage('chimie');
+        }
+    }
+
+    const matched = findMatchingSubject(list, refSubject);
+    if (!matched) return null;
     
-    [1, 2, 3].forEach(y => {
-        const avg = getAnnualAverageForSubjectInYear(y, subject);
+    const data = calculateSubjectData(matched, 'annual');
+    return data.rawAverage !== null ? data.roundedAverage : null;
+}
+
+function renderSubjectEvolutionChart(subject, drawer) {
+    const timelineKeys = [];
+    timelineKeys.push({ keyVal: 1, label: state.repeatingYears && state.repeatingYears[1] ? "1.1" : "1ère" });
+    if (state.repeatingYears && state.repeatingYears[1]) timelineKeys.push({ keyVal: 1.5, label: "Rép." });
+    timelineKeys.push({ keyVal: 2, label: state.repeatingYears && state.repeatingYears[2] ? "2.1" : "2ème" });
+    if (state.repeatingYears && state.repeatingYears[2]) timelineKeys.push({ keyVal: 2.5, label: "Rép." });
+    timelineKeys.push({ keyVal: 3, label: state.repeatingYears && state.repeatingYears[3] ? "3.1" : "3ème" });
+    if (state.repeatingYears && state.repeatingYears[3]) timelineKeys.push({ keyVal: 3.5, label: "Rép." });
+
+    const totalSteps = timelineKeys.length;
+    const startX = 60;
+    const endX = 300;
+    
+    const xCoords = {};
+    timelineKeys.forEach((item, index) => {
+        xCoords[item.keyVal] = totalSteps > 1 
+            ? startX + (index / (totalSteps - 1)) * (endX - startX)
+            : 180;
+    });
+
+    const points = [];
+    timelineKeys.forEach(tk => {
+        const avg = getAnnualAverageForSubjectInYearKey(tk.keyVal, subject);
         if (avg !== null && !isNaN(avg)) {
             const svgY = 85 - (avg - 1.0) * (70 / 5.0);
-            points.push({ year: y, avg: avg, x: xCoords[y], y: svgY });
+            points.push({ year: tk.keyVal, avg: avg, x: xCoords[tk.keyVal], y: svgY, label: tk.label });
         }
     });
 
@@ -1331,6 +1384,13 @@ function renderSubjectEvolutionChart(subject, drawer) {
 
     const thresholdY = 85 - (4.0 - 1.0) * (70 / 5.0); // 43
 
+    let gridLinesHTML = '';
+    let xAxisLabelsHTML = '';
+    points.forEach(pt => {
+        gridLinesHTML += `<line x1="${pt.x}" y1="15" x2="${pt.x}" y2="85" stroke="rgba(0,0,0,0.05)" stroke-width="1" />`;
+        xAxisLabelsHTML += `<text x="${pt.x}" y="98" font-size="8" fill="var(--color-text-muted)" text-anchor="middle">${pt.label}</text>`;
+    });
+
     drawer.innerHTML = `
         <div style="font-size: 0.8rem; font-weight: 600; color: var(--color-text-secondary); margin-bottom: 0.5rem; display: flex; justify-content: space-between;">
             <span>Évolution de ${escapeHTML(subject.name)}</span>
@@ -1343,14 +1403,10 @@ function renderSubjectEvolutionChart(subject, drawer) {
                 <text class="promo-limit-text" x="15" y="${thresholdY + 3}" font-size="8" fill="#ef4444" font-weight="bold" text-anchor="end">4.0</text>
                 
                 <!-- X-Axis Labels -->
-                <text x="60" y="98" font-size="9" fill="var(--color-text-muted)" text-anchor="middle">1ère année</text>
-                <text x="180" y="98" font-size="9" fill="var(--color-text-muted)" text-anchor="middle">2ème année</text>
-                <text x="300" y="98" font-size="9" fill="var(--color-text-muted)" text-anchor="middle">3ème année</text>
+                ${xAxisLabelsHTML}
  
                 <!-- Grid lines for years -->
-                <line x1="60" y1="15" x2="60" y2="85" stroke="rgba(0,0,0,0.05)" stroke-width="1" />
-                <line x1="180" y1="15" x2="180" y2="85" stroke="rgba(0,0,0,0.05)" stroke-width="1" />
-                <line x1="300" y1="15" x2="300" y2="85" stroke="rgba(0,0,0,0.05)" stroke-width="1" />
+                ${gridLinesHTML}
 
                 <!-- Trend Line and circles -->
                 ${pathHTML}
@@ -1596,9 +1652,24 @@ function renderMultiSubjectGraph() {
     const svgWidth = isMax ? 800 : 600;
     const svgHeight = isMax ? 400 : 220;
     
-    const xCoords = isMax 
-        ? { 1: 120, 2: 400, 3: 680 }
-        : { 1: 100, 2: 300, 3: 500 };
+    const timelineKeys = [];
+    timelineKeys.push({ keyVal: 1, label: state.repeatingYears && state.repeatingYears[1] ? "1.1" : "1ère année" });
+    if (state.repeatingYears && state.repeatingYears[1]) timelineKeys.push({ keyVal: 1.5, label: "1ère (Rép.)" });
+    timelineKeys.push({ keyVal: 2, label: state.repeatingYears && state.repeatingYears[2] ? "2.1" : "2ème année" });
+    if (state.repeatingYears && state.repeatingYears[2]) timelineKeys.push({ keyVal: 2.5, label: "2ème (Rép.)" });
+    timelineKeys.push({ keyVal: 3, label: state.repeatingYears && state.repeatingYears[3] ? "3.1" : "3ème année" });
+    if (state.repeatingYears && state.repeatingYears[3]) timelineKeys.push({ keyVal: 3.5, label: "3ème (Rép.)" });
+
+    const totalSteps = timelineKeys.length;
+    const startX = isMax ? 100 : 80;
+    const endX = isMax ? svgWidth - 100 : svgWidth - 80;
+    
+    const xCoords = {};
+    timelineKeys.forEach((item, index) => {
+        xCoords[item.keyVal] = totalSteps > 1 
+            ? startX + (index / (totalSteps - 1)) * (endX - startX)
+            : svgWidth / 2;
+    });
         
     const mapY = (val) => {
         const clamped = Math.max(1.0, Math.min(6.0, val));
@@ -1617,10 +1688,10 @@ function renderMultiSubjectGraph() {
         if (!activeSubjectFilters.has(sub.key)) return;
 
         const points = [];
-        [1, 2, 3].forEach(y => {
-            const avg = getAnnualAverageForSubjectInYear(y, sub);
+        timelineKeys.forEach(tk => {
+            const avg = getAnnualAverageForSubjectInYearKey(tk.keyVal, sub);
             if (avg !== null && !isNaN(avg)) {
-                points.push({ year: y, val: avg, x: xCoords[y], y: mapY(avg) });
+                points.push({ year: tk.keyVal, val: avg, x: xCoords[tk.keyVal], y: mapY(avg) });
                 hasAnyDataToPlot = true;
             }
         });
@@ -1664,14 +1735,14 @@ function renderMultiSubjectGraph() {
                 <text class="promo-limit-text" x="${svgWidth - 45}" y="${thresholdY + 3}" fill="#ef4444" font-family="var(--font-family-sans)" font-size="10" font-weight="700">4.0</text>
 
                 <!-- X-Axis Labels -->
-                <text x="${xCoords[1]}" y="${svgHeight - 8}" font-size="11" fill="var(--color-text-muted)" text-anchor="middle" font-weight="600">1ère année</text>
-                <text x="${xCoords[2]}" y="${svgHeight - 8}" font-size="11" fill="var(--color-text-muted)" text-anchor="middle" font-weight="600">2ème année</text>
-                <text x="${xCoords[3]}" y="${svgHeight - 8}" font-size="11" fill="var(--color-text-muted)" text-anchor="middle" font-weight="600">3ème année</text>
+                ${timelineKeys.map(tk => `
+                    <text x="${xCoords[tk.keyVal]}" y="${svgHeight - 8}" font-size="11" fill="var(--color-text-muted)" text-anchor="middle" font-weight="600">${tk.label}</text>
+                `).join('')}
 
                 <!-- Vertical grid lines -->
-                <line x1="${xCoords[1]}" y1="20" x2="${xCoords[1]}" y2="${svgHeight - 30}" stroke="rgba(255,255,255,0.05)" stroke-width="1" />
-                <line x1="${xCoords[2]}" y1="20" x2="${xCoords[2]}" y2="${svgHeight - 30}" stroke="rgba(255,255,255,0.05)" stroke-width="1" />
-                <line x1="${xCoords[3]}" y1="20" x2="${xCoords[3]}" y2="${svgHeight - 30}" stroke="rgba(255,255,255,0.05)" stroke-width="1" />
+                ${timelineKeys.map(tk => `
+                    <line x1="${xCoords[tk.keyVal]}" y1="20" x2="${xCoords[tk.keyVal]}" y2="${svgHeight - 30}" stroke="rgba(255,255,255,0.05)" stroke-width="1" />
+                `).join('')}
 
                 <!-- Grouped lines and circles -->
                 ${graphGroupsHTML}
@@ -1744,18 +1815,63 @@ function renderEvolutionGraph() {
     const wrapper = document.getElementById('evolution-graph-wrapper');
     if (!wrapper) return;
 
+    const timeline = [];
+    
+    // Y1 attempt 1
     const resultsY1 = checkVaudPromotion(state.subjectsYear1, 'annual');
-    const resultsY2 = checkVaudPromotion(state.subjectsYear2, 'annual');
-    const resultsY3 = checkVaudPromotion(state.subjectsYear3, 'annual');
-
     const avgY1 = resultsY1.activeSubjectsCount > 0 ? resultsY1.overallAverage : null;
+    if (avgY1 !== null) {
+        timeline.push({ val: avgY1, label: state.repeatingYears && state.repeatingYears[1] ? "1ère (1.1)" : "1ère année" });
+    }
+    // Y1 repeated
+    if (state.repeatingYears && state.repeatingYears[1]) {
+        const resultsY1Rep = checkVaudPromotion(state.subjectsYear1_rep, 'annual');
+        const avgY1Rep = resultsY1Rep.activeSubjectsCount > 0 ? resultsY1Rep.overallAverage : null;
+        if (avgY1Rep !== null) {
+            timeline.push({ val: avgY1Rep, label: "1ère (Rép.)" });
+        }
+    }
+
+    // Y2 attempt 1
+    const resultsY2 = checkVaudPromotion(state.subjectsYear2, 'annual');
     const avgY2 = resultsY2.activeSubjectsCount > 0 ? resultsY2.overallAverage : null;
+    if (avgY2 !== null) {
+        timeline.push({ val: avgY2, label: state.repeatingYears && state.repeatingYears[2] ? "2ème (2.1)" : "2ème année" });
+    }
+    // Y2 repeated
+    if (state.repeatingYears && state.repeatingYears[2]) {
+        const resultsY2Rep = checkVaudPromotion(state.subjectsYear2_rep, 'annual');
+        const avgY2Rep = resultsY2Rep.activeSubjectsCount > 0 ? resultsY2Rep.overallAverage : null;
+        if (avgY2Rep !== null) {
+            timeline.push({ val: avgY2Rep, label: "2ème (Rép.)" });
+        }
+    }
+
+    // Y3 attempt 1
+    const resultsY3 = checkVaudPromotion(state.subjectsYear3, 'annual');
     const avgY3 = resultsY3.activeSubjectsCount > 0 ? resultsY3.overallAverage : null;
+    if (avgY3 !== null) {
+        timeline.push({ val: avgY3, label: state.repeatingYears && state.repeatingYears[3] ? "3ème (3.1)" : "3ème année" });
+    }
+    // Y3 repeated
+    if (state.repeatingYears && state.repeatingYears[3]) {
+        const resultsY3Rep = checkVaudPromotion(state.subjectsYear3_rep, 'annual');
+        const avgY3Rep = resultsY3Rep.activeSubjectsCount > 0 ? resultsY3Rep.overallAverage : null;
+        if (avgY3Rep !== null) {
+            timeline.push({ val: avgY3Rep, label: "3ème (Rép.)" });
+        }
+    }
 
     const points = [];
-    if (avgY1 !== null) points.push({ x: 100, val: avgY1, label: "1ère année" });
-    if (avgY2 !== null) points.push({ x: 300, val: avgY2, label: "2ème année" });
-    if (avgY3 !== null) points.push({ x: 500, val: avgY3, label: "3ème année" });
+    const count = timeline.length;
+    const startX = 80;
+    const endX = 520;
+    timeline.forEach((item, index) => {
+        const x = count > 1 
+            ? startX + (index / (count - 1)) * (endX - startX) 
+            : 300;
+        points.push({ x: x, val: item.val, label: item.label });
+    });
 
     if (points.length === 0) {
         wrapper.innerHTML = `
@@ -2072,12 +2188,16 @@ function getSubjectCardInnerHTML(subject, sem) {
             `;
         }
 
+        const addGradeBtnHTML = isCurrentYearLocked() ? '' : `
+            <button class="btn btn-secondary add-grade-btn" style="padding: 0.5rem 1rem; font-size: 0.8rem; border-radius: var(--radius-full);">
+                + Ajouter une note
+            </button>
+        `;
+
         footerHTML = `
             <div class="subject-footer">
                 ${targetStatusHTML}
-                <button class="btn btn-secondary add-grade-btn" style="padding: 0.5rem 1rem; font-size: 0.8rem; border-radius: var(--radius-full);">
-                    + Ajouter une note
-                </button>
+                ${addGradeBtnHTML}
             </div>
         `;
     }
@@ -2195,6 +2315,36 @@ function openSubjectDetailsModal(subject) {
 
 function renderSubjects() {
     subjectsContainer.innerHTML = '';
+    
+    // Hide or show custom subject addition button based on locked status
+    const addSubBtn = document.getElementById('add-subject-btn');
+    if (addSubBtn) {
+        addSubBtn.style.display = isCurrentYearLocked() ? 'none' : 'inline-flex';
+    }
+    
+    if (isCurrentYearLocked()) {
+        const lockBanner = document.createElement('div');
+        lockBanner.className = 'lock-banner';
+        lockBanner.style.padding = '0.75rem 1rem';
+        lockBanner.style.marginBottom = '1.25rem';
+        lockBanner.style.background = 'rgba(239, 68, 68, 0.08)';
+        lockBanner.style.border = '1px solid rgba(239, 68, 68, 0.2)';
+        lockBanner.style.borderRadius = 'var(--radius-md)';
+        lockBanner.style.color = '#ef4444';
+        lockBanner.style.fontSize = '0.8rem';
+        lockBanner.style.fontWeight = '600';
+        lockBanner.style.display = 'flex';
+        lockBanner.style.alignItems = 'center';
+        lockBanner.style.gap = '0.5rem';
+        lockBanner.style.width = '100%';
+        lockBanner.style.gridColumn = '1 / -1'; // Span across all columns in grid layouts
+        lockBanner.innerHTML = `
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+            <span>Cette tentative est verrouillée car le redoublement est actif. Pour modifier ces notes, décochez l'option de redoublement dans l'onglet Annuel.</span>
+        `;
+        subjectsContainer.appendChild(lockBanner);
+    }
+
     const currentSubjects = getCurrentSubjects();
     const sem = state.currentSemester;
 
@@ -2997,6 +3147,16 @@ function handleSubjectInteractionClick(e) {
                 });
 
                 toggleEditMode(false); // Default to view mode
+                
+                const editBtn = document.getElementById('edit-details-btn');
+                if (editBtn) {
+                    editBtn.style.display = isCurrentYearLocked() ? 'none' : 'inline-block';
+                }
+                const delBtn = document.getElementById('delete-detail-grade-btn');
+                if (delBtn) {
+                    delBtn.style.display = isCurrentYearLocked() ? 'none' : 'inline-block';
+                }
+                
                 openModal(gradeDetailsModal);
             }
         }
@@ -3047,6 +3207,10 @@ if (subjectDetailsModal) {
 // Delete Grade action inside details modal
 if (deleteDetailGradeBtn) {
     deleteDetailGradeBtn.addEventListener('click', () => {
+        if (isCurrentYearLocked()) {
+            alert("Cette tentative est verrouillée.");
+            return;
+        }
         if (selectedSubjectIdForDetails && selectedGradeIdForDetails) {
             const currentSubjects = getCurrentSubjects();
             const subject = currentSubjects.find(s => s.id === selectedSubjectIdForDetails);
@@ -3074,6 +3238,10 @@ document.getElementById('edit-details-btn').addEventListener('click', () => {
 // Save edits inside Details Modal
 document.getElementById('save-edit-btn').addEventListener('click', (e) => {
     e.preventDefault();
+    if (isCurrentYearLocked()) {
+        alert("Cette tentative est verrouillée.");
+        return;
+    }
     if (!selectedSubjectIdForDetails || !selectedGradeIdForDetails) return;
 
     const currentSubjects = getCurrentSubjects();
@@ -3265,6 +3433,11 @@ document.getElementById('edit-remove-grade-photo-btn').addEventListener('click',
 document.getElementById('add-grade-form').addEventListener('submit', (e) => {
     e.preventDefault();
     const submitBtn = e.target.querySelector('button[type="submit"]');
+    if (isCurrentYearLocked()) {
+        alert("Cette tentative est verrouillée.");
+        closeModal(addGradeModal);
+        return;
+    }
     if (submitBtn) submitBtn.disabled = true;
 
     let value = 4.0;
