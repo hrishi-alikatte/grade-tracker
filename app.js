@@ -2235,26 +2235,28 @@ function renderSubjects() {
         });
 
         // Append gemstone repeating year box
-        const repeatItem = document.createElement('div');
-        repeatItem.className = 'gem-item';
-        repeatItem.innerHTML = `
-            <div class="gem-sphere gem-repeat-status" style="background-color: var(--color-bg-elevated); display: flex; align-items: center; justify-content: center; border: 1px dashed var(--color-border-subtle); cursor: pointer;" onclick="document.getElementById('chk-repeat-year-gem')?.click();">
-                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--color-primary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <polyline points="23 4 23 10 17 10"></polyline>
-                    <polyline points="1 20 1 14 7 14"></polyline>
-                    <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
-                </svg>
-            </div>
-            <div class="gem-sphere-shadow"></div>
-            <div class="gem-subject-name" style="margin-top: 0.5rem; display: flex; flex-direction: column; align-items: center; gap: 0.25rem;">
-                <div style="font-size: 0.85rem; font-weight: 700; color: var(--color-text-primary);">Redoublement</div>
-                <div style="display: flex; align-items: center; gap: 0.25rem; font-size: 0.75rem;">
-                    <input type="checkbox" id="chk-repeat-year-gem" style="cursor: pointer; width: 14px; height: 14px;" ${state.repeatingYears[getBaseYear()] ? 'checked' : ''}>
-                    <label for="chk-repeat-year-gem" style="cursor: pointer; font-weight: 600; color: var(--color-text-secondary);">Redoubler</label>
+        if (sem === 'annual') {
+            const repeatItem = document.createElement('div');
+            repeatItem.className = 'gem-item';
+            repeatItem.innerHTML = `
+                <div class="gem-sphere gem-repeat-status" style="background-color: var(--color-bg-elevated); display: flex; align-items: center; justify-content: center; border: 1px dashed var(--color-border-subtle); cursor: pointer;" onclick="document.getElementById('chk-repeat-year-gem')?.click();">
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--color-primary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="23 4 23 10 17 10"></polyline>
+                        <polyline points="1 20 1 14 7 14"></polyline>
+                        <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
+                    </svg>
                 </div>
-            </div>
-        `;
-        subjectsContainer.appendChild(repeatItem);
+                <div class="gem-sphere-shadow"></div>
+                <div class="gem-subject-name" style="margin-top: 0.5rem; display: flex; flex-direction: column; align-items: center; gap: 0.25rem;">
+                    <div style="font-size: 0.85rem; font-weight: 700; color: var(--color-text-primary);">Redoublement</div>
+                    <div style="display: flex; align-items: center; gap: 0.25rem; font-size: 0.75rem;">
+                        <input type="checkbox" id="chk-repeat-year-gem" style="cursor: pointer; width: 14px; height: 14px;" ${state.repeatingYears[getBaseYear()] ? 'checked' : ''}>
+                        <label for="chk-repeat-year-gem" style="cursor: pointer; font-weight: 600; color: var(--color-text-secondary);">Redoubler</label>
+                    </div>
+                </div>
+            `;
+            subjectsContainer.appendChild(repeatItem);
+        }
 
         // Initialize rotation dragging physics on the new spheres
         initGemstoneRotation();
@@ -2290,29 +2292,31 @@ function renderSubjects() {
         });
 
         // Append Repeating status card
-        const repeatCard = document.createElement('div');
-        repeatCard.className = animateCards ? 'subject-card slide-up repeating-card' : 'subject-card repeating-card';
-        repeatCard.style.padding = '1.5rem';
-        repeatCard.style.display = 'flex';
-        repeatCard.style.flexDirection = 'column';
-        repeatCard.style.gap = '0.75rem';
-        repeatCard.style.border = '1px dashed var(--color-border-subtle)';
-        repeatCard.style.justifyContent = 'center';
-        repeatCard.style.background = 'rgba(0,0,0,0.01)';
-        
-        repeatCard.innerHTML = `
-            <h3 style="font-size: 1.1rem; font-weight: 800; display: flex; align-items: center; gap: 0.5rem; color: var(--color-text-primary); margin: 0;">
-                <span>Statut de Redoublement</span>
-            </h3>
-            <p style="font-size: 0.8rem; color: var(--color-text-secondary); line-height: 1.4; margin: 0;">
-                Si vous redoublez cette année, activez cette option pour configurer une deuxième tentative de cette même année.
-            </p>
-            <div style="display: flex; align-items: center; gap: 0.5rem; margin-top: 0.25rem;">
-                <input type="checkbox" id="chk-repeat-year" style="cursor: pointer; width: 16px; height: 16px;" ${state.repeatingYears[getBaseYear()] ? 'checked' : ''}>
-                <label for="chk-repeat-year" style="font-size: 0.85rem; font-weight: 600; cursor: pointer; color: var(--color-text-primary);">Redoubler l'année</label>
-            </div>
-        `;
-        subjectsContainer.appendChild(repeatCard);
+        if (sem === 'annual') {
+            const repeatCard = document.createElement('div');
+            repeatCard.className = animateCards ? 'subject-card slide-up repeating-card' : 'subject-card repeating-card';
+            repeatCard.style.padding = '1.5rem';
+            repeatCard.style.display = 'flex';
+            repeatCard.style.flexDirection = 'column';
+            repeatCard.style.gap = '0.75rem';
+            repeatCard.style.border = '1px dashed var(--color-border-subtle)';
+            repeatCard.style.justifyContent = 'center';
+            repeatCard.style.background = 'rgba(0,0,0,0.01)';
+            
+            repeatCard.innerHTML = `
+                <h3 style="font-size: 1.1rem; font-weight: 800; display: flex; align-items: center; gap: 0.5rem; color: var(--color-text-primary); margin: 0;">
+                    <span>Statut de Redoublement</span>
+                </h3>
+                <p style="font-size: 0.8rem; color: var(--color-text-secondary); line-height: 1.4; margin: 0;">
+                    Si vous redoublez cette année, activez cette option pour configurer une deuxième tentative de cette même année.
+                </p>
+                <div style="display: flex; align-items: center; gap: 0.5rem; margin-top: 0.25rem;">
+                    <input type="checkbox" id="chk-repeat-year" style="cursor: pointer; width: 16px; height: 16px;" ${state.repeatingYears[getBaseYear()] ? 'checked' : ''}>
+                    <label for="chk-repeat-year" style="font-size: 0.85rem; font-weight: 600; cursor: pointer; color: var(--color-text-primary);">Redoubler l'année</label>
+                </div>
+            `;
+            subjectsContainer.appendChild(repeatCard);
+        }
     }
     animateCards = false;
 
