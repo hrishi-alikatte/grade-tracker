@@ -1316,12 +1316,18 @@ function renderDedicatedEvolutionSlide() {
         </div>
 
         <!-- Multi-Subject Comparison Card -->
-        <div class="subject-card" style="padding: 1.5rem; display: flex; flex-direction: column; gap: 1rem;">
+        <div id="multi-subject-card" class="subject-card" style="padding: 1.5rem; display: flex; flex-direction: column; gap: 1rem;">
             <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--color-border-subtle); padding-bottom: 0.5rem; flex-wrap: wrap; gap: 0.5rem;">
-                <h3 style="font-size: 1.15rem; font-weight: 800; color: white; display: flex; align-items: center; gap: 0.5rem;">
-                    <span>Évolution par Branche</span>
+                <h3 style="font-size: 1.15rem; font-weight: 800; color: white; display: flex; align-items: center; gap: 0.5rem; width: 100%; justify-content: space-between; flex-wrap: wrap;">
+                    <span style="display: flex; align-items: center; gap: 0.5rem;">
+                        <span>Évolution par Branche</span>
+                        <button type="button" id="btn-maximize-multi-graph" class="btn btn-secondary" style="padding: 2px 8px; font-size: 0.7rem; border-radius: var(--radius-sm); display: flex; align-items: center; gap: 0.25rem;" title="Agrandir / Plein écran">
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg>
+                            <span>Agrandir</span>
+                        </button>
+                    </span>
+                    <span style="font-size: 0.8rem; color: var(--color-text-secondary); font-weight: 500;">Branches principales et OS</span>
                 </h3>
-                <span style="font-size: 0.8rem; color: var(--color-text-secondary); font-weight: 500;">Branches principales et OS</span>
             </div>
             <div id="multi-subject-graph-wrapper" style="position: relative; width: 100%; min-height: 250px; display: flex; align-items: center; justify-content: center; flex-direction: column;">
                 <!-- Dynamically rendered -->
@@ -1331,6 +1337,29 @@ function renderDedicatedEvolutionSlide() {
 
     renderEvolutionGraph();
     renderMultiSubjectGraph();
+
+    const maxBtn = document.getElementById('btn-maximize-multi-graph');
+    if (maxBtn) {
+        maxBtn.addEventListener('click', () => {
+            const card = document.getElementById('multi-subject-card');
+            if (card) {
+                card.classList.toggle('is-maximized');
+                const isMax = card.classList.contains('is-maximized');
+                if (isMax) {
+                    maxBtn.innerHTML = `
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 14h6v6M20 10h-6V4M14 10l7-7M10 14l-7 7"/></svg>
+                        <span>Réduire</span>
+                    `;
+                } else {
+                    maxBtn.innerHTML = `
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg>
+                        <span>Agrandir</span>
+                    `;
+                }
+                renderMultiSubjectGraph();
+            }
+        });
+    }
 }
 
 function hexToRgb(hex) {
@@ -1404,7 +1433,22 @@ function renderMultiSubjectGraph() {
         return;
     }
 
-    const subjectColors = [
+    const isLightTheme = document.body.classList.contains('theme-light');
+    const subjectColors = isLightTheme ? [
+        '#b91c1c', // Crimson Red
+        '#1d4ed8', // Royal Blue
+        '#047857', // Forest Green
+        '#b45309', // Dark Amber
+        '#7e22ce', // Purple
+        '#0f766e', // Dark Teal
+        '#be185d', // Pink
+        '#c2410c', // Dark Orange
+        '#4338ca', // Indigo
+        '#9f1239', // Rose
+        '#1e3a8a', // Navy
+        '#451a03', // Brown
+        '#065f46'  // Emerald
+    ] : [
         '#ef4444', // Red
         '#3b82f6', // Blue
         '#10b981', // Emerald Green
@@ -1455,10 +1499,22 @@ function renderMultiSubjectGraph() {
         </div>
     `;
 
-    const xCoords = { 1: 100, 2: 300, 3: 500 };
+    const card = document.getElementById('multi-subject-card');
+    const isMax = card && card.classList.contains('is-maximized');
+    
+    const svgWidth = isMax ? 800 : 600;
+    const svgHeight = isMax ? 400 : 220;
+    
+    const xCoords = isMax 
+        ? { 1: 120, 2: 400, 3: 680 }
+        : { 1: 100, 2: 300, 3: 500 };
+        
     const mapY = (val) => {
         const clamped = Math.max(1.0, Math.min(6.0, val));
-        return 180 - ((clamped - 1.0) / 5.0) * 150;
+        const chartTop = 30;
+        const chartBottom = svgHeight - 40;
+        const chartHeight = chartBottom - chartTop;
+        return chartBottom - ((clamped - 1.0) / 5.0) * chartHeight;
     };
 
     const thresholdY = mapY(4.0);
@@ -1484,14 +1540,14 @@ function renderMultiSubjectGraph() {
         if (points.length > 1) {
             const pathData = points.map((p, i) => `${i === 0 ? 'M' : 'L'} ${p.x} ${p.y}`).join(' ');
             pathHTML = `
-                <path d="${pathData}" fill="none" stroke="${sub.color}" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" />
-                <path class="graph-hover-helper" d="${pathData}" fill="none" stroke="transparent" stroke-width="16" stroke-linecap="round" stroke-linejoin="round" style="cursor: pointer;" />
+                <path d="${pathData}" fill="none" stroke="${sub.color}" stroke-width="${isMax ? '3.5' : '2.5'}" stroke-linecap="round" stroke-linejoin="round" />
+                <path class="graph-hover-helper" d="${pathData}" fill="none" stroke="transparent" stroke-width="20" stroke-linecap="round" stroke-linejoin="round" style="cursor: pointer;" />
             `;
         }
 
         let markersHTML = points.map(p => `
-            <circle cx="${p.x}" cy="${p.y}" r="5" fill="var(--color-bg-surface)" stroke="${sub.color}" stroke-width="2" />
-            <text class="node-text" x="${p.x}" y="${p.y - 10}" text-anchor="middle" font-size="9.5" font-weight="bold" fill="var(--color-text-primary)" stroke="var(--color-bg-surface)" stroke-width="3" paint-order="stroke fill">${p.val.toFixed(1)}</text>
+            <circle cx="${p.x}" cy="${p.y}" r="${isMax ? '7' : '5'}" fill="var(--color-bg-surface)" stroke="${sub.color}" stroke-width="2" />
+            <text class="node-text" x="${p.x}" y="${p.y - 12}" text-anchor="middle" font-size="${isMax ? '11' : '9.5'}" font-weight="bold" fill="var(--color-text-primary)" stroke="var(--color-bg-surface)" stroke-width="3" paint-order="stroke fill">${p.val.toFixed(1)}</text>
         `).join('');
 
         graphGroupsHTML += `
@@ -1505,26 +1561,26 @@ function renderMultiSubjectGraph() {
     let svgHTML = '';
     if (hasAnyDataToPlot) {
         svgHTML = `
-            <svg id="multi-subject-svg" viewBox="0 0 600 220" width="100%" height="220" style="overflow: visible; cursor: crosshair;">
+            <svg id="multi-subject-svg" viewBox="0 0 ${svgWidth} ${svgHeight}" width="100%" height="${svgHeight}" style="overflow: visible; cursor: crosshair;">
                 <!-- Grid horizontal lines -->
-                <line x1="50" y1="${mapY(6.0)}" x2="550" y2="${mapY(6.0)}" stroke="rgba(255,255,255,0.03)" stroke-width="1"/>
-                <line x1="50" y1="${mapY(5.0)}" x2="550" y2="${mapY(5.0)}" stroke="rgba(255,255,255,0.03)" stroke-width="1"/>
-                <line x1="50" y1="${mapY(3.0)}" x2="550" y2="${mapY(3.0)}" stroke="rgba(255,255,255,0.03)" stroke-width="1"/>
-                <line x1="50" y1="${mapY(2.0)}" x2="550" y2="${mapY(2.0)}" stroke="rgba(255,255,255,0.03)" stroke-width="1"/>
+                <line x1="50" y1="${mapY(6.0)}" x2="${svgWidth - 50}" y2="${mapY(6.0)}" stroke="rgba(255,255,255,0.03)" stroke-width="1"/>
+                <line x1="50" y1="${mapY(5.0)}" x2="${svgWidth - 50}" y2="${mapY(5.0)}" stroke="rgba(255,255,255,0.03)" stroke-width="1"/>
+                <line x1="50" y1="${mapY(3.0)}" x2="${svgWidth - 50}" y2="${mapY(3.0)}" stroke="rgba(255,255,255,0.03)" stroke-width="1"/>
+                <line x1="50" y1="${mapY(2.0)}" x2="${svgWidth - 50}" y2="${mapY(2.0)}" stroke="rgba(255,255,255,0.03)" stroke-width="1"/>
 
                 <!-- Promotion Limit Line (4.0) -->
-                <line x1="50" y1="${thresholdY}" x2="550" y2="${thresholdY}" stroke="#ef4444" stroke-dasharray="4,4" stroke-width="1.5" opacity="0.6"/>
-                <text x="555" y="${thresholdY + 3}" fill="#ef4444" font-family="var(--font-family-sans)" font-size="10" font-weight="700">4.0</text>
+                <line x1="50" y1="${thresholdY}" x2="${svgWidth - 50}" y2="${thresholdY}" stroke="#ef4444" stroke-dasharray="4,4" stroke-width="1.5" opacity="0.6"/>
+                <text x="${svgWidth - 45}" y="${thresholdY + 3}" fill="#ef4444" font-family="var(--font-family-sans)" font-size="10" font-weight="700">4.0</text>
 
                 <!-- X-Axis Labels -->
-                <text x="100" y="212" font-size="11" fill="var(--color-text-muted)" text-anchor="middle" font-weight="600">1ère année</text>
-                <text x="300" y="212" font-size="11" fill="var(--color-text-muted)" text-anchor="middle" font-weight="600">2ème année</text>
-                <text x="500" y="212" font-size="11" fill="var(--color-text-muted)" text-anchor="middle" font-weight="600">3ème année</text>
+                <text x="${xCoords[1]}" y="${svgHeight - 8}" font-size="11" fill="var(--color-text-muted)" text-anchor="middle" font-weight="600">1ère année</text>
+                <text x="${xCoords[2]}" y="${svgHeight - 8}" font-size="11" fill="var(--color-text-muted)" text-anchor="middle" font-weight="600">2ème année</text>
+                <text x="${xCoords[3]}" y="${svgHeight - 8}" font-size="11" fill="var(--color-text-muted)" text-anchor="middle" font-weight="600">3ème année</text>
 
                 <!-- Vertical grid lines -->
-                <line x1="100" y1="20" x2="100" y2="190" stroke="rgba(255,255,255,0.05)" stroke-width="1" />
-                <line x1="300" y1="20" x2="300" y2="190" stroke="rgba(255,255,255,0.05)" stroke-width="1" />
-                <line x1="500" y1="20" x2="500" y2="190" stroke="rgba(255,255,255,0.05)" stroke-width="1" />
+                <line x1="${xCoords[1]}" y1="20" x2="${xCoords[1]}" y2="${svgHeight - 30}" stroke="rgba(255,255,255,0.05)" stroke-width="1" />
+                <line x1="${xCoords[2]}" y1="20" x2="${xCoords[2]}" y2="${svgHeight - 30}" stroke="rgba(255,255,255,0.05)" stroke-width="1" />
+                <line x1="${xCoords[3]}" y1="20" x2="${xCoords[3]}" y2="${svgHeight - 30}" stroke="rgba(255,255,255,0.05)" stroke-width="1" />
 
                 <!-- Grouped lines and circles -->
                 ${graphGroupsHTML}

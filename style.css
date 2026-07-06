@@ -3024,3 +3024,105 @@ body.theme-light #theme-selector {
     display: none !important;
 }
 
+/* ==========================================================================
+   VISIBILITY AND DYNAMIC SCALING OVERRIDES (LIGHT MODE)
+   ========================================================================== */
+
+/* Catch-all light mode text visibility overrides: forces hardcoded white text to be black */
+body.theme-light h1,
+body.theme-light h2,
+body.theme-light h3,
+body.theme-light h4,
+body.theme-light h5,
+body.theme-light h6,
+body.theme-light strong,
+body.theme-light p,
+body.theme-light span,
+body.theme-light select,
+body.theme-light option,
+body.theme-light input,
+body.theme-light textarea,
+body.theme-light .guide-card-title,
+body.theme-light .bilan-section h2,
+body.theme-light .subject-name,
+body.theme-light .toast-message,
+body.theme-light .modal-content,
+body.theme-light .modal-header h2,
+body.theme-light [style*="color: white"],
+body.theme-light [style*="color:white"],
+body.theme-light [style*="color: #fff"],
+body.theme-light [style*="color:#fff"],
+body.theme-light [style*="color: #ffffff"],
+body.theme-light [style*="color:#ffffff"] {
+    color: var(--color-text-primary) !important;
+}
+
+/* Specific elements visibility */
+body.theme-light select.sim-num-tests,
+body.theme-light select.sim-type {
+    background-color: var(--color-bg-elevated) !important;
+    color: var(--color-text-primary) !important;
+    border: 1px solid var(--color-border-subtle) !important;
+}
+
+/* Maximized Multi-Subject Graph Card overlay style */
+.subject-card.is-maximized {
+    position: fixed !important;
+    top: 50% !important;
+    left: 50% !important;
+    transform: translate(-50%, -50%) !important;
+    width: 92vw !important;
+    max-width: 960px !important;
+    height: 85vh !important;
+    max-height: 720px !important;
+    z-index: 9999 !important;
+    background-color: var(--color-bg-surface) !important;
+    border: 1px solid var(--color-border-subtle) !important;
+    box-shadow: 0 20px 80px rgba(0, 0, 0, 0.45) !important;
+    padding: 2rem !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: flex-start !important;
+    border-radius: var(--radius-lg) !important;
+    overflow-y: auto !important;
+    animation: zoomIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+body.theme-light .subject-card.is-maximized {
+    box-shadow: 0 20px 80px rgba(0, 0, 0, 0.12) !important;
+    border-color: rgba(0, 0, 0, 0.1) !important;
+}
+
+@keyframes zoomIn {
+    from {
+        opacity: 0;
+        transform: translate(-50%, -45%) scale(0.96);
+    }
+    to {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1);
+    }
+}
+
+/* Dim overlay when maximized */
+body::after {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    z-index: 9998;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.25s ease;
+}
+
+body:has(.subject-card.is-maximized)::after {
+    opacity: 1;
+    pointer-events: auto;
+}
+
