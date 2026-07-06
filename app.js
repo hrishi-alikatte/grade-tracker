@@ -2386,10 +2386,22 @@ function renderSubjects() {
 
         // Append gemstone repeating year box
         if (sem === 'annual') {
+            const baseYear = getBaseYear();
+            const firstAttemptSubjects = baseYear === 3 ? state.subjectsYear3 : baseYear === 2 ? state.subjectsYear2 : state.subjectsYear1;
+            const firstAttemptPromo = checkVaudPromotion(firstAttemptSubjects, 'annual');
+            const isFirstAttemptPassing = firstAttemptPromo.isPromoted;
+            const repeatingActive = state.repeatingYears && state.repeatingYears[baseYear];
+            const isRepeatDisabled = isFirstAttemptPassing && !repeatingActive;
+
             const repeatItem = document.createElement('div');
             repeatItem.className = 'gem-item';
+            if (isRepeatDisabled) {
+                repeatItem.style.opacity = '0.5';
+                repeatItem.style.cursor = 'not-allowed';
+            }
+
             repeatItem.innerHTML = `
-                <div class="gem-sphere gem-repeat-status" style="background-color: var(--color-bg-elevated); display: flex; align-items: center; justify-content: center; border: 1px dashed var(--color-border-subtle); cursor: pointer;" onclick="document.getElementById('chk-repeat-year-gem')?.click();">
+                <div class="gem-sphere gem-repeat-status" style="background-color: var(--color-bg-elevated); display: flex; align-items: center; justify-content: center; border: 1px dashed var(--color-border-subtle); ${isRepeatDisabled ? 'cursor: not-allowed;' : 'cursor: pointer;'}" ${isRepeatDisabled ? '' : 'onclick="document.getElementById(\'chk-repeat-year-gem\')?.click();"'}>
                     <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--color-primary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <polyline points="23 4 23 10 17 10"></polyline>
                         <polyline points="1 20 1 14 7 14"></polyline>
@@ -2400,8 +2412,12 @@ function renderSubjects() {
                 <div class="gem-subject-name" style="margin-top: 0.5rem; display: flex; flex-direction: column; align-items: center; gap: 0.25rem;">
                     <div style="font-size: 0.85rem; font-weight: 700; color: var(--color-text-primary);">Redoublement</div>
                     <div style="display: flex; align-items: center; gap: 0.25rem; font-size: 0.75rem;">
-                        <input type="checkbox" id="chk-repeat-year-gem" style="cursor: pointer; width: 14px; height: 14px;" ${state.repeatingYears[getBaseYear()] ? 'checked' : ''}>
-                        <label for="chk-repeat-year-gem" style="cursor: pointer; font-weight: 600; color: var(--color-text-secondary);">Redoubler</label>
+                        ${isRepeatDisabled ? `
+                            <span style="font-size: 0.7rem; color: var(--color-text-muted); font-weight: 600; text-align: center;">Réussite active</span>
+                        ` : `
+                            <input type="checkbox" id="chk-repeat-year-gem" style="cursor: pointer; width: 14px; height: 14px;" ${repeatingActive ? 'checked' : ''}>
+                            <label for="chk-repeat-year-gem" style="cursor: pointer; font-weight: 600; color: var(--color-text-secondary);">Redoubler</label>
+                        `}
                     </div>
                 </div>
             `;
@@ -2443,6 +2459,13 @@ function renderSubjects() {
 
         // Append Repeating status card
         if (sem === 'annual') {
+            const baseYear = getBaseYear();
+            const firstAttemptSubjects = baseYear === 3 ? state.subjectsYear3 : baseYear === 2 ? state.subjectsYear2 : state.subjectsYear1;
+            const firstAttemptPromo = checkVaudPromotion(firstAttemptSubjects, 'annual');
+            const isFirstAttemptPassing = firstAttemptPromo.isPromoted;
+            const repeatingActive = state.repeatingYears && state.repeatingYears[baseYear];
+            const isRepeatDisabled = isFirstAttemptPassing && !repeatingActive;
+
             const repeatCard = document.createElement('div');
             repeatCard.className = animateCards ? 'subject-card slide-up repeating-card' : 'subject-card repeating-card';
             repeatCard.style.padding = '1.5rem';
@@ -2452,7 +2475,30 @@ function renderSubjects() {
             repeatCard.style.border = '1px dashed var(--color-border-subtle)';
             repeatCard.style.justifyContent = 'center';
             repeatCard.style.background = 'rgba(0,0,0,0.01)';
+            if (isRepeatDisabled) {
+                repeatCard.style.opacity = '0.65';
+            }
             
+            let repeatControlHTML = '';
+            if (isRepeatDisabled) {
+                repeatControlHTML = `
+                    <div style="display: flex; align-items: center; gap: 0.5rem; margin-top: 0.25rem;">
+                        <input type="checkbox" id="chk-repeat-year" style="cursor: not-allowed; width: 16px; height: 16px;" disabled>
+                        <label style="font-size: 0.85rem; font-weight: 600; color: var(--color-text-muted); cursor: not-allowed; display: flex; flex-direction: column; gap: 0.15rem;">
+                            <span>Redoubler l'année (verrouillé)</span>
+                            <span style="font-size: 0.72rem; font-weight: 500; color: var(--color-primary);">Cette option est désactivée car vous réussissez actuellement cette tentative.</span>
+                        </label>
+                    </div>
+                `;
+            } else {
+                repeatControlHTML = `
+                    <div style="display: flex; align-items: center; gap: 0.5rem; margin-top: 0.25rem;">
+                        <input type="checkbox" id="chk-repeat-year" style="cursor: pointer; width: 16px; height: 16px;" ${repeatingActive ? 'checked' : ''}>
+                        <label for="chk-repeat-year" style="font-size: 0.85rem; font-weight: 600; cursor: pointer; color: var(--color-text-primary);">Redoubler l'année</label>
+                    </div>
+                `;
+            }
+
             repeatCard.innerHTML = `
                 <h3 style="font-size: 1.1rem; font-weight: 800; display: flex; align-items: center; gap: 0.5rem; color: var(--color-text-primary); margin: 0;">
                     <span>Statut de Redoublement</span>
@@ -2460,10 +2506,7 @@ function renderSubjects() {
                 <p style="font-size: 0.8rem; color: var(--color-text-secondary); line-height: 1.4; margin: 0;">
                     Si vous redoublez cette année, activez cette option pour configurer une deuxième tentative de cette même année.
                 </p>
-                <div style="display: flex; align-items: center; gap: 0.5rem; margin-top: 0.25rem;">
-                    <input type="checkbox" id="chk-repeat-year" style="cursor: pointer; width: 16px; height: 16px;" ${state.repeatingYears[getBaseYear()] ? 'checked' : ''}>
-                    <label for="chk-repeat-year" style="font-size: 0.85rem; font-weight: 600; cursor: pointer; color: var(--color-text-primary);">Redoubler l'année</label>
-                </div>
+                ${repeatControlHTML}
             `;
             subjectsContainer.appendChild(repeatCard);
         }
