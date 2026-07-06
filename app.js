@@ -327,24 +327,27 @@ function formatYear2SubjectAvg(nameSub) {
 }
 
 function getYear2SubjectAverage(nameSub) {
-    if (!state.subjectsYear2) return null;
-    const sub = state.subjectsYear2.find(s => s.name.toLowerCase().includes(nameSub));
+    const list = (state.repeatingYears && state.repeatingYears[2]) ? state.subjectsYear2_rep : state.subjectsYear2;
+    if (!list) return null;
+    const sub = list.find(s => s.name.toLowerCase().includes(nameSub));
     if (!sub) return null;
     const data = calculateSubjectData(sub, 'annual');
     return data.rawAverage !== null ? data.roundedAverage : null;
 }
 
 function getYear2ArtAverage() {
-    if (!state.subjectsYear2) return null;
-    const sub = state.subjectsYear2.find(s => s.role === 'art');
+    const list = (state.repeatingYears && state.repeatingYears[2]) ? state.subjectsYear2_rep : state.subjectsYear2;
+    if (!list) return null;
+    const sub = list.find(s => s.role === 'art');
     if (!sub) return null;
     const data = calculateSubjectData(sub, 'annual');
     return data.rawAverage !== null ? data.roundedAverage : null;
 }
 
 function formatYear2ArtAvg() {
-    if (!state.subjectsYear2) return '—';
-    const sub = state.subjectsYear2.find(s => s.role === 'art');
+    const list = (state.repeatingYears && state.repeatingYears[2]) ? state.subjectsYear2_rep : state.subjectsYear2;
+    if (!list) return '—';
+    const sub = list.find(s => s.role === 'art');
     if (!sub) return '—';
     const data = calculateSubjectData(sub, 'annual');
     return data.rawAverage !== null ? `${data.roundedAverage.toFixed(1)} (moy: ${data.rawAverage.toFixed(2)})` : '—';
@@ -649,9 +652,9 @@ function checkVaudPromotion(subjects, semester) {
     const coreSumPassed = !hasCoreGrades || g1Sum >= 16.0;
 
     const overallAverage = activeSubjectsCount > 0 ? (roundedAveragesSum / activeSubjectsCount) : null;
-    const requiredCompensation = (state.currentYear === 3) ? (2 * pointsManquants) : 0;
+    const requiredCompensation = (getBaseYear() === 3) ? (2 * pointsManquants) : 0;
     let isPromoted = false;
-    if (state.currentYear === 1 || state.currentYear === 2) {
+    if (getBaseYear() === 1 || getBaseYear() === 2) {
         isPromoted = activeSubjectsCount > 0 &&
                      coreSumPassed &&
                      roundedAveragesSum >= activeSubjectsCount * 4.0 &&
@@ -853,12 +856,21 @@ function loadState() {
             if (state.hasSeenOnboarding === undefined) state.hasSeenOnboarding = false;
             if (!state.promoViewMode) state.promoViewMode = 'visual';
             if (state.isLightTheme === undefined) state.isLightTheme = true;
+            if (!state.repeatingYears) {
+                state.repeatingYears = { 1: false, 2: false, 3: false };
+            }
+            if (!state.subjectsYear1_rep) state.subjectsYear1_rep = JSON.parse(JSON.stringify(defaultSubjectsYear1));
+            if (!state.subjectsYear2_rep) state.subjectsYear2_rep = JSON.parse(JSON.stringify(defaultSubjectsYear2));
+            if (!state.subjectsYear3_rep) state.subjectsYear3_rep = JSON.parse(JSON.stringify(defaultSubjectsYear3));
             
             runStateMigrations();
             
             state.subjectsYear1.forEach(migrateSubjectGrades);
             state.subjectsYear2.forEach(migrateSubjectGrades);
             state.subjectsYear3.forEach(migrateSubjectGrades);
+            state.subjectsYear1_rep.forEach(migrateSubjectGrades);
+            state.subjectsYear2_rep.forEach(migrateSubjectGrades);
+            state.subjectsYear3_rep.forEach(migrateSubjectGrades);
             
             applyTheme();
         } catch(e) {
@@ -878,6 +890,10 @@ function resetStateToDefault() {
         subjectsYear1: JSON.parse(JSON.stringify(defaultSubjectsYear1)),
         subjectsYear2: JSON.parse(JSON.stringify(defaultSubjectsYear2)),
         subjectsYear3: JSON.parse(JSON.stringify(defaultSubjectsYear3)),
+        subjectsYear1_rep: JSON.parse(JSON.stringify(defaultSubjectsYear1)),
+        subjectsYear2_rep: JSON.parse(JSON.stringify(defaultSubjectsYear2)),
+        subjectsYear3_rep: JSON.parse(JSON.stringify(defaultSubjectsYear3)),
+        repeatingYears: { 1: false, 2: false, 3: false },
         theme: 'navy',
         isLightTheme: true,
         hasSeenOnboarding: false,
@@ -889,6 +905,81 @@ function resetStateToDefault() {
 
 function saveState() {
     localStorage.setItem('gymnase_vaud_state_v5', JSON.stringify(state));
+}
+
+function getBaseYear() {
+    const cy = state.currentYear;
+    if (cy === 1 || cy === 1.5) return 1;
+    if (cy === 2 || cy === 2.5) return 2;
+    if (cy === 3 || cy === 3.5) return 3;
+    return 1;
+}
+
+function getCurrentSubjects() {
+    const cy = state.currentYear;
+    if (cy === 1) return state.subjectsYear1;
+    if (cy === 1.5) return state.subjectsYear1_rep;
+    if (cy === 2) return state.subjectsYear2;
+    if (cy === 2.5) return state.subjectsYear2_rep;
+    if (cy === 3) return state.subjectsYear3;
+    if (cy === 3.5) return state.subjectsYear3_rep;
+    return state.subjectsYear1;
+}
+
+function renderYearSelector() {
+    const container = document.getElementById('year-tabs-container');
+    if (!container) return;
+
+    let buttonsHTML = '';
+    
+    // Year 1
+    buttonsHTML += `<button type="button" class="lang-toggle-btn ${state.currentYear === 1 ? 'active' : ''}" data-year="1" style="flex: 1; text-align: center; font-size: 0.8rem; padding: 6px 4px;">1ère année</button>`;
+    if (state.repeatingYears && state.repeatingYears[1]) {
+        buttonsHTML += `<button type="button" class="lang-toggle-btn ${state.currentYear === 1.5 ? 'active' : ''}" data-year="1.5" style="flex: 1; text-align: center; font-size: 0.8rem; padding: 6px 4px;">1ère (Rép.)</button>`;
+    }
+    
+    // Year 2
+    buttonsHTML += `<button type="button" class="lang-toggle-btn ${state.currentYear === 2 ? 'active' : ''}" data-year="2" style="flex: 1; text-align: center; font-size: 0.8rem; padding: 6px 4px;">2ème année</button>`;
+    if (state.repeatingYears && state.repeatingYears[2]) {
+        buttonsHTML += `<button type="button" class="lang-toggle-btn ${state.currentYear === 2.5 ? 'active' : ''}" data-year="2.5" style="flex: 1; text-align: center; font-size: 0.8rem; padding: 6px 4px;">2ème (Rép.)</button>`;
+    }
+    
+    // Year 3
+    buttonsHTML += `<button type="button" class="lang-toggle-btn ${state.currentYear === 3 ? 'active' : ''}" data-year="3" style="flex: 1; text-align: center; font-size: 0.8rem; padding: 6px 4px;">3ème année</button>`;
+    if (state.repeatingYears && state.repeatingYears[3]) {
+        buttonsHTML += `<button type="button" class="lang-toggle-btn ${state.currentYear === 3.5 ? 'active' : ''}" data-year="3.5" style="flex: 1; text-align: center; font-size: 0.8rem; padding: 6px 4px;">3ème (Rép.)</button>`;
+    }
+    
+    // Year 4 / Evolution
+    buttonsHTML += `<button type="button" class="lang-toggle-btn ${state.currentYear === 4 ? 'active' : ''}" data-year="4" style="flex: 1; text-align: center; font-size: 0.8rem; padding: 6px 4px;">Évolution</button>`;
+
+    container.innerHTML = `
+        <div class="lang-toggle-container" style="margin: 0; padding: 2px; width: 100%; display: flex; max-width: 650px; justify-content: space-between; gap: 4px;">
+            ${buttonsHTML}
+        </div>
+    `;
+
+    // Rebind event listeners to the new buttons
+    container.querySelectorAll('.lang-toggle-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            container.querySelectorAll('.lang-toggle-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            
+            const rawYear = btn.getAttribute('data-year');
+            state.currentYear = rawYear.includes('.') ? parseFloat(rawYear) : parseInt(rawYear);
+            
+            closeModal(document.getElementById('subject-details-modal'));
+            activeDetailsSubjectId = null;
+            
+            saveState();
+            updateTabVisibility();
+            if (state.currentYear !== 4) {
+                animateCards = true;
+                renderSubjects();
+                updateDashboard();
+            }
+        });
+    });
 }
 
 // --- 7. DOM Elements ---
@@ -972,7 +1063,7 @@ studentNameEl.addEventListener('keydown', (e) => {
 // --- 9. UI Rendering ---
 
 function updateDashboard() {
-    const currentSubjects = (state.currentYear === 3) ? state.subjectsYear3 : (state.currentYear === 2) ? state.subjectsYear2 : state.subjectsYear1;
+    const currentSubjects = getCurrentSubjects();
     const results = checkVaudPromotion(currentSubjects, state.currentSemester);
 
     // Update name UI if different
@@ -995,7 +1086,7 @@ function updateDashboard() {
         if (promoDashboard) promoDashboard.className = 'promo-dashboard-container status-promoted';
         promoTitle.textContent = "Promotion garantie";
         const periodLabel = state.currentSemester === 'sem1' ? 'du 1er semestre' : state.currentSemester === 'sem2' ? 'du 2ème semestre' : 'annuelle (combinée)';
-        if (state.currentYear === 3) {
+        if (getBaseYear() === 3) {
             promoSubtitle.textContent = `Félicitations, vous remplissez toutes les conditions de promotion avec une moyenne générale arithmétique de ${results.overallAverage.toFixed(2)} (${periodLabel}) !`;
         } else {
             promoSubtitle.textContent = `Félicitations, vous remplissez toutes les conditions de promotion (${periodLabel}) !`;
@@ -1007,7 +1098,7 @@ function updateDashboard() {
         const reasons = [];
         if (results.g2Sum < results.g2Min) {
             const diff = (results.g2Min - results.g2Sum).toFixed(1);
-            if (state.currentYear === 3) {
+            if (getBaseYear() === 3) {
                 reasons.push(`Votre moyenne générale arithmétique (${results.overallAverage.toFixed(2)}) est inférieure à 4.0 (il vous manque ${diff} point(s) pour atteindre les ${results.g2Min.toFixed(1)} points requis dans le Groupe 2)`);
             } else {
                 reasons.push(`Il vous manque ${diff} point(s) pour atteindre les ${results.g2Min.toFixed(1)} points requis dans le Groupe 2 (toutes les disciplines)`);
@@ -1020,7 +1111,7 @@ function updateDashboard() {
         if (results.insuffisances > 4) {
             reasons.push(`Vous avez ${results.insuffisances} branches insuffisantes (maximum 4 autorisées)`);
         }
-        if (state.currentYear === 3) {
+        if (getBaseYear() === 3) {
             if (results.pointsManquants > 3.0) {
                 const diff = (results.pointsManquants - 3.0).toFixed(1);
                 reasons.push(`Votre déficit total de branches insuffisantes (${results.pointsManquants.toFixed(1)}) dépasse de ${diff} point(s) la limite autorisée (3.0)`);
@@ -1049,7 +1140,7 @@ function updateGroupsBilan() {
     g1List.innerHTML = '';
     g2List.innerHTML = '';
 
-    const currentSubjects = (state.currentYear === 3) ? state.subjectsYear3 : (state.currentYear === 2) ? state.subjectsYear2 : state.subjectsYear1;
+    const currentSubjects = getCurrentSubjects();
     const sem = state.currentSemester;
     const results = checkVaudPromotion(currentSubjects, sem);
 
@@ -1242,7 +1333,7 @@ function renderSubjectEvolutionChart(subject, drawer) {
 
     drawer.innerHTML = `
         <div style="font-size: 0.8rem; font-weight: 600; color: var(--color-text-secondary); margin-bottom: 0.5rem; display: flex; justify-content: space-between;">
-            <span>📈 Évolution de ${escapeHTML(subject.name)}</span>
+            <span>Évolution de ${escapeHTML(subject.name)}</span>
             <span style="font-weight: normal; font-size: 0.75rem; color: var(--color-text-muted);">Seuil de promotion: 4.0</span>
         </div>
         <div style="background: rgba(0,0,0,0.03); border-radius: var(--radius-md); padding: 0.5rem; display: flex; justify-content: center;">
@@ -1306,7 +1397,7 @@ function renderDedicatedEvolutionSlide() {
         <div class="subject-card" style="padding: 1.5rem; display: flex; flex-direction: column; gap: 1rem;">
             <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--color-border-subtle); padding-bottom: 0.5rem; flex-wrap: wrap; gap: 0.5rem;">
                 <h3 style="font-size: 1.15rem; font-weight: 800; color: white; display: flex; align-items: center; gap: 0.5rem;">
-                    <span>📈 Évolution Générale</span>
+                    <span>Évolution Générale</span>
                 </h3>
                 <span style="font-size: 0.8rem; color: var(--color-text-secondary); font-weight: 500;">Moyennes annuelles générales sur 3 ans</span>
             </div>
@@ -1884,7 +1975,7 @@ function getSubjectCardInnerHTML(subject, sem) {
                 </div>
             </div>
         `;
-        const showEvoBtn = (state.currentYear === 3 && sem === 'annual');
+        const showEvoBtn = (getBaseYear() === 3 && sem === 'annual');
         const evoBtnHTML = showEvoBtn ? `<button type="button" class="btn-sub-evo" title="Afficher l'évolution sur 3 ans">Évolution</button>` : '';
 
         footerHTML = `
@@ -1928,7 +2019,7 @@ function getSubjectCardInnerHTML(subject, sem) {
             </div>
         `;
 
-        const showEvoBtn = (state.currentYear === 3);
+        const showEvoBtn = (getBaseYear() === 3);
         const evoBtnHTML = showEvoBtn ? `<button type="button" class="btn-sub-evo" title="Afficher l'évolution sur 3 ans">Évolution</button>` : '';
 
         footerHTML = `
@@ -2011,7 +2102,7 @@ function getSubjectCardInnerHTML(subject, sem) {
 
     const isStandardSubject = subject.id.startsWith('y1_') || subject.id.startsWith('y2_') || subject.id.startsWith('y3_');
     const deleteBtnHTML = isStandardSubject ? '' : `<button class="btn-delete-subject" title="Supprimer la branche">&times;</button>`;
-    const drawerHTML = (state.currentYear === 3 && sem === 'annual') ? `<div class="sub-evo-drawer"></div>` : '';
+    const drawerHTML = (getBaseYear() === 3 && sem === 'annual') ? `<div class="sub-evo-drawer"></div>` : '';
 
     let simulatorHTML = '';
     if (mode !== 'locked' && sem !== 'annual') {
@@ -2104,7 +2195,7 @@ function openSubjectDetailsModal(subject) {
 
 function renderSubjects() {
     subjectsContainer.innerHTML = '';
-    const currentSubjects = (state.currentYear === 3) ? state.subjectsYear3 : (state.currentYear === 2) ? state.subjectsYear2 : state.subjectsYear1;
+    const currentSubjects = getCurrentSubjects();
     const sem = state.currentSemester;
 
     if (state.promoViewMode === 'visual') {
@@ -2143,6 +2234,28 @@ function renderSubjects() {
             subjectsContainer.appendChild(item);
         });
 
+        // Append gemstone repeating year box
+        const repeatItem = document.createElement('div');
+        repeatItem.className = 'gem-item';
+        repeatItem.innerHTML = `
+            <div class="gem-sphere gem-repeat-status" style="background-color: var(--color-bg-elevated); display: flex; align-items: center; justify-content: center; border: 1px dashed var(--color-border-subtle); cursor: pointer;" onclick="document.getElementById('chk-repeat-year-gem')?.click();">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--color-primary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="23 4 23 10 17 10"></polyline>
+                    <polyline points="1 20 1 14 7 14"></polyline>
+                    <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
+                </svg>
+            </div>
+            <div class="gem-sphere-shadow"></div>
+            <div class="gem-subject-name" style="margin-top: 0.5rem; display: flex; flex-direction: column; align-items: center; gap: 0.25rem;">
+                <div style="font-size: 0.85rem; font-weight: 700; color: var(--color-text-primary);">Redoublement</div>
+                <div style="display: flex; align-items: center; gap: 0.25rem; font-size: 0.75rem;">
+                    <input type="checkbox" id="chk-repeat-year-gem" style="cursor: pointer; width: 14px; height: 14px;" ${state.repeatingYears[getBaseYear()] ? 'checked' : ''}>
+                    <label for="chk-repeat-year-gem" style="cursor: pointer; font-weight: 600; color: var(--color-text-secondary);">Redoubler</label>
+                </div>
+            </div>
+        `;
+        subjectsContainer.appendChild(repeatItem);
+
         // Initialize rotation dragging physics on the new spheres
         initGemstoneRotation();
 
@@ -2175,8 +2288,78 @@ function renderSubjects() {
                 updateCardSimulatorBadge(card, subject, sem);
             }
         });
+
+        // Append Repeating status card
+        const repeatCard = document.createElement('div');
+        repeatCard.className = animateCards ? 'subject-card slide-up repeating-card' : 'subject-card repeating-card';
+        repeatCard.style.padding = '1.5rem';
+        repeatCard.style.display = 'flex';
+        repeatCard.style.flexDirection = 'column';
+        repeatCard.style.gap = '0.75rem';
+        repeatCard.style.border = '1px dashed var(--color-border-subtle)';
+        repeatCard.style.justifyContent = 'center';
+        repeatCard.style.background = 'rgba(0,0,0,0.01)';
+        
+        repeatCard.innerHTML = `
+            <h3 style="font-size: 1.1rem; font-weight: 800; display: flex; align-items: center; gap: 0.5rem; color: var(--color-text-primary); margin: 0;">
+                <span>Statut de Redoublement</span>
+            </h3>
+            <p style="font-size: 0.8rem; color: var(--color-text-secondary); line-height: 1.4; margin: 0;">
+                Si vous redoublez cette année, activez cette option pour configurer une deuxième tentative de cette même année.
+            </p>
+            <div style="display: flex; align-items: center; gap: 0.5rem; margin-top: 0.25rem;">
+                <input type="checkbox" id="chk-repeat-year" style="cursor: pointer; width: 16px; height: 16px;" ${state.repeatingYears[getBaseYear()] ? 'checked' : ''}>
+                <label for="chk-repeat-year" style="font-size: 0.85rem; font-weight: 600; cursor: pointer; color: var(--color-text-primary);">Redoubler l'année</label>
+            </div>
+        `;
+        subjectsContainer.appendChild(repeatCard);
     }
     animateCards = false;
+
+    // Bind repeating year checkbox events
+    const chkGrid = document.getElementById('chk-repeat-year');
+    if (chkGrid) {
+        chkGrid.addEventListener('change', (e) => {
+            const baseYear = getBaseYear();
+            const isChecked = e.target.checked;
+            state.repeatingYears[baseYear] = isChecked;
+            
+            if (isChecked) {
+                const key = 'subjectsYear' + baseYear + '_rep';
+                if (!state[key]) {
+                    const defaults = baseYear === 1 ? defaultSubjectsYear1 : baseYear === 2 ? defaultSubjectsYear2 : defaultSubjectsYear3;
+                    state[key] = JSON.parse(JSON.stringify(defaults));
+                }
+            }
+            
+            saveState();
+            renderYearSelector();
+            renderSubjects();
+            updateDashboard();
+        });
+    }
+
+    const chkGem = document.getElementById('chk-repeat-year-gem');
+    if (chkGem) {
+        chkGem.addEventListener('change', (e) => {
+            const baseYear = getBaseYear();
+            const isChecked = e.target.checked;
+            state.repeatingYears[baseYear] = isChecked;
+            
+            if (isChecked) {
+                const key = 'subjectsYear' + baseYear + '_rep';
+                if (!state[key]) {
+                    const defaults = baseYear === 1 ? defaultSubjectsYear1 : baseYear === 2 ? defaultSubjectsYear2 : defaultSubjectsYear3;
+                    state[key] = JSON.parse(JSON.stringify(defaults));
+                }
+            }
+            
+            saveState();
+            renderYearSelector();
+            renderSubjects();
+            updateDashboard();
+        });
+    }
 }
 
 function initGemstoneRotation() {
@@ -2288,7 +2471,7 @@ function initGemstoneRotation() {
             // If the user barely moved the cursor, treat it as a click!
             if (dragDistance < 6) {
                 if (item) item.classList.remove('is-rotating');
-                const currentSubjects = state.subjectsYear1;
+                const currentSubjects = getCurrentSubjects();
                 const subject = currentSubjects.find(s => s.id === subId);
                 if (subject) {
                     openSubjectDetailsModal(subject);
@@ -2505,25 +2688,6 @@ document.getElementById('add-subject-btn').addEventListener('click', () => {
 // Removed toggle-promo-view listener
 
 // --- 11. Tabs and Selector Bindings ---
-document.querySelectorAll('#year-selector .lang-toggle-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-        document.querySelectorAll('#year-selector .lang-toggle-btn').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        state.currentYear = parseInt(btn.getAttribute('data-year'));
-        
-        // Close details modal on year switch
-        closeModal(document.getElementById('subject-details-modal'));
-        activeDetailsSubjectId = null;
-        
-        saveState();
-        updateTabVisibility();
-        if (state.currentYear !== 4) {
-            animateCards = true;
-            renderSubjects();
-            updateDashboard();
-        }
-    });
-});
 document.querySelectorAll('.semester-tab').forEach(btn => {
     btn.addEventListener('click', () => {
         document.querySelectorAll('.semester-tab').forEach(b => b.classList.remove('active'));
@@ -2610,13 +2774,13 @@ document.getElementById('add-subject-form').addEventListener('submit', (e) => {
         }
     };
 
-    if (state.currentYear === 3) {
-        state.subjectsYear3.push(newSub);
-    } else if (state.currentYear === 2) {
-        state.subjectsYear2.push(newSub);
-    } else {
-        state.subjectsYear1.push(newSub);
-    }
+    const cy = state.currentYear;
+    if (cy === 3) state.subjectsYear3.push(newSub);
+    else if (cy === 3.5) state.subjectsYear3_rep.push(newSub);
+    else if (cy === 2) state.subjectsYear2.push(newSub);
+    else if (cy === 2.5) state.subjectsYear2_rep.push(newSub);
+    else if (cy === 1) state.subjectsYear1.push(newSub);
+    else if (cy === 1.5) state.subjectsYear1_rep.push(newSub);
     
     saveState();
     renderSubjects();
@@ -2636,7 +2800,7 @@ function handleSubjectInteractionClick(e) {
     const card = e.target.closest('.subject-card');
     if (!card) return;
     const subId = card.getAttribute('data-id');
-    const currentSubjects = (state.currentYear === 3) ? state.subjectsYear3 : (state.currentYear === 2) ? state.subjectsYear2 : state.subjectsYear1;
+    const currentSubjects = getCurrentSubjects();
     const subject = currentSubjects.find(s => s.id === subId);
     if (!subject) return;
 
@@ -2682,13 +2846,13 @@ function handleSubjectInteractionClick(e) {
     // Delete branch
     if (e.target.classList.contains('btn-delete-subject')) {
         if (confirm(`Voulez-vous vraiment supprimer la branche "${subject.name}"?`)) {
-            if (state.currentYear === 3) {
-                state.subjectsYear3 = state.subjectsYear3.filter(s => s.id !== subId);
-            } else if (state.currentYear === 2) {
-                state.subjectsYear2 = state.subjectsYear2.filter(s => s.id !== subId);
-            } else {
-                state.subjectsYear1 = state.subjectsYear1.filter(s => s.id !== subId);
-            }
+            const cy = state.currentYear;
+            if (cy === 3) state.subjectsYear3 = state.subjectsYear3.filter(s => s.id !== subId);
+            else if (cy === 3.5) state.subjectsYear3_rep = state.subjectsYear3_rep.filter(s => s.id !== subId);
+            else if (cy === 2) state.subjectsYear2 = state.subjectsYear2.filter(s => s.id !== subId);
+            else if (cy === 2.5) state.subjectsYear2_rep = state.subjectsYear2_rep.filter(s => s.id !== subId);
+            else if (cy === 1) state.subjectsYear1 = state.subjectsYear1.filter(s => s.id !== subId);
+            else if (cy === 1.5) state.subjectsYear1_rep = state.subjectsYear1_rep.filter(s => s.id !== subId);
             saveState();
             renderSubjects();
             updateDashboard();
@@ -2718,8 +2882,11 @@ function handleSubjectInteractionClick(e) {
             
             // Propagate OS name to all years
             state.subjectsYear1.forEach(s => { if (s.role === 'os') s.name = nameVal; });
+            state.subjectsYear1_rep.forEach(s => { if (s.role === 'os') s.name = nameVal; });
             state.subjectsYear2.forEach(s => { if (s.role === 'os') s.name = nameVal; });
+            state.subjectsYear2_rep.forEach(s => { if (s.role === 'os') s.name = nameVal; });
             state.subjectsYear3.forEach(s => { if (s.role === 'os') s.name = nameVal; });
+            state.subjectsYear3_rep.forEach(s => { if (s.role === 'os') s.name = nameVal; });
             
             saveState();
             renderSubjects();
@@ -2735,8 +2902,9 @@ function handleSubjectInteractionClick(e) {
         subject.name = lang;
         
         // If we are changing Year 2 Art, also update Year 3 Art Card name!
-        if (subject.role === 'art' && state.currentYear === 2) {
-            const y3Art = state.subjectsYear3.find(s => s.role === 'art_y2');
+        if (subject.role === 'art' && getBaseYear() === 2) {
+            const y3List = (state.repeatingYears && state.repeatingYears[3]) ? state.subjectsYear3_rep : state.subjectsYear3;
+            const y3Art = y3List ? y3List.find(s => s.role === 'art_y2') : null;
             if (y3Art) {
                 y3Art.name = `${lang} (Y2)`;
             }
@@ -2858,7 +3026,7 @@ function handleSubjectInteractionChange(e) {
         const card = e.target.closest('.subject-card');
         if (!card) return;
         const subId = card.getAttribute('data-id');
-        const currentSubjects = (state.currentYear === 3) ? state.subjectsYear3 : (state.currentYear === 2) ? state.subjectsYear2 : state.subjectsYear1;
+        const currentSubjects = getCurrentSubjects();
         const subject = currentSubjects.find(s => s.id === subId);
         if (subject) {
             updateCardSimulatorBadge(card, subject, state.currentSemester);
@@ -2876,7 +3044,7 @@ if (subjectDetailsModal) {
 if (deleteDetailGradeBtn) {
     deleteDetailGradeBtn.addEventListener('click', () => {
         if (selectedSubjectIdForDetails && selectedGradeIdForDetails) {
-            const currentSubjects = (state.currentYear === 3) ? state.subjectsYear3 : (state.currentYear === 2) ? state.subjectsYear2 : state.subjectsYear1;
+            const currentSubjects = getCurrentSubjects();
             const subject = currentSubjects.find(s => s.id === selectedSubjectIdForDetails);
             if (subject) {
                 if (confirm("Supprimer cette note?")) {
@@ -2904,7 +3072,7 @@ document.getElementById('save-edit-btn').addEventListener('click', (e) => {
     e.preventDefault();
     if (!selectedSubjectIdForDetails || !selectedGradeIdForDetails) return;
 
-    const currentSubjects = (state.currentYear === 3) ? state.subjectsYear3 : (state.currentYear === 2) ? state.subjectsYear2 : state.subjectsYear1;
+    const currentSubjects = getCurrentSubjects();
     const subject = currentSubjects.find(s => s.id === selectedSubjectIdForDetails);
     if (!subject) return;
 
@@ -3106,7 +3274,7 @@ document.getElementById('add-grade-form').addEventListener('submit', (e) => {
         value = activeGradeBtn ? parseFloat(activeGradeBtn.getAttribute('data-value')) : 4.0;
         const type = activeTypeBtn ? activeTypeBtn.getAttribute('data-value') : 'TS';
 
-        const currentSubjects = (state.currentYear === 3) ? state.subjectsYear3 : (state.currentYear === 2) ? state.subjectsYear2 : state.subjectsYear1;
+        const currentSubjects = getCurrentSubjects();
         const subject = currentSubjects.find(s => s.id === subId);
         if (subject) {
             migrateSubjectGrades(subject);
@@ -3296,10 +3464,8 @@ function init() {
         });
     }
 
-    // Set Year selector active button on startup
-    document.querySelectorAll('#year-selector .lang-toggle-btn').forEach(btn => {
-        btn.classList.toggle('active', parseInt(btn.getAttribute('data-year')) === state.currentYear);
-    });
+    // Render and initialize year selector tabs dynamically on startup
+    renderYearSelector();
 
     // Set Semester selector active button on startup
     document.querySelectorAll('.semester-tab').forEach(btn => {
@@ -3352,17 +3518,17 @@ function init() {
         if (e.target.classList.contains('btn-delete-gem')) {
             e.stopPropagation();
             const subId = e.target.getAttribute('data-id');
-            const currentSubjects = (state.currentYear === 3) ? state.subjectsYear3 : (state.currentYear === 2) ? state.subjectsYear2 : state.subjectsYear1;
+            const currentSubjects = getCurrentSubjects();
             const subject = currentSubjects.find(s => s.id === subId);
             if (subject) {
                 if (confirm(`Voulez-vous vraiment supprimer la branche "${subject.name}"?`)) {
-                    if (state.currentYear === 3) {
-                        state.subjectsYear3 = state.subjectsYear3.filter(s => s.id !== subId);
-                    } else if (state.currentYear === 2) {
-                        state.subjectsYear2 = state.subjectsYear2.filter(s => s.id !== subId);
-                    } else {
-                        state.subjectsYear1 = state.subjectsYear1.filter(s => s.id !== subId);
-                    }
+                    const cy = state.currentYear;
+                    if (cy === 3) state.subjectsYear3 = state.subjectsYear3.filter(s => s.id !== subId);
+                    else if (cy === 3.5) state.subjectsYear3_rep = state.subjectsYear3_rep.filter(s => s.id !== subId);
+                    else if (cy === 2) state.subjectsYear2 = state.subjectsYear2.filter(s => s.id !== subId);
+                    else if (cy === 2.5) state.subjectsYear2_rep = state.subjectsYear2_rep.filter(s => s.id !== subId);
+                    else if (cy === 1) state.subjectsYear1 = state.subjectsYear1.filter(s => s.id !== subId);
+                    else if (cy === 1.5) state.subjectsYear1_rep = state.subjectsYear1_rep.filter(s => s.id !== subId);
                     saveState();
                     renderSubjects();
                     updateDashboard();

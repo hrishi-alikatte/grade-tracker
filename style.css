@@ -3132,3 +3132,13 @@ body:has(.subject-card.is-maximized)::after {
     pointer-events: auto;
 }
 
+/* Light Mode active/hover filter pill text visibility fixes */
+body.theme-light .filter-pill.active {
+    color: var(--color-text-primary) !important;
+    font-weight: 700 !important;
+}
+
+body.theme-light .filter-pill:hover {
+    color: var(--color-text-primary) !important;
+}
+
