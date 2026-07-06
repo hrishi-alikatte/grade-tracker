@@ -332,13 +332,13 @@ body {
 
 /* Broken state (Failing / Not Passing) */
 .status-failing .promo-3d-graphic .slice-1 {
-    transform: translate(9px, -12px) rotate(14deg);
+    transform: translate(3px, -4px) rotate(3deg);
 }
 .status-failing .promo-3d-graphic .slice-2 {
-    transform: translate(-5px, 2px) rotate(-10deg);
+    transform: translate(-2px, 1px) rotate(-2deg);
 }
 .status-failing .promo-3d-graphic .slice-3 {
-    transform: translate(-9px, 10px) rotate(6deg);
+    transform: translate(-3px, 3px) rotate(1deg);
 }
 
 /* 3D Graphic Gradient Themes */
