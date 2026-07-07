@@ -58,6 +58,9 @@
                 </button>
             </div>
             
+            <button id="btn-settings-modal" class="btn" style="padding: 0; margin: 0 0.25rem 0 0; width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; background-color: var(--color-bg-surface); border: 1px solid var(--color-border-subtle); color: white;" title="Paramètres d'affichage">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+            </button>
             <button id="theme-toggle-btn" class="btn" style="padding: 0; margin: 0; width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center;" title="Changer de thème">
                 <!-- Inner icon will be injected dynamically -->
             </button>
@@ -823,6 +826,57 @@
             <div id="subject-details-modal-content">
                 <!-- Dynamically rendered subject details -->
             </div>
+        </div>
+    </div>
+
+    <!-- MODAL: Onboarding / Configuration initiale -->
+    <div class="modal-backdrop" id="onboarding-setup-modal">
+        <div class="modal-container" style="max-width: 440px; width: 95%;">
+            <button class="modal-close-btn" id="close-onboarding-setup-modal">&times;</button>
+            <h2 class="modal-title" style="margin-bottom: 0.5rem; text-align: center;">Personnalisez votre espace</h2>
+            <p style="color: var(--color-text-secondary); font-size: 0.8rem; text-align: center; margin-bottom: 1.5rem;">
+                Choisissez votre année pour adapter le tableau de bord sans détails inutiles.
+            </p>
+            
+            <form id="onboarding-setup-form" style="display: flex; flex-direction: column; gap: 1.25rem;">
+                <!-- 1. Sélection de l'année -->
+                <div class="form-group">
+                    <label class="form-label" style="font-weight: 700; margin-bottom: 0.5rem; display: block;">Votre Année d'Études</label>
+                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.5rem;">
+                        <button type="button" class="btn btn-secondary onboarding-year-btn active" data-year="1" style="padding: 0.75rem 0.25rem;">1ère</button>
+                        <button type="button" class="btn btn-secondary onboarding-year-btn" data-year="2" style="padding: 0.75rem 0.25rem;">2ème</button>
+                        <button type="button" class="btn btn-secondary onboarding-year-btn" data-year="3" style="padding: 0.75rem 0.25rem;">3ème</button>
+                    </div>
+                </div>
+
+                <!-- 2. Option de redoublement -->
+                <div style="display: flex; align-items: center; justify-content: space-between; background: rgba(255,255,255,0.02); padding: 0.75rem 1rem; border-radius: var(--radius-md); border: 1px solid var(--color-border-subtle);">
+                    <div>
+                        <label class="form-label" style="font-weight: 700; margin: 0; display: block;">Redoublez-vous cette année ?</label>
+                        <span style="font-size: 0.7rem; color: var(--color-text-secondary);">Ajoute une tentative supplémentaire pour cette année</span>
+                    </div>
+                    <label class="switch-container" style="position: relative; display: inline-block; width: 44px; height: 24px;">
+                        <input type="checkbox" id="onboarding-is-repeating" style="opacity: 0; width: 0; height: 0;">
+                        <span class="switch-slider" style="position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: var(--color-border-subtle); transition: .4s; border-radius: 24px;"></span>
+                    </label>
+                </div>
+
+                <!-- 3. Affichage des autres années -->
+                <div style="display: flex; align-items: center; justify-content: space-between; background: rgba(255,255,255,0.02); padding: 0.75rem 1rem; border-radius: var(--radius-md); border: 1px solid var(--color-border-subtle);">
+                    <div>
+                        <label class="form-label" style="font-weight: 700; margin: 0; display: block;">Afficher les autres années ?</label>
+                        <span style="font-size: 0.7rem; color: var(--color-text-secondary);">Affiche ou masque les onglets des autres années</span>
+                    </div>
+                    <label class="switch-container" style="position: relative; display: inline-block; width: 44px; height: 24px;">
+                        <input type="checkbox" id="onboarding-show-all-years" checked style="opacity: 0; width: 0; height: 0;">
+                        <span class="switch-slider" style="position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: var(--color-border-subtle); transition: .4s; border-radius: 24px;"></span>
+                    </label>
+                </div>
+                
+                <button type="submit" class="btn btn-primary" style="width: 100%; padding: 0.85rem; font-weight: 800; font-size: 1rem; border-radius: var(--radius-md); margin-top: 0.5rem;">
+                    C'est parti !
+                </button>
+            </form>
         </div>
     </div>
 

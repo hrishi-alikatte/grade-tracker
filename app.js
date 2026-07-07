@@ -856,6 +856,7 @@ function loadState() {
             if (state.hasSeenOnboarding === undefined) state.hasSeenOnboarding = false;
             if (!state.promoViewMode) state.promoViewMode = 'visual';
             if (state.isLightTheme === undefined) state.isLightTheme = true;
+            if (state.showAllYears === undefined) state.showAllYears = true;
             if (!state.repeatingYears) {
                 state.repeatingYears = { 1: false, 2: false, 3: false };
             }
@@ -897,6 +898,7 @@ function resetStateToDefault() {
         theme: 'navy',
         isLightTheme: true,
         hasSeenOnboarding: false,
+        showAllYears: true,
         promoViewMode: 'visual'
     };
     saveState();
@@ -940,26 +942,48 @@ function renderYearSelector() {
 
     let buttonsHTML = '';
     
-    // Year 1
-    buttonsHTML += `<button type="button" class="lang-toggle-btn ${state.currentYear === 1 ? 'active' : ''}" data-year="1" style="flex: 1; text-align: center; font-size: 0.8rem; padding: 6px 4px;">1ère année</button>`;
-    if (state.repeatingYears && state.repeatingYears[1]) {
-        buttonsHTML += `<button type="button" class="lang-toggle-btn ${state.currentYear === 1.5 ? 'active' : ''}" data-year="1.5" style="flex: 1; text-align: center; font-size: 0.8rem; padding: 6px 4px;">1ère (Rép.)</button>`;
+    if (state.showAllYears) {
+        // Year 1
+        buttonsHTML += `<button type="button" class="lang-toggle-btn ${state.currentYear === 1 ? 'active' : ''}" data-year="1" style="flex: 1; text-align: center; font-size: 0.8rem; padding: 6px 4px;">1ère année</button>`;
+        if (state.repeatingYears && state.repeatingYears[1]) {
+            buttonsHTML += `<button type="button" class="lang-toggle-btn ${state.currentYear === 1.5 ? 'active' : ''}" data-year="1.5" style="flex: 1; text-align: center; font-size: 0.8rem; padding: 6px 4px;">1ère (Rép.)</button>`;
+        }
+        
+        // Year 2
+        buttonsHTML += `<button type="button" class="lang-toggle-btn ${state.currentYear === 2 ? 'active' : ''}" data-year="2" style="flex: 1; text-align: center; font-size: 0.8rem; padding: 6px 4px;">2ème année</button>`;
+        if (state.repeatingYears && state.repeatingYears[2]) {
+            buttonsHTML += `<button type="button" class="lang-toggle-btn ${state.currentYear === 2.5 ? 'active' : ''}" data-year="2.5" style="flex: 1; text-align: center; font-size: 0.8rem; padding: 6px 4px;">2ème (Rép.)</button>`;
+        }
+        
+        // Year 3
+        buttonsHTML += `<button type="button" class="lang-toggle-btn ${state.currentYear === 3 ? 'active' : ''}" data-year="3" style="flex: 1; text-align: center; font-size: 0.8rem; padding: 6px 4px;">3ème année</button>`;
+        if (state.repeatingYears && state.repeatingYears[3]) {
+            buttonsHTML += `<button type="button" class="lang-toggle-btn ${state.currentYear === 3.5 ? 'active' : ''}" data-year="3.5" style="flex: 1; text-align: center; font-size: 0.8rem; padding: 6px 4px;">3ème (Rép.)</button>`;
+        }
+        
+        // Year 4 / Evolution
+        buttonsHTML += `<button type="button" class="lang-toggle-btn ${state.currentYear === 4 ? 'active' : ''}" data-year="4" style="flex: 1; text-align: center; font-size: 0.8rem; padding: 6px 4px;">Évolution</button>`;
+    } else {
+        const baseYear = Math.floor(state.currentYear);
+        if (baseYear === 1) {
+            buttonsHTML += `<button type="button" class="lang-toggle-btn ${state.currentYear === 1 ? 'active' : ''}" data-year="1" style="flex: 1; text-align: center; font-size: 0.8rem; padding: 6px 4px;">1ère année</button>`;
+            if (state.repeatingYears && state.repeatingYears[1]) {
+                buttonsHTML += `<button type="button" class="lang-toggle-btn ${state.currentYear === 1.5 ? 'active' : ''}" data-year="1.5" style="flex: 1; text-align: center; font-size: 0.8rem; padding: 6px 4px;">1ère (Rép.)</button>`;
+            }
+        } else if (baseYear === 2) {
+            buttonsHTML += `<button type="button" class="lang-toggle-btn ${state.currentYear === 2 ? 'active' : ''}" data-year="2" style="flex: 1; text-align: center; font-size: 0.8rem; padding: 6px 4px;">2ème année</button>`;
+            if (state.repeatingYears && state.repeatingYears[2]) {
+                buttonsHTML += `<button type="button" class="lang-toggle-btn ${state.currentYear === 2.5 ? 'active' : ''}" data-year="2.5" style="flex: 1; text-align: center; font-size: 0.8rem; padding: 6px 4px;">2ème (Rép.)</button>`;
+            }
+        } else if (baseYear === 3) {
+            buttonsHTML += `<button type="button" class="lang-toggle-btn ${state.currentYear === 3 ? 'active' : ''}" data-year="3" style="flex: 1; text-align: center; font-size: 0.8rem; padding: 6px 4px;">3ème année</button>`;
+            if (state.repeatingYears && state.repeatingYears[3]) {
+                buttonsHTML += `<button type="button" class="lang-toggle-btn ${state.currentYear === 3.5 ? 'active' : ''}" data-year="3.5" style="flex: 1; text-align: center; font-size: 0.8rem; padding: 6px 4px;">3ème (Rép.)</button>`;
+            }
+        } else {
+            buttonsHTML += `<button type="button" class="lang-toggle-btn active" data-year="4" style="flex: 1; text-align: center; font-size: 0.8rem; padding: 6px 4px;">Évolution</button>`;
+        }
     }
-    
-    // Year 2
-    buttonsHTML += `<button type="button" class="lang-toggle-btn ${state.currentYear === 2 ? 'active' : ''}" data-year="2" style="flex: 1; text-align: center; font-size: 0.8rem; padding: 6px 4px;">2ème année</button>`;
-    if (state.repeatingYears && state.repeatingYears[2]) {
-        buttonsHTML += `<button type="button" class="lang-toggle-btn ${state.currentYear === 2.5 ? 'active' : ''}" data-year="2.5" style="flex: 1; text-align: center; font-size: 0.8rem; padding: 6px 4px;">2ème (Rép.)</button>`;
-    }
-    
-    // Year 3
-    buttonsHTML += `<button type="button" class="lang-toggle-btn ${state.currentYear === 3 ? 'active' : ''}" data-year="3" style="flex: 1; text-align: center; font-size: 0.8rem; padding: 6px 4px;">3ème année</button>`;
-    if (state.repeatingYears && state.repeatingYears[3]) {
-        buttonsHTML += `<button type="button" class="lang-toggle-btn ${state.currentYear === 3.5 ? 'active' : ''}" data-year="3.5" style="flex: 1; text-align: center; font-size: 0.8rem; padding: 6px 4px;">3ème (Rép.)</button>`;
-    }
-    
-    // Year 4 / Evolution
-    buttonsHTML += `<button type="button" class="lang-toggle-btn ${state.currentYear === 4 ? 'active' : ''}" data-year="4" style="flex: 1; text-align: center; font-size: 0.8rem; padding: 6px 4px;">Évolution</button>`;
 
     container.innerHTML = `
         <div class="lang-toggle-container" style="margin: 0; padding: 2px; width: 100%; display: flex; max-width: 650px; justify-content: space-between; gap: 4px;">
@@ -3704,26 +3728,114 @@ function init() {
         updateDashboard();
     }
 
-    // Onboarding Enter App Buttons
+    // Onboarding Enter App Buttons (opens customization settings)
     const enterButtons = ['btn-enter-app', 'btn-enter-app-bottom'];
     enterButtons.forEach(id => {
         const btn = document.getElementById(id);
         if (btn) {
             btn.addEventListener('click', () => {
-                state.currentSemester = 'annual';
-                state.hasSeenOnboarding = true;
-                saveState();
+                const onboardingModal = document.getElementById('onboarding-setup-modal');
+                const onboardingTitle = onboardingModal.querySelector('.modal-title');
+                const onboardingForm = document.getElementById('onboarding-setup-form');
+                const onboardingSubmitBtn = onboardingForm.querySelector('button[type="submit"]');
                 
-                // Update semester selectors visual states and trigger render
-                document.querySelectorAll('.semester-tab').forEach(b => {
-                    b.classList.toggle('active', b.getAttribute('data-sem') === 'annual');
+                // Customize modal labels for Setup mode
+                onboardingTitle.textContent = "Personnalisez votre espace";
+                onboardingSubmitBtn.textContent = "C'est parti !";
+                
+                // Pre-fill inputs with current state
+                const currentBaseYear = Math.floor(state.currentYear);
+                onboardingYearBtns.forEach(btn => {
+                    const yearVal = parseInt(btn.getAttribute('data-year'));
+                    btn.classList.toggle('active', yearVal === currentBaseYear);
                 });
-                renderSubjects();
-                updateDashboard();
-                switchView('view-dashboard');
+                document.getElementById('onboarding-is-repeating').checked = !!state.repeatingYears[currentBaseYear];
+                document.getElementById('onboarding-show-all-years').checked = state.showAllYears !== false;
+                
+                openModal(onboardingModal);
             });
         }
     });
+
+    // Onboarding modal year selection toggle buttons
+    const onboardingYearBtns = document.querySelectorAll('.onboarding-year-btn');
+    onboardingYearBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            onboardingYearBtns.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+        });
+    });
+
+    // Close onboarding modal button
+    const closeOnboardingBtn = document.getElementById('close-onboarding-setup-modal');
+    if (closeOnboardingBtn) {
+        closeOnboardingBtn.addEventListener('click', () => {
+            closeModal(document.getElementById('onboarding-setup-modal'));
+        });
+    }
+
+    // Submit onboarding/settings form
+    const onboardingForm = document.getElementById('onboarding-setup-form');
+    if (onboardingForm) {
+        onboardingForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            const activeYearBtn = document.querySelector('.onboarding-year-btn.active');
+            if (!activeYearBtn) return;
+            
+            const selectedYear = parseInt(activeYearBtn.getAttribute('data-year'));
+            const isRepeating = document.getElementById('onboarding-is-repeating').checked;
+            const showAll = document.getElementById('onboarding-show-all-years').checked;
+            
+            state.currentYear = isRepeating ? selectedYear + 0.5 : selectedYear;
+            state.repeatingYears[selectedYear] = isRepeating;
+            state.showAllYears = showAll;
+            state.currentSemester = 'annual';
+            state.hasSeenOnboarding = true;
+            
+            saveState();
+            
+            // Sync active semester tab UI state
+            document.querySelectorAll('.semester-tab').forEach(b => {
+                b.classList.toggle('active', b.getAttribute('data-sem') === 'annual');
+            });
+            
+            // Re-render dashboard
+            renderYearSelector();
+            renderSubjects();
+            updateDashboard();
+            updateTabVisibility();
+            
+            closeModal(document.getElementById('onboarding-setup-modal'));
+            switchView('view-dashboard');
+        });
+    }
+
+    // Open/Close settings from Navbar Settings Button
+    const settingsBtn = document.getElementById('btn-settings-modal');
+    if (settingsBtn) {
+        settingsBtn.addEventListener('click', () => {
+            const onboardingModal = document.getElementById('onboarding-setup-modal');
+            const onboardingTitle = onboardingModal.querySelector('.modal-title');
+            const onboardingSubmitBtn = onboardingForm.querySelector('button[type="submit"]');
+            
+            // Populate current preferences
+            const currentBaseYear = Math.floor(state.currentYear);
+            onboardingYearBtns.forEach(btn => {
+                const yearVal = parseInt(btn.getAttribute('data-year'));
+                btn.classList.toggle('active', yearVal === currentBaseYear);
+            });
+            
+            document.getElementById('onboarding-is-repeating').checked = !!state.repeatingYears[currentBaseYear];
+            document.getElementById('onboarding-show-all-years').checked = state.showAllYears !== false;
+            
+            // Customize modal labels for Settings mode
+            onboardingTitle.textContent = "Paramètres d'affichage";
+            onboardingSubmitBtn.textContent = "Enregistrer";
+            
+            openModal(onboardingModal);
+        });
+    }
 
     // Bind Top Navigation Tabs
     document.querySelectorAll('.nav-tab-btn').forEach(btn => {
