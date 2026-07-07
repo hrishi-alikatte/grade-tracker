@@ -14,7 +14,12 @@
   "devDependencies": {
     "vite": "^7.0.0",
     "vite-plugin-pwa": "^1.0.0",
-    "vitest": "^3.2.0"
+    "vitest": "^3.2.0",
+    "workbox-core": "^7.4.1",
+    "workbox-expiration": "^7.4.1",
+    "workbox-precaching": "^7.4.1",
+    "workbox-routing": "^7.4.1",
+    "workbox-strategies": "^7.4.1"
   },
   "dependencies": {
     "tesseract.js": "^5.1.1"
