@@ -288,37 +288,45 @@ function animateConfetti() {
 }
 
 // --- 4. Swiss Vaud Gymnase Calculations ---
+// The math itself now lives in src/logic/calculator.js (pure + unit-tested).
+// The wrappers below feed it the current app state so call sites stay unchanged.
+import * as calculator from './src/logic/calculator.js';
 
-function roundToHalfPoint(value) {
-    if (value === null || value === undefined || isNaN(value)) {
-        return 0;
-    }
-    return Math.round(value * 2) / 2;
+function calcCtx() {
+    return {
+        baseYear: getBaseYear(),
+        currentYear: state.currentYear,
+        subjectsYear2: state.subjectsYear2,
+        subjectsYear2Rep: state.subjectsYear2_rep,
+        repeatingYear2: !!(state.repeatingYears && state.repeatingYears[2])
+    };
 }
 
-/**
- * Calculates subject averages supporting both semesters and annual combinations
- */
-function calculateLockedYear2PhysChem() {
-    if (!state.subjectsYear2) return null;
-    const phys = state.subjectsYear2.find(s => s.name.toLowerCase().includes('physique'));
-    const chim = state.subjectsYear2.find(s => s.name.toLowerCase().includes('chimie'));
-    
-    const physData = phys ? calculateSubjectData(phys, 'annual') : null;
-    const chimData = chim ? calculateSubjectData(chim, 'annual') : null;
-    
-    const avgPhys = physData && physData.rawAverage !== null ? physData.roundedAverage : null;
-    const avgChim = chimData && chimData.rawAverage !== null ? chimData.roundedAverage : null;
-    
-    if (avgPhys !== null && avgChim !== null) {
-        return roundToHalfPoint((avgPhys + avgChim) / 2);
-    } else if (avgPhys !== null) {
-        return avgPhys;
-    } else if (avgChim !== null) {
-        return avgChim;
-    }
-    return null;
+const roundToHalfPoint = calculator.roundToHalfPoint;
+const calculateSubjectDataForSem = calculator.calculateSubjectDataForSem;
+const calculateRequiredGrade = calculator.calculateRequiredGrade;
+const getStatusClass = calculator.getStatusClass;
+
+function calculateSubjectData(subject, semester) {
+    return calculator.calculateSubjectData(subject, semester || state.currentSemester, calcCtx());
 }
+
+function checkVaudPromotion(subjects, semester) {
+    return calculator.checkVaudPromotion(subjects, semester || state.currentSemester, calcCtx());
+}
+
+function getSubjectExamConfig(subject) {
+    return calculator.getSubjectExamConfig(subject, calcCtx());
+}
+
+function getYear2SubjectAverage(nameSub) {
+    return calculator.getYear2SubjectAverage(nameSub, calcCtx());
+}
+
+function getYear2ArtAverage() {
+    return calculator.getYear2ArtAverage(calcCtx());
+}
+
 
 function formatYear2SubjectAvg(nameSub) {
     if (!state.subjectsYear2) return '—';
@@ -328,24 +336,6 @@ function formatYear2SubjectAvg(nameSub) {
     return data.rawAverage !== null ? `${data.roundedAverage.toFixed(1)} (moy: ${data.rawAverage.toFixed(2)})` : '—';
 }
 
-function getYear2SubjectAverage(nameSub) {
-    const list = (state.repeatingYears && state.repeatingYears[2]) ? state.subjectsYear2_rep : state.subjectsYear2;
-    if (!list) return null;
-    const sub = list.find(s => s.name.toLowerCase().includes(nameSub));
-    if (!sub) return null;
-    const data = calculateSubjectData(sub, 'annual');
-    return data.rawAverage !== null ? data.roundedAverage : null;
-}
-
-function getYear2ArtAverage() {
-    const list = (state.repeatingYears && state.repeatingYears[2]) ? state.subjectsYear2_rep : state.subjectsYear2;
-    if (!list) return null;
-    const sub = list.find(s => s.role === 'art');
-    if (!sub) return null;
-    const data = calculateSubjectData(sub, 'annual');
-    return data.rawAverage !== null ? data.roundedAverage : null;
-}
-
 function formatYear2ArtAvg() {
     const list = (state.repeatingYears && state.repeatingYears[2]) ? state.subjectsYear2_rep : state.subjectsYear2;
     if (!list) return '—';
@@ -353,280 +343,6 @@ function formatYear2ArtAvg() {
     if (!sub) return '—';
     const data = calculateSubjectData(sub, 'annual');
     return data.rawAverage !== null ? `${data.roundedAverage.toFixed(1)} (moy: ${data.rawAverage.toFixed(2)})` : '—';
-}
-
-function getSubjectExamConfig(subject) {
-    const isY3 = subject.id.startsWith('y3_') || (subject.id.startsWith('sub_') && (state.currentYear === 3 || state.currentYear === 3.5));
-    if (!isY3) return null;
-    
-    const role = subject.role;
-    if (['french', 'math', 'os', 'l2', 'l3'].includes(role)) {
-        return { written: true, oral: true };
-    } else if (role === 'oc') {
-        return { written: false, oral: true };
-    }
-    return null;
-}
-
-/**
- * Calculates subject averages supporting both semesters and annual combinations
- */
-function calculateSubjectData(subject, semester) {
-    if (subject.role === 'physique_y2') {
-        const val = getYear2SubjectAverage('physique');
-        return {
-            rawAverage: val,
-            roundedAverage: val,
-            taAverage: null,
-            tsAverage: null
-        };
-    }
-    if (subject.role === 'chimie_y2') {
-        const val = getYear2SubjectAverage('chimie');
-        return {
-            rawAverage: val,
-            roundedAverage: val,
-            taAverage: null,
-            tsAverage: null
-        };
-    }
-    if (subject.role === 'art_y2') {
-        const val = getYear2ArtAverage();
-        return {
-            rawAverage: val,
-            roundedAverage: val,
-            taAverage: null,
-            tsAverage: null
-        };
-    }
-    if (subject.role === 'phys_chimie_y2') {
-        const val = calculateLockedYear2PhysChem();
-        if (val === null) {
-            return { rawAverage: null, roundedAverage: null, taAverage: null, tsAverage: null };
-        }
-        return {
-            rawAverage: val,
-            roundedAverage: val,
-            taAverage: null,
-            tsAverage: null
-        };
-    }
-
-    const sem = semester || state.currentSemester;
-
-    if (sem === 'annual') {
-        const data1 = calculateSubjectDataForSem(subject, 'sem1');
-        const data2 = calculateSubjectDataForSem(subject, 'sem2');
-
-        const avg1 = data1.roundedAverage;
-        const avg2 = data2.roundedAverage;
-
-        if (avg1 === null && avg2 === null) {
-            const examConfig = getSubjectExamConfig(subject);
-            let examGradeRaw = null;
-            if (examConfig) {
-                const exams = subject.exams || { written: null, oral: null };
-                const wVal = exams.written !== null && exams.written !== undefined && !isNaN(exams.written) ? exams.written : null;
-                const oVal = exams.oral !== null && exams.oral !== undefined && !isNaN(exams.oral) ? exams.oral : null;
-                if (examConfig.written) {
-                    if (wVal !== null && oVal !== null) examGradeRaw = (wVal + oVal) / 2;
-                    else if (wVal !== null) examGradeRaw = wVal;
-                    else if (oVal !== null) examGradeRaw = oVal;
-                } else {
-                    if (oVal !== null) examGradeRaw = oVal;
-                }
-            }
-            if (examGradeRaw !== null) {
-                const roundedEx = roundToHalfPoint(examGradeRaw);
-                return {
-                    rawAverage: examGradeRaw,
-                    roundedAverage: roundedEx,
-                    annualRawAverage: null,
-                    annualRoundedAverage: null,
-                    examGrade: examGradeRaw,
-                    taAverage: null,
-                    tsAverage: null,
-                    sem1Data: data1,
-                    sem2Data: data2
-                };
-            }
-            return { rawAverage: null, roundedAverage: null, taAverage: null, tsAverage: null };
-        }
-
-        // Annual average is the average of both semesters' rounded averages
-        let rawAverage = 0;
-        if (avg1 !== null && avg2 !== null) {
-            rawAverage = (avg1 + avg2) / 2;
-        } else {
-            rawAverage = avg1 !== null ? avg1 : avg2;
-        }
-        const roundedAverage = roundToHalfPoint(rawAverage);
-
-        // Factor in Maturity Exams
-        let examGradeRaw = null;
-        let finalGradeRounded = roundedAverage;
-        let finalGradeRaw = rawAverage;
-        const examConfig = getSubjectExamConfig(subject);
-        if (examConfig) {
-            const exams = subject.exams || { written: null, oral: null };
-            const wVal = exams.written !== null && exams.written !== undefined && !isNaN(exams.written) ? exams.written : null;
-            const oVal = exams.oral !== null && exams.oral !== undefined && !isNaN(exams.oral) ? exams.oral : null;
-
-            if (examConfig.written) {
-                if (wVal !== null && oVal !== null) {
-                    examGradeRaw = (wVal + oVal) / 2;
-                } else if (wVal !== null) {
-                    examGradeRaw = wVal;
-                } else if (oVal !== null) {
-                    examGradeRaw = oVal;
-                }
-            } else {
-                if (oVal !== null) {
-                    examGradeRaw = oVal;
-                }
-            }
-
-            if (examGradeRaw !== null) {
-                if (roundedAverage !== null) {
-                    finalGradeRaw = (roundedAverage + examGradeRaw) / 2;
-                    finalGradeRounded = roundToHalfPoint(finalGradeRaw);
-                } else {
-                    finalGradeRaw = examGradeRaw;
-                    finalGradeRounded = roundToHalfPoint(examGradeRaw);
-                }
-            }
-        }
-
-        return {
-            rawAverage: finalGradeRaw,
-            roundedAverage: finalGradeRounded,
-            annualRawAverage: rawAverage,
-            annualRoundedAverage: roundedAverage,
-            examGrade: examGradeRaw,
-            taAverage: null,
-            tsAverage: null,
-            sem1Data: data1,
-            sem2Data: data2
-        };
-    } else {
-        return calculateSubjectDataForSem(subject, sem);
-    }
-}
-
-function calculateSubjectDataForSem(subject, sem) {
-    const grades = (subject.grades && subject.grades[sem]) ? subject.grades[sem] : [];
-
-    if (grades.length === 0) {
-        return { rawAverage: null, roundedAverage: null, taAverage: null, tsAverage: null };
-    }
-
-    const mode = subject.evaluationMode || 'dual';
-
-    if (mode === 'standard') {
-        const sum = grades.reduce((s, g) => s + g.value, 0);
-        const rawAverage = sum / grades.length;
-        const roundedAverage = roundToHalfPoint(rawAverage);
-        return {
-            rawAverage,
-            roundedAverage,
-            taAverage: null,
-            tsAverage: null
-        };
-    }
-
-    const tas = grades.filter(g => g.type === 'TA');
-    const tss = grades.filter(g => g.type === 'TS');
-
-    let taAverage = null;
-    let taAvgRounded = null;
-    if (tas.length > 0) {
-        const taSum = tas.reduce((sum, g) => sum + g.value, 0);
-        taAverage = taSum / tas.length;
-        taAvgRounded = roundToHalfPoint(taAverage);
-    }
-
-    let tsAverage = null;
-    if (tss.length > 0) {
-        const tsSum = tss.reduce((sum, g) => sum + g.value, 0);
-        tsAverage = tsSum / tss.length;
-    }
-
-    // Combine TS grades with virtual TA average
-    const combinedTS = tss.map(g => g.value);
-    if (taAvgRounded !== null) {
-        combinedTS.push(taAvgRounded);
-    }
-
-    if (combinedTS.length === 0) {
-        return { rawAverage: null, roundedAverage: null, taAverage, tsAverage };
-    }
-
-    const rawAverage = combinedTS.reduce((sum, val) => sum + val, 0) / combinedTS.length;
-    const roundedAverage = roundToHalfPoint(rawAverage);
-
-    return {
-        rawAverage,
-        roundedAverage,
-        taAverage,
-        tsAverage
-    };
-}
-
-function calculateRequiredGrade(subject, sem, numTests, typeRemaining) {
-    const grades = (subject.grades && subject.grades[sem]) ? subject.grades[sem] : [];
-    const target = subject.target;
-    const mode = subject.evaluationMode || 'dual';
-    
-    if (mode === 'locked') return null;
-    
-    const reqRaw = target - 0.25;
-    
-    if (mode === 'standard') {
-        const S_curr = grades.reduce((s, g) => s + g.value, 0);
-        const C_curr = grades.length;
-        const reqGrade = (reqRaw * (C_curr + numTests) - S_curr) / numTests;
-        return reqGrade;
-    }
-    
-    // Dual mode
-    const tas = grades.filter(g => g.type === 'TA');
-    const tss = grades.filter(g => g.type === 'TS');
-    
-    if (typeRemaining === 'TS') {
-        let taAvgRounded = null;
-        if (tas.length > 0) {
-            const taSum = tas.reduce((s, g) => s + g.value, 0);
-            taAvgRounded = roundToHalfPoint(taSum / tas.length);
-        }
-        
-        const combined = tss.map(g => g.value);
-        if (taAvgRounded !== null) combined.push(taAvgRounded);
-        
-        const S_curr = combined.reduce((s, val) => s + val, 0);
-        const C_curr = combined.length;
-        
-        const reqGrade = (reqRaw * (C_curr + numTests) - S_curr) / numTests;
-        return reqGrade;
-    } else {
-        // Remaining is TA
-        const N_ts = tss.length;
-        const S_ts = tss.reduce((s, g) => s + g.value, 0);
-        const K_ta = tas.length;
-        const S_ta = tas.reduce((s, g) => s + g.value, 0);
-        
-        if (N_ts === 0 && K_ta === 0) {
-            return target - 0.25;
-        }
-        
-        const reqTaAvgRounded = reqRaw * (N_ts + 1) - S_ts;
-        if (reqTaAvgRounded > 6.0) {
-            return 999.0; // Impossible
-        }
-        
-        const reqTaAvgMin = Math.ceil(reqTaAvgRounded * 2) / 2;
-        const reqGrade = ((reqTaAvgMin - 0.25) * (K_ta + numTests) - S_ta) / numTests;
-        return reqGrade;
-    }
 }
 
 function updateCardSimulatorBadge(card, subject, sem) {
@@ -667,110 +383,6 @@ function updateCardSimulatorBadge(card, subject, sem) {
         }
         badge.title = `Note moyenne requise sur les évaluations restantes : ${reqGrade.toFixed(2)}`;
     }
-}
-
-/**
- * Computes Vaud Swiss Gymnase promotion status based on rounded subject averages
- */
-function checkVaudPromotion(subjects, semester) {
-    const sem = semester || state.currentSemester;
-    let activeSubjectsCount = 0;
-    let roundedAveragesSum = 0;
-    let insuffisances = 0;
-    let pointsManquants = 0; // Deficits
-    let pointsEnPlus = 0;    // Surplus
-
-    subjects.forEach(s => {
-        const data = calculateSubjectData(s, sem);
-        if (data.rawAverage !== null) {
-            activeSubjectsCount++;
-            const avgRounded = data.roundedAverage;
-            roundedAveragesSum += avgRounded;
-
-            if (avgRounded < 4.0) {
-                insuffisances++;
-                pointsManquants += (4.0 - avgRounded);
-            } else if (avgRounded > 4.0) {
-                pointsEnPlus += (avgRounded - 4.0);
-            }
-        }
-    });
-
-    // Compute G1 points sum
-    const french = subjects.find(s => s.role === 'french');
-    const math = subjects.find(s => s.role === 'math');
-    const os = subjects.find(s => s.role === 'os');
-    const l2 = subjects.find(s => s.role === 'l2');
-    const l3 = subjects.find(s => s.role === 'l3');
-
-    const mathData = math ? calculateSubjectData(math, sem) : null;
-    const mathRound = mathData && mathData.rawAverage !== null ? mathData.roundedAverage : null;
-    
-    const frData = french ? calculateSubjectData(french, sem) : null;
-    const frRound = frData && frData.rawAverage !== null ? frData.roundedAverage : null;
-
-    const osObj = os ? calculateSubjectData(os, sem) : null;
-    const osRound = osObj && osObj.rawAverage !== null ? osObj.roundedAverage : null;
-
-    const l2Data = l2 ? calculateSubjectData(l2, sem) : null;
-    const l3Data = l3 ? calculateSubjectData(l3, sem) : null;
-    let l2l3AvgRounded = null;
-    if (l2Data && l2Data.rawAverage !== null && l3Data && l3Data.rawAverage !== null) {
-        l2l3AvgRounded = roundToHalfPoint((l2Data.roundedAverage + l3Data.roundedAverage) / 2);
-    } else if (l2Data && l2Data.rawAverage !== null) {
-        l2l3AvgRounded = l2Data.roundedAverage;
-    } else if (l3Data && l3Data.rawAverage !== null) {
-        l2l3AvgRounded = l3Data.roundedAverage;
-    }
-
-    let g1Sum = 0;
-    g1Sum += mathRound !== null ? mathRound : 0;
-    g1Sum += frRound !== null ? frRound : 0;
-    g1Sum += osRound !== null ? osRound : 0;
-    g1Sum += l2l3AvgRounded !== null ? l2l3AvgRounded : 0;
-
-    const hasCoreGrades = (mathRound !== null || frRound !== null || osRound !== null || l2l3AvgRounded !== null);
-    const coreSumPassed = !hasCoreGrades || g1Sum >= 16.0;
-
-    const overallAverage = activeSubjectsCount > 0 ? (roundedAveragesSum / activeSubjectsCount) : null;
-    const requiredCompensation = (getBaseYear() === 3) ? (2 * pointsManquants) : 0;
-    let isPromoted = false;
-    if (getBaseYear() === 1 || getBaseYear() === 2) {
-        isPromoted = activeSubjectsCount > 0 &&
-                     coreSumPassed &&
-                     roundedAveragesSum >= activeSubjectsCount * 4.0 &&
-                     insuffisances <= 4;
-    } else {
-        isPromoted = activeSubjectsCount > 0 && 
-                     overallAverage >= 4.0 && 
-                     roundedAveragesSum >= activeSubjectsCount * 4.0 &&
-                     insuffisances <= 4 && 
-                     pointsEnPlus >= requiredCompensation &&
-                     pointsManquants <= 3.0 &&
-                     coreSumPassed;
-    }
-
-    return {
-        overallAverage: overallAverage !== null ? Math.round(overallAverage * 100) / 100 : null,
-        activeSubjectsCount,
-        insuffisances,
-        pointsManquants: Math.round(pointsManquants * 100) / 100,
-        pointsEnPlus: Math.round(pointsEnPlus * 100) / 100,
-        requiredCompensation,
-        isPromoted,
-        g1Sum,
-        coreSumPassed,
-        g2Sum: roundedAveragesSum,
-        g2Min: activeSubjectsCount * 4.0
-    };
-}
-
-// Helper to map grade/average to color CSS class (yellow for exactly 4.0)
-function getStatusClass(val) {
-    if (val === null || val === undefined) return 'empty';
-    if (val < 4.0) return 'failing';
-    if (val === 4.0) return 'warning';
-    return 'passing';
 }
 
 // --- 5. Default Vaud Subjects lists ---
