@@ -2270,30 +2270,30 @@ function getSubjectCardInnerHTML(subject, sem) {
                     </div>
                     
                     <!-- Annual average and exam inputs row -->
-                    <div style="display: grid; grid-template-columns: 1.15fr 0.85fr; gap: 0.75rem; align-items: center;">
-                        <!-- Left: Averages -->
-                        <div style="display: flex; flex-direction: column; gap: 0.5rem; border-right: 1px solid var(--color-border-subtle); padding-right: 0.5rem;">
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; align-items: stretch;">
+                        <!-- Left Column: Averages -->
+                        <div style="display: flex; flex-direction: column; justify-content: space-between; gap: 0.4rem; background: rgba(96, 165, 250, 0.04); border: 1px solid rgba(96, 165, 250, 0.12); padding: 0.5rem 0.6rem; border-radius: var(--radius-md);">
                             <div style="display: flex; justify-content: space-between; align-items: center;">
-                                <span style="font-size: 0.7rem; color: var(--color-text-secondary); font-weight: 500;">Sans exam :</span>
-                                <span class="comparison-col-val ${getCompareValClass(avgAnn)}" style="font-size: 0.95rem; font-weight: 700;">${formatVal(avgAnn)}</span>
+                                <span style="font-size: 0.7rem; color: var(--color-text-secondary); font-weight: 600;">Sans exam :</span>
+                                <span class="comparison-col-val ${getCompareValClass(avgAnn)}" style="font-size: 0.9rem; font-weight: 700;">${formatVal(avgAnn)}</span>
                             </div>
-                            <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(96, 165, 250, 0.05); padding: 4px 6px; border-radius: var(--radius-sm);">
+                            <div style="border-top: 1px dashed rgba(96, 165, 250, 0.15); margin: 0.15rem 0; padding-top: 0.25rem; display: flex; justify-content: space-between; align-items: center;">
                                 <span style="font-size: 0.7rem; color: var(--color-primary); font-weight: 700;">Avec exam :</span>
-                                <span class="comparison-col-val ${getCompareValClass(avgMaturity)}" style="font-size: 1.1rem; font-weight: 900;">${formatVal(avgMaturity)}</span>
+                                <span class="comparison-col-val ${getCompareValClass(avgMaturity)}" style="font-size: 1.05rem; font-weight: 900;">${formatVal(avgMaturity)}</span>
                             </div>
                         </div>
                         
-                        <!-- Right: Exam inputs -->
-                        <div style="display: flex; flex-direction: column; gap: 0.35rem;">
+                        <!-- Right Column: Exam inputs -->
+                        <div style="display: flex; flex-direction: column; justify-content: center; gap: 0.35rem; border: 1px solid var(--color-border-subtle); padding: 0.5rem 0.6rem; border-radius: var(--radius-md); background: rgba(255, 255, 255, 0.01);">
                             ${examConfig.written ? `
                             <div style="display: flex; justify-content: space-between; align-items: center; gap: 0.25rem;">
-                                <span style="font-size: 0.7rem; color: var(--color-text-primary); font-weight: 500;">Écrit</span>
-                                <input type="number" step="0.5" min="1" max="6" class="exam-input-field" data-subject-id="${subject.id}" data-exam-type="written" value="${subject.exams && subject.exams.written !== null ? subject.exams.written : ''}" placeholder="—" style="width: 44px; padding: 2px 4px; font-size: 0.75rem; background: var(--color-bg-surface); border: 1px solid var(--color-border-subtle); color: var(--color-text-primary); border-radius: var(--radius-sm); text-align: center; font-weight: 700;">
+                                <span style="font-size: 0.7rem; color: var(--color-text-primary); font-weight: 600;">Écrit :</span>
+                                <input type="number" step="0.5" min="1" max="6" class="exam-input-field" data-subject-id="${subject.id}" data-exam-type="written" value="${subject.exams && subject.exams.written !== null ? subject.exams.written : ''}" placeholder="—" style="width: 48px; padding: 3px 5px; font-size: 0.8rem; border-radius: var(--radius-sm); border: 1px solid var(--color-border-subtle); background-color: var(--color-bg-elevated); color: var(--color-text-primary); text-align: center; font-weight: 700; outline: none;">
                             </div>
                             ` : ''}
                             <div style="display: flex; justify-content: space-between; align-items: center; gap: 0.25rem;">
-                                <span style="font-size: 0.7rem; color: var(--color-text-primary); font-weight: 500;">Oral</span>
-                                <input type="number" step="0.5" min="1" max="6" class="exam-input-field" data-subject-id="${subject.id}" data-exam-type="oral" value="${subject.exams && subject.exams.oral !== null ? subject.exams.oral : ''}" placeholder="—" style="width: 44px; padding: 2px 4px; font-size: 0.75rem; background: var(--color-bg-surface); border: 1px solid var(--color-border-subtle); color: var(--color-text-primary); border-radius: var(--radius-sm); text-align: center; font-weight: 700;">
+                                <span style="font-size: 0.7rem; color: var(--color-text-primary); font-weight: 600;">Oral :</span>
+                                <input type="number" step="0.5" min="1" max="6" class="exam-input-field" data-subject-id="${subject.id}" data-exam-type="oral" value="${subject.exams && subject.exams.oral !== null ? subject.exams.oral : ''}" placeholder="—" style="width: 48px; padding: 3px 5px; font-size: 0.8rem; border-radius: var(--radius-sm); border: 1px solid var(--color-border-subtle); background-color: var(--color-bg-elevated); color: var(--color-text-primary); text-align: center; font-weight: 700; outline: none;">
                             </div>
                         </div>
                     </div>
