@@ -856,7 +856,7 @@ function loadState() {
             if (state.hasSeenOnboarding === undefined) state.hasSeenOnboarding = false;
             if (!state.promoViewMode) state.promoViewMode = 'visual';
             if (state.isLightTheme === undefined) state.isLightTheme = true;
-            if (state.showAllYears === undefined) state.showAllYears = true;
+            if (state.showAllYears === undefined) state.showAllYears = (state.currentYear === 1 ? false : true);
             if (!state.repeatingYears) {
                 state.repeatingYears = { 1: false, 2: false, 3: false };
             }
@@ -898,7 +898,7 @@ function resetStateToDefault() {
         theme: 'navy',
         isLightTheme: true,
         hasSeenOnboarding: false,
-        showAllYears: true,
+        showAllYears: false,
         promoViewMode: 'visual'
     };
     saveState();
@@ -3787,6 +3787,13 @@ function init() {
         btn.addEventListener('click', () => {
             onboardingYearBtns.forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
+            
+            // If year 1 is selected, default to hiding other years. Otherwise, show other years.
+            const selectedYear = parseInt(btn.getAttribute('data-year'));
+            const showAllCheckbox = document.getElementById('onboarding-show-all-years');
+            if (showAllCheckbox) {
+                showAllCheckbox.checked = (selectedYear !== 1);
+            }
         });
     });
 
