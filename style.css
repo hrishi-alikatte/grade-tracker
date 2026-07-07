@@ -3307,10 +3307,13 @@ body.theme-light .simulator-controls select {
     transform: translateX(20px);
 }
 
-.onboarding-year-btn.active {
+body.theme-light .onboarding-year-btn.active,
+body.theme-light .btn-secondary.onboarding-year-btn.active,
+body .onboarding-year-btn.active {
     background-color: var(--color-primary) !important;
     color: var(--color-bg-base) !important;
     border-color: var(--color-primary) !important;
+    font-weight: 800 !important;
 }
 
 body.theme-light #btn-settings-modal {
