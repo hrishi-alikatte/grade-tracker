@@ -19,6 +19,30 @@ body.modal-open {
     overflow: hidden;
 }
 
+/* --- Zero-latency touch: remove the iOS ~300ms tap delay and the grey
+   tap-highlight flash so every control responds on touchstart. --- */
+* {
+    -webkit-tap-highlight-color: transparent;
+}
+a,
+button,
+label,
+summary,
+select,
+[role="button"],
+[data-view],
+.btn,
+.chip-btn,
+.nav-tab-btn,
+.semester-tab,
+.lang-toggle-btn,
+.filter-pill,
+.oc-edit-btn,
+.btn-sub-evo,
+.gem-item {
+    touch-action: manipulation;
+}
+
 :root {
     /* Slightly lighter, premium Navy Blue palette as requested */
     --color-bg-base: #0f172a;          /* Lighter midnight navy (slate-900) */
@@ -928,7 +952,7 @@ body {
 
 /* Animations */
 .slide-up {
-    animation: slideUp 0.25s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+    animation: slideUp 0.12s cubic-bezier(0.2, 0, 0.2, 1) forwards;
 }
 
 @keyframes slideUp {
@@ -1844,18 +1868,30 @@ body {
 
 .guide-content-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(480px, 1fr));
+    /* min(480px, 100%) lets the track shrink on phones instead of forcing a
+       hard 480px min that overflows the viewport. */
+    grid-template-columns: repeat(auto-fit, minmax(min(480px, 100%), 1fr));
     gap: 2rem;
     margin-bottom: 2rem;
 }
 
 @media (max-width: 600px) {
+    /* minmax(0,1fr) (not plain 1fr) lets the single column shrink below its
+       content's min-content width, killing the nested-grid overflow. */
     .guide-content-grid {
+        grid-template-columns: minmax(0, 1fr);
+    }
+    /* Collapse the inner step/example grids so they don't force width. */
+    .scanning-steps-visual,
+    .example-profiles-container {
         grid-template-columns: 1fr;
     }
 }
 
 .guide-card {
+    /* Allow the card to shrink inside its grid track (grid items default to
+       min-width:auto = min-content, which was causing horizontal overflow). */
+    min-width: 0;
     background-color: color-mix(in srgb, var(--color-bg-surface) 60%, transparent);
     backdrop-filter: blur(16px);
     -webkit-backdrop-filter: blur(16px);
@@ -3482,7 +3518,7 @@ body.theme-light .exam-input-field:focus {
 
 /* View Transition Animations */
 .view-fade-in {
-    animation: gentleFadeIn 0.25s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+    animation: gentleFadeIn 0.1s ease-out forwards;
     will-change: opacity, transform;
 }
 
@@ -3522,6 +3558,13 @@ body.theme-light .exam-input-field:focus {
 @media (max-width: 600px) {
     .bilan-grid {
         grid-template-columns: 1fr;
+    }
+
+    /* Let the dashboard header actions (Mode selector, theme, Ajouter) wrap
+       instead of crowding on one line. */
+    .header-actions {
+        flex-wrap: wrap;
+        gap: 0.5rem;
     }
 
     /* Stack the top nav so brand + tabs + action buttons never crowd/overflow

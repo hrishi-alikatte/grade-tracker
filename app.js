@@ -211,21 +211,20 @@ function renderYearSelector() {
             btn.classList.add('active');
             
             state.currentYear = targetYear;
-            
+
             closeModal(document.getElementById('subject-details-modal'));
             activeDetailsSubjectId = null;
-            
-            saveState();
+
             updateTabVisibility();
-            
+
+            // Instant swap — no card-slide/fade replay; persist after paint.
             if (state.currentYear !== 4) {
-                animateCards = true;
                 renderSubjects();
                 updateDashboard();
             } else {
                 renderDedicatedEvolutionSlide();
             }
-            triggerInstantTransition();
+            requestAnimationFrame(saveState);
         });
     });
 }
@@ -2243,16 +2242,16 @@ document.querySelectorAll('.semester-tab').forEach(btn => {
         document.querySelectorAll('.semester-tab').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
         state.currentSemester = targetSem;
-        
+
         // Close details modal on semester switch
         closeModal(document.getElementById('subject-details-modal'));
         activeDetailsSubjectId = null;
-        
-        saveState();
-        animateCards = true;
+
+        // Instant swap: render synchronously with no card-slide/fade replay so
+        // the switch feels zero-latency. Persist after paint (non-blocking).
         renderSubjects();
         updateDashboard();
-        triggerInstantTransition();
+        requestAnimationFrame(saveState);
     });
 });
 
