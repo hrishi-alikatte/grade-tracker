@@ -3272,3 +3272,20 @@ body.theme-light .filter-pill:hover {
     margin: 0 !important;
 }
 
+/* Light Mode crisp white modal container and simulator text legibility overrides */
+body.theme-light .modal-container {
+    background-color: #ffffff !important;
+    border: 1px solid rgba(0, 0, 0, 0.08) !important;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.06) !important;
+}
+
+body.theme-light .target-simulator {
+    background-color: rgba(0, 0, 0, 0.02) !important;
+}
+
+body.theme-light .simulator-controls select {
+    background-color: #f1f5f9 !important;
+    color: var(--color-text-primary) !important;
+    border: 1px solid rgba(0, 0, 0, 0.12) !important;
+}
+
