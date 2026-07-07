@@ -3134,8 +3134,7 @@ body.theme-light .subject-card.is-maximized {
 }
 
 /* Dim overlay when maximized */
-body::after {
-    content: '';
+.graph-maximize-backdrop {
     position: fixed;
     top: 0;
     left: 0;
@@ -3150,7 +3149,7 @@ body::after {
     transition: opacity 0.25s ease;
 }
 
-body:has(.subject-card.is-maximized)::after {
+.graph-maximize-backdrop.active {
     opacity: 1;
     pointer-events: auto;
 }
