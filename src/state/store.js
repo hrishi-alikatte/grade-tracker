@@ -2,8 +2,21 @@
 // The whole app state lives here: one object persisted as a single JSON blob
 // in localStorage. UI modules import { state } and mutate its properties,
 // then call saveState().
+//
+// Storage keys:
+//   gymnase_vaud_state_v5           the live blob (name is historical — the
+//                                   real version is state.schemaVersion)
+//   gymnase_vaud_state_backup       last-known-good snapshot, refreshed on
+//                                   every successful load
+//   gymnase_vaud_state_corrupt_<ts> quarantined copies of unreadable blobs —
+//                                   never silently destroy a student's data
 import { defaultSubjectsYear1, defaultSubjectsYear2, defaultSubjectsYear3 } from './defaults.js';
+import { normalizeState, runMigrations, isValidStateShape, migrateSubjectGrades, CURRENT_SCHEMA_VERSION, DEFAULT_SETTINGS } from './migrations.js';
 import { applyTheme } from '../ui/theme.js';
+import { showSidebarToast } from '../ui/effects.js';
+
+export const STORAGE_KEY = 'gymnase_vaud_state_v5';
+export const BACKUP_KEY = 'gymnase_vaud_state_backup';
 
 export let state = {
     studentName: 'Étudiant',
@@ -15,98 +28,67 @@ export let state = {
     theme: 'navy'
 };
 
-function migrateSubjectGrades(subject) {
-    if (Array.isArray(subject.grades)) {
-        const oldGrades = subject.grades;
-        subject.grades = {
-            sem1: oldGrades,
-            sem2: []
-        };
-    } else if (!subject.grades) {
-        subject.grades = {
-            sem1: [],
-            sem2: []
-        };
-    } else {
-        if (!subject.grades.sem1) subject.grades.sem1 = [];
-        if (!subject.grades.sem2) subject.grades.sem2 = [];
-    }
-}
-
-function runStateMigrations() {
-    if (!state.subjectsYear1 || state.subjectsYear1.length === 0) {
-        state.subjectsYear1 = JSON.parse(JSON.stringify(defaultSubjectsYear1));
-    }
-    if (!state.subjectsYear2 || state.subjectsYear2.length === 0) {
-        state.subjectsYear2 = JSON.parse(JSON.stringify(defaultSubjectsYear2));
-    }
-    if (!state.subjectsYear3 || state.subjectsYear3.length === 0) {
-        state.subjectsYear3 = JSON.parse(JSON.stringify(defaultSubjectsYear3));
-    } else {
-        const hasCombined = state.subjectsYear3.some(s => s.id === 'y3_phys_chimie_y2');
-        if (hasCombined) {
-            state.subjectsYear3 = state.subjectsYear3.filter(s => s.id !== 'y3_phys_chimie_y2');
-            if (!state.subjectsYear3.some(s => s.id === 'y3_physique_y2')) {
-                state.subjectsYear3.push({ id: 'y3_physique_y2', name: 'Physique (Y2)', role: 'physique_y2', target: 4.0, evaluationMode: 'locked', grades: { sem1: [], sem2: [] } });
-            }
-            if (!state.subjectsYear3.some(s => s.id === 'y3_chimie_y2')) {
-                state.subjectsYear3.push({ id: 'y3_chimie_y2', name: 'Chimie (Y2)', role: 'chimie_y2', target: 4.0, evaluationMode: 'locked', grades: { sem1: [], sem2: [] } });
-            }
-        }
-        if (!state.subjectsYear3.some(s => s.id === 'y3_art_y2')) {
-            state.subjectsYear3.push({ id: 'y3_art_y2', name: 'Arts Visuels / Musique (Y2)', role: 'art_y2', target: 4.0, evaluationMode: 'locked', grades: { sem1: [], sem2: [] } });
-        }
-    }
-
-    // Sync the Year 3 Art name from Year 2 choice
-    const y3Art = state.subjectsYear3.find(s => s.role === 'art_y2');
-    const y2Art = state.subjectsYear2.find(s => s.role === 'art');
-    if (y2Art && y3Art) {
-        y3Art.name = `${y2Art.name} (Y2)`;
+function quarantine(raw, reason) {
+    try {
+        const key = `gymnase_vaud_state_corrupt_${Date.now()}`;
+        localStorage.setItem(key, raw);
+        console.error(`State unreadable (${reason}); raw blob preserved under ${key}`);
+    } catch (e) {
+        console.error('Could not quarantine the unreadable state blob', e);
     }
 }
 
 function loadState() {
-    const saved = localStorage.getItem('gymnase_vaud_state_v5');
-    if (saved) {
-        try {
-            state = JSON.parse(saved);
-            if (!state.studentName) state.studentName = 'Étudiant';
-            if (!state.currentYear) state.currentYear = 1;
-            if (!state.currentSemester) state.currentSemester = 'sem1';
-            if (!state.theme) state.theme = 'navy';
-            if (state.hasSeenOnboarding === undefined) state.hasSeenOnboarding = false;
-            if (!state.promoViewMode) state.promoViewMode = 'visual';
-            if (state.isLightTheme === undefined) state.isLightTheme = true;
-            if (state.showAllYears === undefined) state.showAllYears = (Math.floor(state.currentYear) === 3 ? true : false);
-            if (!state.repeatingYears) {
-                state.repeatingYears = { 1: false, 2: false, 3: false };
-            }
-            if (!state.subjectsYear1_rep) state.subjectsYear1_rep = JSON.parse(JSON.stringify(defaultSubjectsYear1));
-            if (!state.subjectsYear2_rep) state.subjectsYear2_rep = JSON.parse(JSON.stringify(defaultSubjectsYear2));
-            if (!state.subjectsYear3_rep) state.subjectsYear3_rep = JSON.parse(JSON.stringify(defaultSubjectsYear3));
-            
-            runStateMigrations();
-            
-            state.subjectsYear1.forEach(migrateSubjectGrades);
-            state.subjectsYear2.forEach(migrateSubjectGrades);
-            state.subjectsYear3.forEach(migrateSubjectGrades);
-            state.subjectsYear1_rep.forEach(migrateSubjectGrades);
-            state.subjectsYear2_rep.forEach(migrateSubjectGrades);
-            state.subjectsYear3_rep.forEach(migrateSubjectGrades);
-            
-            applyTheme();
-        } catch(e) {
-            console.error("Failed to parse state v5", e);
-            resetStateToDefault();
-        }
-    } else {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if (!saved) {
         resetStateToDefault();
+        return;
     }
+
+    let parsed;
+    try {
+        parsed = JSON.parse(saved);
+    } catch (e) {
+        quarantine(saved, 'parse-error');
+        resetStateToDefault();
+        showSidebarToast("Données illisibles — une copie a été conservée, l'app repart de zéro.", 'error');
+        return;
+    }
+
+    if (!isValidStateShape(parsed)) {
+        quarantine(saved, 'bad-shape');
+        resetStateToDefault();
+        showSidebarToast("Données invalides — une copie a été conservée, l'app repart de zéro.", 'error');
+        return;
+    }
+
+    if ((parsed.schemaVersion || 5) > CURRENT_SCHEMA_VERSION) {
+        // Blob written by a NEWER app version: don't touch it, keep a copy,
+        // and run on defaults so a later save can't corrupt the newer data.
+        quarantine(saved, 'newer-schema');
+        resetStateToDefault();
+        showSidebarToast("Ces données viennent d'une version plus récente de l'app. Mets à jour pour les retrouver.", 'error');
+        return;
+    }
+
+    state = parsed;
+    runMigrations(state);
+    normalizeState(state);
+    saveState();
+
+    // Refresh the last-known-good snapshot only after a fully successful load.
+    try {
+        localStorage.setItem(BACKUP_KEY, JSON.stringify(state));
+    } catch (e) {
+        // Quota exceeded is non-fatal: the live blob still saved fine.
+    }
+
+    applyTheme();
 }
 
 function resetStateToDefault() {
     state = {
+        schemaVersion: CURRENT_SCHEMA_VERSION,
         studentName: 'Étudiant',
         currentYear: 1,
         currentSemester: 'sem1',
@@ -121,14 +103,26 @@ function resetStateToDefault() {
         isLightTheme: true,
         hasSeenOnboarding: false,
         showAllYears: false,
-        promoViewMode: 'visual'
+        promoViewMode: 'visual',
+        settings: { ...DEFAULT_SETTINGS }
     };
     saveState();
     applyTheme();
 }
 
 function saveState() {
-    localStorage.setItem('gymnase_vaud_state_v5', JSON.stringify(state));
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+}
+
+/**
+ * Replaces the whole state (used by backup import). The caller is expected
+ * to reload the UI afterwards.
+ */
+function replaceState(newState) {
+    state = newState;
+    runMigrations(state);
+    normalizeState(state);
+    saveState();
 }
 
 function getBaseYear() {
@@ -158,4 +152,4 @@ function isCurrentYearLocked() {
     return false;
 }
 
-export { migrateSubjectGrades, runStateMigrations, loadState, resetStateToDefault, saveState, getBaseYear, getCurrentSubjects, isCurrentYearLocked };
+export { migrateSubjectGrades, loadState, resetStateToDefault, saveState, replaceState, getBaseYear, getCurrentSubjects, isCurrentYearLocked };
