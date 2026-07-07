@@ -1,0 +1,22 @@
+{
+  "name": "gradevibe",
+  "private": true,
+  "version": "6.0.0",
+  "description": "Suivi des notes — Gymnase Vaud. PWA mobile-first pour suivre ses moyennes, objectifs et promotion.",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "devDependencies": {
+    "vite": "^7.0.0",
+    "vite-plugin-pwa": "^1.0.0",
+    "vitest": "^3.2.0"
+  },
+  "dependencies": {
+    "tesseract.js": "^5.1.1"
+  }
+}

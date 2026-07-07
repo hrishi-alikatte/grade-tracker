@@ -125,7 +125,9 @@ function verifyGradeInText(ocrText, gradeValue) {
 }
 
 // --- 1. PWA Service Worker Registration ---
-if ('serviceWorker' in navigator) {
+// Enregistré uniquement en production : en dev, un SW cache-first servirait
+// du code périmé et casserait le rechargement à chaud de Vite.
+if (import.meta.env.PROD && 'serviceWorker' in navigator) {
     window.addEventListener('load', () => {
         navigator.serviceWorker.register('./sw.js')
             .then(reg => console.log('Service Worker registered with scope:', reg.scope))
@@ -165,8 +167,8 @@ const ctx = canvas ? canvas.getContext('2d') : null;
 let confettiParticles = [];
 let confettiAnimationId = null;
 
-const fahAudio = new Audio(encodeURI('FAH SOUND .mpeg'));
-const confettiAudio = new Audio(encodeURI('CONFETTI SOUND.mp3'));
+const fahAudio = new Audio('/sounds/fah.mp3');
+const confettiAudio = new Audio('/sounds/confetti.mp3');
 
 function playConfettiSound() {
     try {
@@ -4239,4 +4241,5 @@ function initBackgroundBoxes() {
     grid.appendChild(fragment);
 }
 
-window.onload = init;
+// Les modules ES sont différés : le DOM est déjà prêt quand ce code s'exécute.
+init();

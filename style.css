@@ -2366,57 +2366,57 @@ body {
 
 /* 1. Ruby Zoisite */
 .gem-ruby-zoisite .gem-texture {
-    background-image: url('assets/ruby-zoisite.png');
+    background-image: url('/assets/ruby-zoisite.png');
 }
 
 /* 2. Red Jasper */
 .gem-red-jasper .gem-texture {
-    background-image: url('assets/red-jasper.png');
+    background-image: url('/assets/red-jasper.png');
 }
 
 /* 3. Ocean Jasper */
 .gem-ocean-jasper .gem-texture {
-    background-image: url('assets/ocean-jasper.png');
+    background-image: url('/assets/ocean-jasper.png');
 }
 
 /* 4. Rainbow Moonstone */
 .gem-rainbow-moonstone .gem-texture {
-    background-image: url('assets/rainbow-moonstone.png');
+    background-image: url('/assets/rainbow-moonstone.png');
 }
 
 /* 5. Selenite */
 .gem-selenite .gem-texture {
-    background-image: url('assets/selenite.png');
+    background-image: url('/assets/selenite.png');
 }
 
 /* 6. Sodalite */
 .gem-sodalite .gem-texture {
-    background-image: url('assets/sodalite.png');
+    background-image: url('/assets/sodalite.png');
 }
 
 /* 7. Serpentine */
 .gem-serpentine .gem-texture {
-    background-image: url('assets/serpentine.png');
+    background-image: url('/assets/serpentine.png');
 }
 
 /* 8. Rose Quartz */
 .gem-rose-quartz .gem-texture {
-    background-image: url('assets/rose-quartz.png');
+    background-image: url('/assets/rose-quartz.png');
 }
 
 /* 9. Labradorite */
 .gem-labradorite .gem-texture {
-    background-image: url('assets/labradorite.png');
+    background-image: url('/assets/labradorite.png');
 }
 
 /* 10. Picture Jasper */
 .gem-picture-jasper .gem-texture {
-    background-image: url('assets/picture-jasper.png');
+    background-image: url('/assets/picture-jasper.png');
 }
 
 /* 11. Amazonite */
 .gem-amazonite .gem-texture {
-    background-image: url('assets/amazonite.png');
+    background-image: url('/assets/amazonite.png');
 }
 
 
@@ -2488,7 +2488,7 @@ body {
 
 /* Custom Gemstone Visual Styling */
 .gem-custom .gem-texture {
-    background-image: url('assets/custom-gem.png');
+    background-image: url('/assets/custom-gem.png');
     background-size: cover;
     /* Fallback high-fidelity radial gradient (iridescent / magic crystal look) */
     background: radial-gradient(circle at 35% 35%, rgba(255, 255, 255, 0.6) 0%, rgba(96, 165, 250, 0.5) 30%, rgba(139, 92, 246, 0.6) 60%, rgba(244, 63, 94, 0.5) 85%, rgba(15, 23, 42, 0.95) 100%);
