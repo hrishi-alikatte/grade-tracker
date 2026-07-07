@@ -941,24 +941,27 @@ function renderYearSelector() {
     if (!container) return;
 
     let buttonsHTML = '';
-    
+    const toggleBtnHTML = state.showAllYears 
+        ? `<button type="button" id="btn-toggle-show-all" class="lang-toggle-btn" style="flex: 0 0 auto; min-width: auto; padding: 6px 10px; font-size: 0.75rem; background: rgba(255,255,255,0.05); border: 1px dashed var(--color-border-subtle); color: var(--color-text-secondary); border-radius: var(--radius-sm); margin-left: 0.5rem;" title="Masquer les autres années">− Concentrer</button>`
+        : `<button type="button" id="btn-toggle-show-all" class="lang-toggle-btn" style="flex: 0 0 auto; min-width: auto; padding: 6px 10px; font-size: 0.75rem; background: rgba(255,255,255,0.05); border: 1px dashed var(--color-border-subtle); color: var(--color-text-secondary); border-radius: var(--radius-sm); margin-left: 0.5rem;" title="Afficher toutes les années">+ Tout afficher</button>`;
+
     if (state.showAllYears) {
         // Year 1
-        buttonsHTML += `<button type="button" class="lang-toggle-btn ${state.currentYear === 1 ? 'active' : ''}" data-year="1" style="flex: 1; text-align: center; font-size: 0.8rem; padding: 6px 4px;">1ère année</button>`;
+        buttonsHTML += `<button type="button" class="lang-toggle-btn ${state.currentYear === 1 ? 'active' : ''}" data-year="1" style="flex: 1; text-align: center; font-size: 0.8rem; padding: 6px 4px;">1ère année ${state.currentYear === 1 ? '▴' : ''}</button>`;
         if (state.repeatingYears && state.repeatingYears[1]) {
-            buttonsHTML += `<button type="button" class="lang-toggle-btn ${state.currentYear === 1.5 ? 'active' : ''}" data-year="1.5" style="flex: 1; text-align: center; font-size: 0.8rem; padding: 6px 4px;">1ère (Rép.)</button>`;
+            buttonsHTML += `<button type="button" class="lang-toggle-btn ${state.currentYear === 1.5 ? 'active' : ''}" data-year="1.5" style="flex: 1; text-align: center; font-size: 0.8rem; padding: 6px 4px;">1ère (Rép.) ${state.currentYear === 1.5 ? '▴' : ''}</button>`;
         }
         
         // Year 2
-        buttonsHTML += `<button type="button" class="lang-toggle-btn ${state.currentYear === 2 ? 'active' : ''}" data-year="2" style="flex: 1; text-align: center; font-size: 0.8rem; padding: 6px 4px;">2ème année</button>`;
+        buttonsHTML += `<button type="button" class="lang-toggle-btn ${state.currentYear === 2 ? 'active' : ''}" data-year="2" style="flex: 1; text-align: center; font-size: 0.8rem; padding: 6px 4px;">2ème année ${state.currentYear === 2 ? '▴' : ''}</button>`;
         if (state.repeatingYears && state.repeatingYears[2]) {
-            buttonsHTML += `<button type="button" class="lang-toggle-btn ${state.currentYear === 2.5 ? 'active' : ''}" data-year="2.5" style="flex: 1; text-align: center; font-size: 0.8rem; padding: 6px 4px;">2ème (Rép.)</button>`;
+            buttonsHTML += `<button type="button" class="lang-toggle-btn ${state.currentYear === 2.5 ? 'active' : ''}" data-year="2.5" style="flex: 1; text-align: center; font-size: 0.8rem; padding: 6px 4px;">2ème (Rép.) ${state.currentYear === 2.5 ? '▴' : ''}</button>`;
         }
         
         // Year 3
-        buttonsHTML += `<button type="button" class="lang-toggle-btn ${state.currentYear === 3 ? 'active' : ''}" data-year="3" style="flex: 1; text-align: center; font-size: 0.8rem; padding: 6px 4px;">3ème année</button>`;
+        buttonsHTML += `<button type="button" class="lang-toggle-btn ${state.currentYear === 3 ? 'active' : ''}" data-year="3" style="flex: 1; text-align: center; font-size: 0.8rem; padding: 6px 4px;">3ème année ${state.currentYear === 3 ? '▴' : ''}</button>`;
         if (state.repeatingYears && state.repeatingYears[3]) {
-            buttonsHTML += `<button type="button" class="lang-toggle-btn ${state.currentYear === 3.5 ? 'active' : ''}" data-year="3.5" style="flex: 1; text-align: center; font-size: 0.8rem; padding: 6px 4px;">3ème (Rép.)</button>`;
+            buttonsHTML += `<button type="button" class="lang-toggle-btn ${state.currentYear === 3.5 ? 'active' : ''}" data-year="3.5" style="flex: 1; text-align: center; font-size: 0.8rem; padding: 6px 4px;">3ème (Rép.) ${state.currentYear === 3.5 ? '▴' : ''}</button>`;
         }
         
         // Year 4 / Evolution
@@ -966,19 +969,19 @@ function renderYearSelector() {
     } else {
         const baseYear = Math.floor(state.currentYear);
         if (baseYear === 1) {
-            buttonsHTML += `<button type="button" class="lang-toggle-btn ${state.currentYear === 1 ? 'active' : ''}" data-year="1" style="flex: 1; text-align: center; font-size: 0.8rem; padding: 6px 4px;">1ère année</button>`;
+            buttonsHTML += `<button type="button" class="lang-toggle-btn ${state.currentYear === 1 ? 'active' : ''}" data-year="1" style="flex: 1; text-align: center; font-size: 0.8rem; padding: 6px 4px;">1ère année ▾</button>`;
             if (state.repeatingYears && state.repeatingYears[1]) {
-                buttonsHTML += `<button type="button" class="lang-toggle-btn ${state.currentYear === 1.5 ? 'active' : ''}" data-year="1.5" style="flex: 1; text-align: center; font-size: 0.8rem; padding: 6px 4px;">1ère (Rép.)</button>`;
+                buttonsHTML += `<button type="button" class="lang-toggle-btn ${state.currentYear === 1.5 ? 'active' : ''}" data-year="1.5" style="flex: 1; text-align: center; font-size: 0.8rem; padding: 6px 4px;">1ère (Rép.) ▾</button>`;
             }
         } else if (baseYear === 2) {
-            buttonsHTML += `<button type="button" class="lang-toggle-btn ${state.currentYear === 2 ? 'active' : ''}" data-year="2" style="flex: 1; text-align: center; font-size: 0.8rem; padding: 6px 4px;">2ème année</button>`;
+            buttonsHTML += `<button type="button" class="lang-toggle-btn ${state.currentYear === 2 ? 'active' : ''}" data-year="2" style="flex: 1; text-align: center; font-size: 0.8rem; padding: 6px 4px;">2ème année ▾</button>`;
             if (state.repeatingYears && state.repeatingYears[2]) {
-                buttonsHTML += `<button type="button" class="lang-toggle-btn ${state.currentYear === 2.5 ? 'active' : ''}" data-year="2.5" style="flex: 1; text-align: center; font-size: 0.8rem; padding: 6px 4px;">2ème (Rép.)</button>`;
+                buttonsHTML += `<button type="button" class="lang-toggle-btn ${state.currentYear === 2.5 ? 'active' : ''}" data-year="2.5" style="flex: 1; text-align: center; font-size: 0.8rem; padding: 6px 4px;">2ème (Rép.) ▾</button>`;
             }
         } else if (baseYear === 3) {
-            buttonsHTML += `<button type="button" class="lang-toggle-btn ${state.currentYear === 3 ? 'active' : ''}" data-year="3" style="flex: 1; text-align: center; font-size: 0.8rem; padding: 6px 4px;">3ème année</button>`;
+            buttonsHTML += `<button type="button" class="lang-toggle-btn ${state.currentYear === 3 ? 'active' : ''}" data-year="3" style="flex: 1; text-align: center; font-size: 0.8rem; padding: 6px 4px;">3ème année ▾</button>`;
             if (state.repeatingYears && state.repeatingYears[3]) {
-                buttonsHTML += `<button type="button" class="lang-toggle-btn ${state.currentYear === 3.5 ? 'active' : ''}" data-year="3.5" style="flex: 1; text-align: center; font-size: 0.8rem; padding: 6px 4px;">3ème (Rép.)</button>`;
+                buttonsHTML += `<button type="button" class="lang-toggle-btn ${state.currentYear === 3.5 ? 'active' : ''}" data-year="3.5" style="flex: 1; text-align: center; font-size: 0.8rem; padding: 6px 4px;">3ème (Rép.) ▾</button>`;
             }
         } else {
             buttonsHTML += `<button type="button" class="lang-toggle-btn active" data-year="4" style="flex: 1; text-align: center; font-size: 0.8rem; padding: 6px 4px;">Évolution</button>`;
@@ -986,19 +989,38 @@ function renderYearSelector() {
     }
 
     container.innerHTML = `
-        <div class="lang-toggle-container" style="margin: 0; padding: 2px; width: 100%; display: flex; max-width: 650px; justify-content: space-between; gap: 4px;">
+        <div class="lang-toggle-container" style="margin: 0; padding: 2px; width: 100%; display: flex; max-width: 650px; justify-content: space-between; gap: 4px; align-items: center;">
             ${buttonsHTML}
+            ${toggleBtnHTML}
         </div>
     `;
 
     // Rebind event listeners to the new buttons
     container.querySelectorAll('.lang-toggle-btn').forEach(btn => {
         btn.addEventListener('click', () => {
+            if (btn.id === 'btn-toggle-show-all') {
+                state.showAllYears = !state.showAllYears;
+                saveState();
+                renderYearSelector();
+                return;
+            }
+
+            const rawYear = btn.getAttribute('data-year');
+            const targetYear = rawYear.includes('.') ? parseFloat(rawYear) : parseInt(rawYear);
+            
+            // If they click on the tab they ALREADY have active:
+            if (state.currentYear === targetYear) {
+                // Toggle showAllYears!
+                state.showAllYears = !state.showAllYears;
+                saveState();
+                renderYearSelector();
+                return;
+            }
+
             container.querySelectorAll('.lang-toggle-btn').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
             
-            const rawYear = btn.getAttribute('data-year');
-            state.currentYear = rawYear.includes('.') ? parseFloat(rawYear) : parseInt(rawYear);
+            state.currentYear = targetYear;
             
             closeModal(document.getElementById('subject-details-modal'));
             activeDetailsSubjectId = null;
@@ -1009,6 +1031,8 @@ function renderYearSelector() {
                 animateCards = true;
                 renderSubjects();
                 updateDashboard();
+            } else {
+                renderDedicatedEvolutionSlide();
             }
         });
     });
