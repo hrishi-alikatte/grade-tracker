@@ -5,6 +5,20 @@
     box-sizing: border-box;
 }
 
+html {
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+}
+
+html, body {
+    overflow-x: hidden;
+}
+
+/* Scroll lock while a modal is open (see openModal in app.js). */
+body.modal-open {
+    overflow: hidden;
+}
+
 :root {
     /* Slightly lighter, premium Navy Blue palette as requested */
     --color-bg-base: #0f172a;          /* Lighter midnight navy (slate-900) */
@@ -104,8 +118,12 @@ body {
     color: var(--color-text-primary);
     font-family: var(--font-family-sans);
     line-height: 1.5;
-    padding: 2rem 1.5rem;
+    /* Safe-area insets so content clears the home-indicator/rounded corners in
+       full-screen (viewport-fit=cover). The sticky top-nav owns the TOP inset
+       (see .top-nav-bar), so body keeps only right/bottom/left here. */
+    padding: 2rem calc(1.5rem + env(safe-area-inset-right)) calc(2rem + env(safe-area-inset-bottom)) calc(1.5rem + env(safe-area-inset-left));
     min-height: 100vh;
+    min-height: 100dvh;
 }
 
 /* Confetti Canvas */
@@ -185,6 +203,7 @@ body {
     font-size: 0.85rem;
     font-weight: 700;
     padding: 0.6rem 1.25rem;
+    min-height: 44px; /* WCAG 2.5.5 / mobile touch target */
     border-radius: var(--radius-full);
     border: none;
     cursor: pointer;
@@ -566,7 +585,8 @@ body {
     font-family: var(--font-family-sans);
     font-weight: 500;
     cursor: pointer;
-    padding: 2px 6px;
+    padding: 6px 8px;
+    min-height: 44px;
     display: inline-flex;
     align-items: center;
     gap: 2px;
@@ -791,6 +811,7 @@ body {
     left: 0;
     width: 100vw;
     height: 100vh;
+    height: 100dvh;
     background: rgba(5, 7, 12, 0.85);
     backdrop-filter: blur(8px);
     -webkit-backdrop-filter: blur(8px);
@@ -820,6 +841,12 @@ body {
     position: relative;
     transform: translateY(20px);
     transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    /* Scroll a tall modal internally at ALL widths (not just <=480px), so it
+       never clips off-screen on short/landscape/tablet viewports. */
+    max-height: calc(100dvh - 2rem);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
 }
 
 .modal-backdrop.active .modal-container {
@@ -828,14 +855,20 @@ body {
 
 .modal-close-btn {
     position: absolute;
-    top: 1.25rem;
-    right: 1.25rem;
+    top: 0.75rem;
+    right: 0.75rem;
     background: transparent;
     border: none;
     color: var(--color-text-secondary);
     font-size: 1.5rem;
     cursor: pointer;
     line-height: 1;
+    /* 44px hit area around the glyph */
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .modal-close-btn:hover {
@@ -927,6 +960,7 @@ body {
 .chip-btn {
     flex: 1;
     min-width: 54px;
+    min-height: 44px;
     background-color: var(--color-bg-base);
     color: var(--color-text-secondary);
     border: 1px solid var(--color-border-subtle);
@@ -1009,6 +1043,7 @@ body {
     font-size: 0.85rem;
     font-weight: 700;
     padding: 0.65rem 0.5rem;
+    min-height: 44px;
     border-radius: var(--radius-sm);
     cursor: pointer;
     transition: all var(--transition-fast);
@@ -1383,9 +1418,11 @@ body {
     grid-template-columns: repeat(3, 1fr) !important;
 }
 
-@media (max-width: 640px) {
+@media (max-width: 600px) {
+    /* Stack the three promotion stats vertically on phones — three columns
+       at ~120px each are too cramped for the numbers + labels. */
     .promo-stats-grid.three-cols {
-        grid-template-columns: repeat(3, 1fr) !important;
+        grid-template-columns: 1fr !important;
     }
 }
 
@@ -1615,6 +1652,7 @@ body {
 
 .landing-hero-section {
     min-height: calc(100vh - 120px);
+    min-height: calc(100dvh - 120px);
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -1646,6 +1684,10 @@ body {
     letter-spacing: -0.04em;
     line-height: 1.1;
     margin-bottom: 1.5rem;
+    /* In the centered flex column, cap width to the container so the title
+       wraps instead of sizing to its (single-line) content and overflowing. */
+    max-width: 100%;
+    overflow-wrap: break-word;
     background: linear-gradient(135deg, #fff 30%, var(--color-primary) 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -1655,7 +1697,7 @@ body {
     font-size: clamp(1.05rem, 2vw, 1.25rem);
     color: var(--color-text-secondary);
     margin-bottom: 3rem;
-    max-width: 600px;
+    max-width: min(600px, 100%);
     line-height: 1.6;
     font-weight: 500;
 }
@@ -1683,6 +1725,7 @@ body {
 
 .landing-section {
     min-height: 100vh;
+    min-height: 100dvh;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -1692,7 +1735,9 @@ body {
 
 .landing-features-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    /* min(280px, 100%) lets the min track shrink below 280px on very narrow
+       phones (<=320px) instead of forcing overflow. */
+    grid-template-columns: repeat(auto-fit, minmax(min(280px, 100%), 1fr));
     gap: 2rem;
     max-width: 1000px;
     margin: 0 auto;
@@ -2101,7 +2146,9 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 0.8rem 2rem;
+    /* Top padding absorbs the notch/status-bar inset so the bar's blurred
+       background fills the safe area while its contents stay clear of it. */
+    padding: calc(0.8rem + env(safe-area-inset-top)) calc(2rem + env(safe-area-inset-right)) 0.8rem calc(2rem + env(safe-area-inset-left));
     width: 100%;
     max-width: 1200px;
     margin: 0 auto 1.5rem auto;
@@ -2132,11 +2179,13 @@ body {
     font-size: 0.85rem;
     font-weight: 700;
     padding: 0.5rem 1rem;
+    min-height: 44px;
     border-radius: var(--radius-sm);
     cursor: pointer;
     transition: all var(--transition-fast);
     display: flex;
     align-items: center;
+    justify-content: center;
     gap: 0.35rem;
 }
 
@@ -2499,8 +2548,8 @@ body {
     position: absolute;
     top: 5px;
     right: 5px;
-    width: 22px;
-    height: 22px;
+    width: 26px;
+    height: 26px;
     border-radius: 50%;
     background-color: #ef4444;
     color: white;
@@ -2513,18 +2562,32 @@ body {
     align-items: center;
     justify-content: center;
     z-index: 10;
-    opacity: 0;
+    opacity: 1; /* visible by default — see @media (hover) below */
     transition: opacity var(--transition-fast), transform var(--transition-fast);
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
 }
 
-.gem-item:hover .btn-delete-gem {
-    opacity: 1;
+/* Expand the compact glyph to a ~44px touch target (26px + 9px on each side). */
+.btn-delete-gem::before {
+    content: "";
+    position: absolute;
+    inset: -9px;
 }
 
-.btn-delete-gem:hover {
-    background-color: #dc2626;
-    transform: scale(1.15);
+/* On pointer/hover devices, hide the delete button until the gem is hovered.
+   On touch devices (no hover) it stays visible — otherwise deleting a custom
+   gemstone would be impossible without a hover state. */
+@media (hover: hover) {
+    .btn-delete-gem {
+        opacity: 0;
+    }
+    .gem-item:hover .btn-delete-gem {
+        opacity: 1;
+    }
+    .btn-delete-gem:hover {
+        background-color: #dc2626;
+        transform: scale(1.15);
+    }
 }
 
 /* Remove all shadows as requested by the user */
@@ -2571,9 +2634,13 @@ body {
     border-bottom: 1px solid rgba(255, 255, 255, 0.04);
     transition: background-color 1.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
-.box-cell:hover {
-    background-color: var(--color-primary);
-    transition: background-color 0s;
+/* Signature grid-cell fill-in: only wire it up on hover-capable pointers so
+   touch devices don't pay the repaint for an effect they can never trigger. */
+@media (hover: hover) {
+    .box-cell:hover {
+        background-color: var(--color-primary);
+        transition: background-color 0s;
+    }
 }
 
 /* Dashboard Hero Section */
@@ -2588,8 +2655,8 @@ body {
 /* --- Floating Sidebar Toast Panel --- */
 .toast-sidebar-container {
     position: fixed;
-    top: 2rem;
-    right: 2rem;
+    top: calc(1rem + env(safe-area-inset-top));
+    right: calc(1rem + env(safe-area-inset-right));
     z-index: 10000;
     display: flex;
     flex-direction: column;
@@ -2638,6 +2705,12 @@ body {
     font-size: 1.2rem;
     cursor: pointer;
     line-height: 1;
+    min-width: 44px;
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
     padding: 0 0.25rem;
     transition: color var(--transition-fast);
 }
@@ -2738,6 +2811,7 @@ body.theme-light .top-nav-brand strong {
 /* Landing Page Hero and Scroll Indicator */
 body.theme-light .landing-hero-section {
     min-height: calc(100vh - 120px);
+    min-height: calc(100dvh - 120px);
 }
 
 body.theme-light .landing-title {
@@ -3024,8 +3098,10 @@ body.theme-light .box-cell {
     border-right: 1px solid rgba(0, 0, 0, 0.03) !important;
     border-bottom: 1px solid rgba(0, 0, 0, 0.03) !important;
 }
-body.theme-light .box-cell:hover {
-    background-color: rgba(0, 0, 0, 0.02) !important;
+@media (hover: hover) {
+    body.theme-light .box-cell:hover {
+        background-color: rgba(0, 0, 0, 0.02) !important;
+    }
 }
 body.theme-light .background-boxes-mask {
     background: radial-gradient(circle at center, transparent 30%, var(--color-bg-base) 90%) !important;
@@ -3140,6 +3216,7 @@ body.theme-light .subject-card.is-maximized {
     left: 0;
     width: 100vw;
     height: 100vh;
+    height: 100dvh;
     background: rgba(0, 0, 0, 0.6);
     backdrop-filter: blur(4px);
     -webkit-backdrop-filter: blur(4px);
@@ -3417,6 +3494,84 @@ body.theme-light .exam-input-field:focus {
     to {
         opacity: 1;
         transform: translateY(0) scale(1);
+    }
+}
+
+/* ==========================================================================
+   Mobile responsive polish (v6 mobile pass)
+   Consolidated phone-first layout rules. Kept last so they win over base
+   rules at the same specificity.
+   ========================================================================== */
+
+/* Bilan groups: two columns on wide screens (was an inline style), one on phones. */
+.bilan-grid {
+    grid-template-columns: 1fr 1fr;
+}
+
+/* App footer (ported from the production lineage). */
+.app-footer {
+    text-align: center;
+    padding-top: 1.5rem;
+    margin-top: 1rem;
+    border-top: 1px solid var(--color-border-subtle);
+    font-size: 0.85rem;
+    color: var(--color-text-secondary);
+    opacity: 0.8;
+}
+
+@media (max-width: 600px) {
+    .bilan-grid {
+        grid-template-columns: 1fr;
+    }
+
+    /* Stack the top nav so brand + tabs + action buttons never crowd/overflow
+       on a phone. Full-width safe-area padding preserved from the base rule. */
+    .top-nav-bar {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0.6rem;
+        padding-top: calc(0.7rem + env(safe-area-inset-top));
+        padding-bottom: 0.7rem;
+    }
+    /* The controls group (tabs + settings + theme buttons) spans the row and
+       wraps if space runs out, so nothing clips off the right edge. */
+    .top-nav-bar > div:last-child {
+        width: 100%;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+    .nav-tabs {
+        flex: 1 1 auto;
+        min-width: 0;
+        justify-content: space-around;
+    }
+
+    /* Stacked, full-width form buttons are far easier to tap than a tight row. */
+    .form-actions {
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+    .form-actions .btn {
+        width: 100%;
+    }
+
+    /* Give modal content a little more edge room on small screens. */
+    .modal-container {
+        width: calc(100% - 1.5rem);
+    }
+}
+
+/* Accessibility: honor the OS "reduce motion" setting. Neutralizes the
+   decorative transitions/animations (grid-cell fills, view fades, chip zooms)
+   for users who are motion-sensitive. Confetti is skipped in JS as well. */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
     }
 }
 

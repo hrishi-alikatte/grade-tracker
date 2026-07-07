@@ -82,7 +82,13 @@ if (typeof window !== 'undefined') {
     window.addEventListener('resize', resizeConfettiCanvas);
 }
 
+function prefersReducedMotion() {
+    return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+}
+
 function startConfetti() {
+    // Respect users who opt out of motion — skip the celebration animation.
+    if (prefersReducedMotion()) return;
     if (!ensureCanvas() || !ctx) return;
     resizeConfettiCanvas();
     confettiParticles = [];
@@ -141,10 +147,13 @@ function initBackgroundBoxes() {
     if (!grid) return;
     
     grid.innerHTML = '';
-    
-    const cols = 60;
-    const rows = 40;
-    
+
+    // Scale grid density to the viewport: phones get a much lighter grid
+    // (~720 cells vs 2400) to cut DOM/paint cost on low-end devices.
+    const isSmallViewport = window.innerWidth < 768;
+    const cols = isSmallViewport ? 30 : 60;
+    const rows = isSmallViewport ? 24 : 40;
+
     grid.style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
     grid.style.gridTemplateRows = `repeat(${rows}, 1fr)`;
     

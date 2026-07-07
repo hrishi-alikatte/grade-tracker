@@ -2,22 +2,32 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="color-scheme" content="light dark">
     <title>Suivi des notes — Gymnase</title>
+    <meta name="description" content="Suivi des moyennes par branche, objectifs, double compensation — calcul de promotion pour le gymnase vaudois.">
+    <meta name="format-detection" content="telephone=no">
     <!-- PWA Settings -->
     <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#0a0f1d">
+    <!-- Kept in sync with the active theme/palette by src/ui/theme.js.
+         Default here is the light-theme base (the app defaults to light). -->
+    <meta name="theme-color" content="#fcfbf9">
+    <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <link rel="apple-touch-icon" href="logo.svg">
+    <meta name="apple-mobile-web-app-title" content="GradeVibe">
+    <link rel="apple-touch-icon" href="apple-touch-icon.png">
     
     <!-- Google Fonts: JetBrains Mono, Plus Jakarta Sans, Playfair Display -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&family=Plus+Jakarta+Sans:wght@200..800&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap" rel="stylesheet">
+    <!-- Load fonts without blocking first paint; display=swap shows fallback
+         text immediately, then swaps. <noscript> keeps it working sans JS. -->
+    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&family=Plus+Jakarta+Sans:wght@200..800&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap" onload="this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&family=Plus+Jakarta+Sans:wght@200..800&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap"></noscript>
     <link rel="stylesheet" href="style.css">
-    <!-- Tesseract OCR Library -->
-    <script src="https://unpkg.com/tesseract.js@5.0.5/dist/tesseract.min.js"></script>
+    <!-- Tesseract OCR is lazy-loaded on first scan (see ensureTesseract in
+         src/features/ocr.js) so it never blocks first paint. -->
 </head>
 <body class="paper-texture">
     <!-- Background Boxes (Aceternity UI) -->
@@ -58,10 +68,10 @@
                 </button>
             </div>
             
-            <button id="btn-settings-modal" class="btn" style="padding: 0; margin: 0 0.25rem 0 0; width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; background-color: var(--color-bg-surface); border: 1px solid var(--color-border-subtle); color: white;" title="Paramètres d'affichage">
+            <button id="btn-settings-modal" class="btn" style="padding: 0; margin: 0 0.25rem 0 0; width: 44px; height: 44px; min-height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; background-color: var(--color-bg-surface); border: 1px solid var(--color-border-subtle); color: white;" title="Paramètres d'affichage">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
             </button>
-            <button id="theme-toggle-btn" class="btn" style="padding: 0; margin: 0; width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center;" title="Changer de thème">
+            <button id="theme-toggle-btn" class="btn" style="padding: 0; margin: 0; width: 44px; height: 44px; min-height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center;" title="Changer de thème">
                 <!-- Inner icon will be injected dynamically -->
             </button>
         </div>
@@ -328,7 +338,7 @@
         <section class="bilan-section">
             <h2 style="font-size: 1.4rem; font-weight: 800; margin-bottom: 1rem; color: white; border-bottom: 1px solid var(--color-border-subtle); padding-bottom: 0.5rem;">Bilan par groupe</h2>
             
-            <div class="bilan-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+            <div class="bilan-grid" style="display: grid; gap: 1.5rem;">
                 <!-- Groupe 1 Card -->
                 <div class="subject-card" style="padding: 1.5rem; display: flex; flex-direction: column; gap: 0.75rem;">
                     <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--color-border-subtle); padding-bottom: 0.5rem; gap: 0.75rem;">
@@ -369,6 +379,11 @@
                 * Points = somme des moyennes arrondies au demi-point. Le minimum (4 par branche) correspond à la ligne de réussite, le maximum à un 6 partout.
             </p>
         </section>
+
+        <!-- Footer -->
+        <footer class="app-footer">
+            Developed by Pranathi Alikatte
+        </footer>
         </div>
     </div>
 
@@ -384,7 +399,7 @@
                 </div>
                 <div class="form-group">
                     <label class="form-label" for="subject-target">Objectif (de 1.0 à 6.0)</label>
-                    <input type="number" id="subject-target" class="form-input" min="1" max="6" step="0.1" value="4.5">
+                    <input type="number" id="subject-target" class="form-input" min="1" max="6" step="0.1" inputmode="decimal" enterkeyhint="done" value="4.5">
                 </div>
                 <div class="form-group">
                     <label class="form-label">Mode d'évaluation</label>

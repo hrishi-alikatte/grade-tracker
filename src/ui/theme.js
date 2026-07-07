@@ -13,6 +13,8 @@ function applyTheme() {
         document.body.classList.remove('theme-light');
     }
 
+    syncThemeColorMeta();
+
     const themeBtn = document.getElementById('theme-toggle-btn');
     if (themeBtn) {
         if (isLight) {
@@ -39,6 +41,15 @@ function applyTheme() {
             themeBtn.title = "Passer au thème clair";
         }
     }
+}
+
+// Match the browser chrome / iOS status bar to the active theme + palette by
+// reading the resolved --color-bg-base (works for every palette, light & dark).
+function syncThemeColorMeta() {
+    const meta = document.querySelector('meta[name="theme-color"]');
+    if (!meta) return;
+    const bg = getComputedStyle(document.body).getPropertyValue('--color-bg-base').trim();
+    if (bg) meta.setAttribute('content', bg);
 }
 
 export { applyTheme };

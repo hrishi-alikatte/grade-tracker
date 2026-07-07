@@ -8,7 +8,7 @@ import { storePhoto, getPhoto, deletePhoto } from './src/state/photos.js';
 import { applyTheme } from './src/ui/theme.js';
 import { escapeHTML } from './src/ui/dom.js';
 import { playConfettiSound, playFahSound, showSidebarToast, startConfetti, initBackgroundBoxes } from './src/ui/effects.js';
-import { verifyGradeInText, compressAndResizeImage } from './src/features/ocr.js';
+import { verifyGradeInText, compressAndResizeImage, ensureTesseract } from './src/features/ocr.js';
 import { initBackupUI } from './src/features/backup.js';
 import './src/features/pwa.js';
 
@@ -1425,12 +1425,12 @@ function getSubjectCardInnerHTML(subject, sem) {
                             ${examConfig.written ? `
                             <div style="display: flex; justify-content: space-between; align-items: center; gap: 0.25rem;">
                                 <span style="font-size: 0.7rem; color: var(--color-text-primary); font-weight: 600;">Écrit :</span>
-                                <input type="number" step="0.5" min="1" max="6" class="exam-input-field" data-subject-id="${subject.id}" data-exam-type="written" value="${subject.exams && subject.exams.written !== null ? subject.exams.written : ''}" placeholder="—">
+                                <input type="number" step="0.5" min="1" max="6" inputmode="decimal" enterkeyhint="done" class="exam-input-field" data-subject-id="${subject.id}" data-exam-type="written" value="${subject.exams && subject.exams.written !== null ? subject.exams.written : ''}" placeholder="—">
                             </div>
                             ` : ''}
                             <div style="display: flex; justify-content: space-between; align-items: center; gap: 0.25rem;">
                                 <span style="font-size: 0.7rem; color: var(--color-text-primary); font-weight: 600;">Oral :</span>
-                                <input type="number" step="0.5" min="1" max="6" class="exam-input-field" data-subject-id="${subject.id}" data-exam-type="oral" value="${subject.exams && subject.exams.oral !== null ? subject.exams.oral : ''}" placeholder="—">
+                                <input type="number" step="0.5" min="1" max="6" inputmode="decimal" enterkeyhint="done" class="exam-input-field" data-subject-id="${subject.id}" data-exam-type="oral" value="${subject.exams && subject.exams.oral !== null ? subject.exams.oral : ''}" placeholder="—">
                             </div>
                         </div>
                     </div>
@@ -2143,9 +2143,21 @@ function captureFrame(videoElement, isEditMode) {
 
 function openModal(modal) {
     modal.classList.add('active');
+    // Lock the page behind the modal so touch scrolling doesn't bleed through.
+    document.body.classList.add('modal-open');
+    // On pointer devices, focus the first field for immediate typing. Skipped
+    // on touch so the on-screen keyboard doesn't jump the layout on open.
+    if (window.matchMedia('(hover: hover)').matches) {
+        const firstField = modal.querySelector('input:not([type=hidden]):not([type=file]), select, textarea');
+        if (firstField) requestAnimationFrame(() => firstField.focus());
+    }
 }
 function closeModal(modal) {
     modal.classList.remove('active');
+    // Release the scroll lock only once no modal remains open.
+    if (!document.querySelector('.modal-backdrop.active')) {
+        document.body.classList.remove('modal-open');
+    }
 }
 
 function toggleEditMode(enable) {
@@ -2169,6 +2181,30 @@ function closeDetailsModalAndReset() {
     closeModal(gradeDetailsModal);
     toggleEditMode(false);
 }
+
+// Dismiss a modal appropriately (the details modal must also stop the camera).
+function dismissModal(backdrop) {
+    if (backdrop.id === 'grade-details-modal') {
+        closeDetailsModalAndReset();
+    } else {
+        closeModal(backdrop);
+    }
+}
+
+// Tap-outside-to-close + Escape-to-close for all standard modals. The
+// onboarding modal is intentionally excluded (setup should be completed, not
+// dismissed by an accidental tap). The graph overlay keeps its own handler.
+document.querySelectorAll('.modal-backdrop').forEach((backdrop) => {
+    if (backdrop.id === 'onboarding-setup-modal') return;
+    backdrop.addEventListener('click', (e) => {
+        if (e.target === backdrop) dismissModal(backdrop);
+    });
+});
+document.addEventListener('keydown', (e) => {
+    if (e.key !== 'Escape') return;
+    const open = document.querySelector('.modal-backdrop.active');
+    if (open && open.id !== 'onboarding-setup-modal') dismissModal(open);
+});
 
 // Modal headers close actions
 document.getElementById('close-subject-modal').addEventListener('click', () => closeModal(addSubjectModal));
@@ -2694,15 +2730,13 @@ if (btnCaptureFrame) {
             currentOcrText = "";
             isOcrRunning = true;
             
-            try {
-                if (typeof Tesseract === 'undefined') {
-                    throw new Error("Tesseract library is not loaded.");
-                }
-                Tesseract.recognize(
+            ensureTesseract()
+                .then(() => Tesseract.recognize(
                     capturedData,
                     'fra+eng',
                     { logger: m => console.log(m) }
-                ).then(({ data: { text } }) => {
+                ))
+                .then(({ data: { text } }) => {
                     currentOcrText = text;
                     console.log("Add Grade Camera Capture OCR result:", text);
                 }).catch(err => {
@@ -2711,11 +2745,6 @@ if (btnCaptureFrame) {
                     ocrStatus.style.display = 'none';
                     isOcrRunning = false;
                 });
-            } catch (err) {
-                console.warn("OCR failed to initialize:", err);
-                ocrStatus.style.display = 'none';
-                isOcrRunning = false;
-            }
         }
     });
 }
@@ -2748,15 +2777,13 @@ if (editBtnCaptureFrame) {
             editOcrText = "";
             isEditOcrRunning = true;
             
-            try {
-                if (typeof Tesseract === 'undefined') {
-                    throw new Error("Tesseract library is not loaded.");
-                }
-                Tesseract.recognize(
+            ensureTesseract()
+                .then(() => Tesseract.recognize(
                     capturedData,
                     'fra+eng',
                     { logger: m => console.log(m) }
-                ).then(({ data: { text } }) => {
+                ))
+                .then(({ data: { text } }) => {
                     editOcrText = text;
                     console.log("Edit Grade Camera Capture OCR result:", text);
                 }).catch(err => {
@@ -2765,11 +2792,6 @@ if (editBtnCaptureFrame) {
                     ocrStatus.style.display = 'none';
                     isEditOcrRunning = false;
                 });
-            } catch (err) {
-                console.warn("OCR failed to initialize:", err);
-                ocrStatus.style.display = 'none';
-                isEditOcrRunning = false;
-            }
         }
     });
 }
@@ -3236,18 +3258,17 @@ setTimeout(() => {
                 currentOcrText = "";
                 isOcrRunning = true;
                 
-                try {
-                    Tesseract.recognize(compressedDataUrl, 'fra+eng').then(({ data: { text } }) => {
+                ensureTesseract()
+                    .then(() => Tesseract.recognize(compressedDataUrl, 'fra+eng'))
+                    .then(({ data: { text } }) => {
                         currentOcrText = text;
                         console.log("Add Grade File OCR:", text);
+                    }).catch(err => {
+                        console.error("Add Grade File OCR error:", err);
                     }).finally(() => {
                         if (ocrStatus) ocrStatus.style.display = 'none';
                         isOcrRunning = false;
                     });
-                } catch(err) {
-                    if (ocrStatus) ocrStatus.style.display = 'none';
-                    isOcrRunning = false;
-                }
             };
             reader.readAsDataURL(file);
         });
@@ -3273,18 +3294,17 @@ setTimeout(() => {
                 editOcrText = "";
                 isEditOcrRunning = true;
                 
-                try {
-                    Tesseract.recognize(compressedDataUrl, 'fra+eng').then(({ data: { text } }) => {
+                ensureTesseract()
+                    .then(() => Tesseract.recognize(compressedDataUrl, 'fra+eng'))
+                    .then(({ data: { text } }) => {
                         editOcrText = text;
                         console.log("Edit Grade File OCR:", text);
+                    }).catch(err => {
+                        console.error("Edit Grade File OCR error:", err);
                     }).finally(() => {
                         if (ocrStatus) ocrStatus.style.display = 'none';
                         isOcrRunning = false;
                     });
-                } catch(err) {
-                    if (ocrStatus) ocrStatus.style.display = 'none';
-                    isOcrRunning = false;
-                }
             };
             reader.readAsDataURL(file);
         });
