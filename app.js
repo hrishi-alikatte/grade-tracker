@@ -3710,8 +3710,16 @@ function init() {
         const btn = document.getElementById(id);
         if (btn) {
             btn.addEventListener('click', () => {
+                state.currentSemester = 'annual';
                 state.hasSeenOnboarding = true;
                 saveState();
+                
+                // Update semester selectors visual states and trigger render
+                document.querySelectorAll('.semester-tab').forEach(b => {
+                    b.classList.toggle('active', b.getAttribute('data-sem') === 'annual');
+                });
+                renderSubjects();
+                updateDashboard();
                 switchView('view-dashboard');
             });
         }
