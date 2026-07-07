@@ -856,7 +856,7 @@ function loadState() {
             if (state.hasSeenOnboarding === undefined) state.hasSeenOnboarding = false;
             if (!state.promoViewMode) state.promoViewMode = 'visual';
             if (state.isLightTheme === undefined) state.isLightTheme = true;
-            if (state.showAllYears === undefined) state.showAllYears = (state.currentYear === 1 ? false : true);
+            if (state.showAllYears === undefined) state.showAllYears = (Math.floor(state.currentYear) === 3 ? true : false);
             if (!state.repeatingYears) {
                 state.repeatingYears = { 1: false, 2: false, 3: false };
             }
@@ -3788,11 +3788,11 @@ function init() {
             onboardingYearBtns.forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
             
-            // If year 1 is selected, default to hiding other years. Otherwise, show other years.
+            // If year 3 is selected, default to showing other years. Otherwise, only show selected year.
             const selectedYear = parseInt(btn.getAttribute('data-year'));
             const showAllCheckbox = document.getElementById('onboarding-show-all-years');
             if (showAllCheckbox) {
-                showAllCheckbox.checked = (selectedYear !== 1);
+                showAllCheckbox.checked = (selectedYear === 3);
             }
         });
     });
@@ -3875,6 +3875,9 @@ function init() {
             
             // If they click dashboard or guide, they implicitly accept onboarding
             if (targetView === 'view-dashboard' || targetView === 'view-guide') {
+                if (!state.hasSeenOnboarding) {
+                    state.showAllYears = (Math.floor(state.currentYear) === 3);
+                }
                 state.hasSeenOnboarding = true;
                 saveState();
             }
