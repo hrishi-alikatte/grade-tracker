@@ -178,8 +178,13 @@ function renderYearSelector() {
         }
     }
 
+    // When collapsed to a single year, keep the pill compact and centred
+    // instead of stretching into a heavy full-width bar.
+    const containerStyle = state.showAllYears
+        ? 'margin: 0; padding: 4px; width: 100%; display: flex; max-width: 650px; justify-content: space-between; gap: 4px; align-items: center;'
+        : 'margin: 0 auto; padding: 4px; width: fit-content; display: inline-flex; justify-content: center; gap: 6px; align-items: center;';
     container.innerHTML = `
-        <div class="lang-toggle-container" style="margin: 0; padding: 2px; width: 100%; display: flex; max-width: 650px; justify-content: space-between; gap: 4px; align-items: center;">
+        <div class="lang-toggle-container" style="${containerStyle}">
             ${buttonsHTML}
             ${toggleBtnHTML}
         </div>
