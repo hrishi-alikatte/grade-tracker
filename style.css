@@ -3975,6 +3975,163 @@ body.theme-light .exam-input-field:focus {
     flex: 1;
 }
 
+/* ==========================================================================
+   Evolution analytics page — KPI cards + premium chart layout
+   ========================================================================== */
+.evo-header {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+}
+.evo-title {
+    font-family: var(--font-family-serif);
+    font-size: 1.75rem;
+    font-weight: 800;
+    color: var(--color-text-primary);
+    letter-spacing: -0.01em;
+    line-height: 1.1;
+}
+.evo-subtitle {
+    font-size: 0.9rem;
+    color: var(--color-text-secondary);
+    max-width: 54ch;
+}
+
+.evo-kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1rem;
+}
+.evo-kpi-card {
+    background-color: var(--color-bg-surface);
+    border: 1px solid var(--color-border-subtle);
+    border-radius: var(--radius-lg);
+    padding: 1.1rem 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    box-shadow: var(--shadow-card) !important;
+}
+.evo-kpi-label {
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--color-text-muted);
+}
+.evo-kpi-value {
+    font-family: var(--font-family-mono);
+    font-size: 2rem;
+    font-weight: 700;
+    line-height: 1;
+    color: var(--color-text-primary);
+    letter-spacing: -0.02em;
+}
+.evo-kpi-value-sm {
+    font-size: 1.05rem;
+    font-weight: 800;
+    color: var(--color-text-primary);
+    line-height: 1.25;
+}
+.evo-kpi-sub {
+    font-size: 0.74rem;
+    color: var(--color-text-muted);
+    font-weight: 500;
+}
+.evo-kpi-trend {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    font-family: var(--font-family-mono);
+    font-size: 0.85rem;
+    font-weight: 700;
+}
+.evo-kpi-trend.up { color: var(--color-avg-passing-text); }
+.evo-kpi-trend.down { color: var(--color-avg-failing-text); }
+.evo-kpi-trend .evo-kpi-sub { font-family: var(--font-family-sans); }
+
+.evo-kpi-status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 1rem;
+    font-weight: 800;
+    line-height: 1.1;
+}
+.evo-kpi-status.ok .evo-kpi-status-badge { color: var(--color-avg-passing-text); }
+.evo-kpi-status.warn .evo-kpi-status-badge { color: var(--color-warning-bg); }
+.evo-kpi-status.ok { border-color: color-mix(in srgb, var(--color-passing-bg) 30%, var(--color-border-subtle)); }
+.evo-kpi-status.warn { border-color: color-mix(in srgb, var(--color-warning-bg) 35%, var(--color-border-subtle)); }
+
+.evo-kpi-empty {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    background-color: var(--color-bg-surface);
+    border: 1px dashed var(--color-border-subtle);
+    border-radius: var(--radius-lg);
+    padding: 1.25rem 1.5rem;
+    color: var(--color-primary);
+    box-shadow: var(--shadow-card) !important;
+}
+.evo-kpi-empty > div { display: flex; flex-direction: column; gap: 0.15rem; }
+.evo-kpi-empty strong { color: var(--color-text-primary); font-size: 0.95rem; }
+.evo-kpi-empty span { color: var(--color-text-secondary); font-size: 0.82rem; }
+
+.evo-chart-card {
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+.evo-chart-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    border-bottom: 1px solid var(--color-border-subtle);
+    padding-bottom: 0.75rem;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+}
+.evo-chart-head-main { display: flex; align-items: center; gap: 0.6rem; }
+.evo-chart-title {
+    font-family: var(--font-family-serif);
+    font-size: 1.25rem;
+    font-weight: 800;
+    color: var(--color-text-primary);
+}
+.evo-chart-caption {
+    font-size: 0.8rem;
+    color: var(--color-text-secondary);
+    font-weight: 500;
+}
+.evo-maximize-btn {
+    padding: 4px 10px !important;
+    font-size: 0.72rem !important;
+    min-height: auto !important;
+    border-radius: var(--radius-full) !important;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+}
+.evo-graph-wrapper {
+    position: relative;
+    width: 100%;
+    min-height: 200px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+}
+
+@media (max-width: 700px) {
+    .evo-kpi-grid { grid-template-columns: 1fr 1fr; gap: 0.6rem; }
+    .evo-kpi-card { padding: 0.85rem 0.9rem; }
+    .evo-kpi-value { font-size: 1.55rem; }
+    .evo-title { font-size: 1.45rem; }
+    .evo-chart-head { flex-direction: column; align-items: flex-start; }
+}
+
 /* --- Interaction polish --- */
 /* Keyboard focus rings — shown only for keyboard users, a finished a11y touch. */
 .btn:focus-visible,

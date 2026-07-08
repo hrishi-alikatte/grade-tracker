@@ -712,39 +712,126 @@ function triggerInstantTransition() {
     });
 }
 
+// Aggregate the year-over-year analytics that power the Evolution KPI cards.
+function computeEvolutionKPIs() {
+    const years = [
+        { key: 1, label: '1ère année', subjects: state.subjectsYear1 },
+        { key: 2, label: '2ème année', subjects: state.subjectsYear2 },
+        { key: 3, label: '3ème année', subjects: state.subjectsYear3 },
+    ];
+    const series = years.map(y => {
+        const res = checkVaudPromotion(y.subjects, 'annual');
+        return {
+            label: y.label,
+            subjects: y.subjects,
+            avg: res.activeSubjectsCount > 0 ? res.overallAverage : null,
+            isPromoted: res.isPromoted,
+        };
+    }).filter(y => y.avg !== null);
+
+    if (series.length === 0) return null;
+
+    const current = series[series.length - 1];
+    const previous = series.length > 1 ? series[series.length - 2] : null;
+    const trend = previous ? (current.avg - previous.avg) : null;
+
+    let best = null, weakest = null;
+    current.subjects.forEach(sub => {
+        const data = calculateSubjectData(sub, 'annual');
+        const avg = data.rawAverage;
+        if (avg === null || isNaN(avg)) return;
+        if (!best || avg > best.avg) best = { label: sub.name, avg };
+        if (!weakest || avg < weakest.avg) weakest = { label: sub.name, avg };
+    });
+
+    return { current, previous, trend, best, weakest, series };
+}
+
+function buildEvolutionKPIsHTML() {
+    const k = computeEvolutionKPIs();
+    if (!k) {
+        return `
+            <div class="evo-kpi-empty">
+                <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg>
+                <div>
+                    <strong>Vos statistiques apparaîtront ici</strong>
+                    <span>Saisissez des notes annuelles pour suivre votre progression sur 3 ans.</span>
+                </div>
+            </div>`;
+    }
+    const fmt = (v) => v.toFixed(2);
+    const promoted = k.current.isPromoted;
+    const trendCard = k.trend === null
+        ? `<span class="evo-kpi-sub">Première année enregistrée</span>`
+        : `<span class="evo-kpi-trend ${k.trend >= 0 ? 'up' : 'down'}">
+               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">${k.trend >= 0 ? '<polyline points="18 15 12 9 6 15"/>' : '<polyline points="6 9 12 15 18 9"/>'}</svg>
+               ${k.trend >= 0 ? '+' : ''}${k.trend.toFixed(2)} <span class="evo-kpi-sub">vs an préc.</span>
+           </span>`;
+
+    return `
+        <div class="evo-kpi-grid">
+            <div class="evo-kpi-card">
+                <span class="evo-kpi-label">Moyenne générale</span>
+                <span class="evo-kpi-value">${fmt(k.current.avg)}</span>
+                ${trendCard}
+            </div>
+            <div class="evo-kpi-card evo-kpi-status ${promoted ? 'ok' : 'warn'}">
+                <span class="evo-kpi-label">Statut de promotion</span>
+                <span class="evo-kpi-status-badge">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">${promoted ? '<path d="M20 6 9 17l-5-5"/>' : '<path d="M12 9v4"/><path d="M12 17h.01"/><circle cx="12" cy="12" r="10"/>'}</svg>
+                    ${promoted ? 'En bonne voie' : 'À surveiller'}
+                </span>
+                <span class="evo-kpi-sub">${k.current.label}</span>
+            </div>
+            <div class="evo-kpi-card">
+                <span class="evo-kpi-label">Meilleure branche</span>
+                <span class="evo-kpi-value-sm">${k.best ? escapeHTML(k.best.label) : '—'}</span>
+                <span class="evo-kpi-sub">${k.best ? 'Moyenne ' + fmt(k.best.avg) : ''}</span>
+            </div>
+            <div class="evo-kpi-card">
+                <span class="evo-kpi-label">Branche à surveiller</span>
+                <span class="evo-kpi-value-sm">${k.weakest ? escapeHTML(k.weakest.label) : '—'}</span>
+                <span class="evo-kpi-sub">${k.weakest ? 'Moyenne ' + fmt(k.weakest.avg) : ''}</span>
+            </div>
+        </div>`;
+}
+
 function renderDedicatedEvolutionSlide() {
     const container = document.getElementById('evolution-slide-container');
     if (!container) return;
 
     container.innerHTML = `
+        <div class="evo-header">
+            <h2 class="evo-title">Évolution</h2>
+            <p class="evo-subtitle">Vos moyennes et leur progression sur les trois années du gymnase.</p>
+        </div>
+
+        ${buildEvolutionKPIsHTML()}
+
         <!-- Overall Average Trend Card -->
-        <div class="subject-card" style="padding: 1.5rem; display: flex; flex-direction: column; gap: 1rem;">
-            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--color-border-subtle); padding-bottom: 0.5rem; flex-wrap: wrap; gap: 0.5rem;">
-                <h3 style="font-size: 1.15rem; font-weight: 800; color: white; display: flex; align-items: center; gap: 0.5rem;">
-                    <span>Évolution Générale</span>
-                </h3>
-                <span style="font-size: 0.8rem; color: var(--color-text-secondary); font-weight: 500;">Moyennes annuelles générales sur 3 ans</span>
+        <div class="subject-card evo-chart-card">
+            <div class="evo-chart-head">
+                <h3 class="evo-chart-title">Évolution générale</h3>
+                <span class="evo-chart-caption">Moyenne annuelle générale sur 3 ans</span>
             </div>
-            <div id="evolution-graph-wrapper" style="position: relative; width: 100%; min-height: 180px; display: flex; align-items: center; justify-content: center;">
+            <div id="evolution-graph-wrapper" class="evo-graph-wrapper">
                 <!-- Dynamically rendered -->
             </div>
         </div>
 
         <!-- Multi-Subject Comparison Card -->
-        <div id="multi-subject-card" class="subject-card" style="padding: 1.5rem; display: flex; flex-direction: column; gap: 1rem;">
-            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--color-border-subtle); padding-bottom: 0.5rem; flex-wrap: wrap; gap: 0.5rem;">
-                <h3 style="font-size: 1.15rem; font-weight: 800; color: white; display: flex; align-items: center; gap: 0.5rem; width: 100%; justify-content: space-between; flex-wrap: wrap;">
-                    <span style="display: flex; align-items: center; gap: 0.5rem;">
-                        <span>Évolution par Branche</span>
-                        <button type="button" id="btn-maximize-multi-graph" class="btn btn-secondary" style="padding: 2px 8px; font-size: 0.7rem; border-radius: var(--radius-sm); display: flex; align-items: center; gap: 0.25rem;" title="Agrandir / Plein écran">
-                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg>
-                            <span>Agrandir</span>
-                        </button>
-                    </span>
-                    <span style="font-size: 0.8rem; color: var(--color-text-secondary); font-weight: 500;">Branches principales et OS</span>
-                </h3>
+        <div id="multi-subject-card" class="subject-card evo-chart-card">
+            <div class="evo-chart-head">
+                <div class="evo-chart-head-main">
+                    <h3 class="evo-chart-title">Évolution par branche</h3>
+                    <button type="button" id="btn-maximize-multi-graph" class="btn btn-secondary evo-maximize-btn" title="Agrandir / Plein écran">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg>
+                        <span>Agrandir</span>
+                    </button>
+                </div>
+                <span class="evo-chart-caption">Comparez la trajectoire de chaque branche</span>
             </div>
-            <div id="multi-subject-graph-wrapper" style="position: relative; width: 100%; min-height: 250px; display: flex; align-items: center; justify-content: center; flex-direction: column;">
+            <div id="multi-subject-graph-wrapper" class="evo-graph-wrapper" style="min-height: 250px;">
                 <!-- Dynamically rendered -->
             </div>
         </div>
