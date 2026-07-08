@@ -433,11 +433,6 @@
                 </div>
 
                 <div class="form-group">
-                    <label class="form-label" for="grade-date">Date de l'évaluation (optionnel)</label>
-                    <input type="date" id="grade-date" class="form-input">
-                </div>
-                
-                <div class="form-group">
                     <label class="form-label">Note (1.0 – 6.0)</label>
                     <div class="grade-slider" id="grade-slider" data-value="4">
                         <div class="grade-slider-value-badge"><span class="gs-value">4.0</span></div>
@@ -451,22 +446,33 @@
                         <div class="grade-slider-scale"></div>
                     </div>
                 </div>
-                
-                <div class="form-group" id="grade-type-group">
-                    <label class="form-label">Type d'évaluation</label>
-                    <div class="chip-container" id="type-chips" style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; width: 100%;">
+
+                <div class="form-group form-group-inline" id="grade-type-group">
+                    <label class="form-label">Type</label>
+                    <div class="chip-container type-chips-compact" id="type-chips">
                         <button type="button" class="chip-btn active" data-value="TS">TS</button>
                         <button type="button" class="chip-btn" data-value="TA">TA</button>
                     </div>
                 </div>
 
+                <button type="button" class="grade-extras-toggle" id="grade-extras-toggle" aria-expanded="false" aria-controls="grade-extras">
+                    <svg class="gx-plus" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                    <span>Date, commentaire ou photo</span>
+                </button>
+
+                <div class="grade-extras" id="grade-extras" hidden>
                 <div class="form-group">
-                    <label class="form-label" for="grade-comment">Commentaire (optionnel)</label>
+                    <label class="form-label" for="grade-date">Date de l'évaluation</label>
+                    <input type="date" id="grade-date" class="form-input">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="grade-comment">Commentaire</label>
                     <input type="text" id="grade-comment" class="form-input" placeholder="Ex: Formule sur la physique, etc.">
                 </div>
 
                 <div class="form-group">
-                    <label class="form-label">Photo de l'évaluation (preuve)</label>
+                    <label class="form-label">Photo (preuve)</label>
                     <div style="display: flex; gap: 0.5rem; margin-bottom: 0.5rem;">
                         <button type="button" class="btn btn-secondary" id="btn-start-camera" style="flex: 1; padding: 0.65rem 1rem; font-size: 0.85rem; background-color: var(--color-bg-elevated); border-color: var(--color-border-subtle); display: flex; align-items: center; justify-content: center; gap: 0.5rem; border-radius: var(--radius-md);">
                             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
@@ -500,8 +506,9 @@
                         <button type="button" id="remove-grade-photo-btn" style="position: absolute; top: -5px; left: 85px; background: #ef4444; color: white; border: none; border-radius: 50%; width: 18px; height: 18px; font-size: 10px; cursor: pointer; display: flex; align-items: center; justify-content: center;">&times;</button>
                     </div>
                 </div>
-                
-                <div class="form-actions">
+                </div><!-- /grade-extras -->
+
+                <div class="form-actions form-actions-inline">
                     <button type="button" class="btn btn-secondary" id="cancel-grade-btn">Annuler</button>
                     <button type="submit" class="btn btn-primary">Ajouter</button>
                 </div>

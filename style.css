@@ -3788,6 +3788,84 @@ body.theme-light .exam-input-field:focus {
     color: var(--color-text-muted);
 }
 
+/* --- Compact add-grade modal: fit the whole entry on one phone screen --- */
+/* Inline label + control on one row (used for the Type selector). */
+.form-group-inline {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+}
+.form-group-inline .form-label {
+    margin: 0;
+}
+
+/* Small TS/TA segmented control. */
+.type-chips-compact {
+    display: flex;
+    gap: 4px;
+    width: auto;
+    background: var(--color-bg-elevated);
+    border: 1px solid var(--color-border-subtle);
+    padding: 4px;
+    border-radius: var(--radius-full);
+}
+.type-chips-compact .chip-btn {
+    flex: 0 0 auto;
+    min-height: 34px;
+    min-width: 58px;
+    padding: 0.3rem 0.9rem;
+    font-size: 0.82rem;
+    font-weight: 700;
+    border: none;
+    border-radius: var(--radius-full);
+}
+.type-chips-compact .chip-btn.active {
+    background: var(--color-primary);
+    color: var(--color-bg-base);
+    box-shadow: var(--shadow-sm) !important;
+}
+
+/* "Date, commentaire ou photo" disclosure — optional extras stay collapsed. */
+.grade-extras-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    margin: 0.15rem 0 0.4rem;
+    padding: 0.5rem 0.25rem;
+    background: none;
+    border: none;
+    color: var(--color-text-secondary);
+    font-family: var(--font-family-sans);
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    min-height: 40px;
+}
+.grade-extras-toggle:hover {
+    color: var(--color-text-primary);
+}
+.grade-extras-toggle .gx-plus {
+    transition: transform 0.15s var(--ease-out);
+}
+.grade-extras-toggle[aria-expanded="true"] .gx-plus {
+    transform: rotate(45deg);
+}
+.grade-extras[hidden] {
+    display: none;
+}
+
+/* Keep the modal's Annuler/Ajouter on one row (overrides the mobile stack). */
+.form-actions-inline {
+    flex-direction: row !important;
+    gap: 0.6rem;
+}
+.form-actions-inline .btn {
+    width: auto !important;
+    flex: 1;
+}
+
 /* --- Interaction polish --- */
 /* Keyboard focus rings — shown only for keyboard users, a finished a11y touch. */
 .btn:focus-visible,

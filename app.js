@@ -2346,6 +2346,19 @@ const gradeSliderEdit = document.getElementById('edit-grade-slider');
 initGradeSlider(gradeSliderAdd);
 initGradeSlider(gradeSliderEdit);
 
+// Optional-details disclosure (date / commentaire / photo) in the add-grade modal.
+const gradeExtras = document.getElementById('grade-extras');
+const gradeExtrasToggle = document.getElementById('grade-extras-toggle');
+function setGradeExtras(open) {
+    if (!gradeExtras || !gradeExtrasToggle) return;
+    if (open) gradeExtras.removeAttribute('hidden');
+    else gradeExtras.setAttribute('hidden', '');
+    gradeExtrasToggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+}
+if (gradeExtrasToggle) {
+    gradeExtrasToggle.addEventListener('click', () => setGradeExtras(gradeExtras.hasAttribute('hidden')));
+}
+
 document.querySelectorAll('#type-chips .chip-btn').forEach(btn => {
     btn.addEventListener('click', () => {
         document.querySelectorAll('#type-chips .chip-btn').forEach(b => b.classList.remove('active'));
@@ -2459,15 +2472,13 @@ function handleSubjectInteractionClick(e) {
         const typeGroup = document.getElementById('grade-type-group');
         const mode = subject.evaluationMode || 'dual';
         if (typeGroup) {
-            if (mode === 'standard') {
-                typeGroup.style.display = 'none';
-            } else {
-                typeGroup.style.display = 'block';
-            }
+            // '' reverts to the CSS (inline flex layout); 'none' hides it.
+            typeGroup.style.display = mode === 'standard' ? 'none' : '';
         }
 
-        // Reset the grade slider to the default 4.0 for each new entry.
+        // Reset the grade slider to 4.0 and collapse the optional extras.
         if (gradeSliderAdd && gradeSliderAdd._setValue) gradeSliderAdd._setValue(4);
+        setGradeExtras(false);
 
         openModal(addGradeModal);
     }
