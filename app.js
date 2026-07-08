@@ -2260,24 +2260,95 @@ document.querySelectorAll('.semester-tab').forEach(btn => {
     });
 });
 
-// --- 12. Grade & Type Chips Bindings ---
-document.querySelectorAll('#grade-chips .chip-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-        document.querySelectorAll('#grade-chips .chip-btn').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
+// --- 12. Grade slider (1.0–6.0, 0.5 steps) + type chip bindings ---
+function initGradeSlider(wrap) {
+    if (!wrap) return;
+    const track = wrap.querySelector('.grade-slider-track');
+    const rail = wrap.querySelector('.grade-slider-rail');
+    const valueEl = wrap.querySelector('.gs-value');
+    const ticksEl = wrap.querySelector('.grade-slider-ticks');
+    const scaleEl = wrap.querySelector('.grade-slider-scale');
+    const MIN = 1, MAX = 6, STEP = 0.5, STEPS = (MAX - MIN) / STEP; // 10 intervals, 11 stops
+
+    // Build the 11 ticks + integer scale labels (1..6) once.
+    if (ticksEl && !ticksEl.childElementCount) {
+        for (let i = 0; i <= STEPS; i++) ticksEl.appendChild(document.createElement('span'));
+    }
+    if (scaleEl && !scaleEl.childElementCount) {
+        for (let n = MIN; n <= MAX; n++) {
+            const s = document.createElement('span');
+            s.textContent = n;
+            scaleEl.appendChild(s);
+        }
+    }
+
+    // Snap to the nearest 0.5 stop and paint instantly (0 latency).
+    function setValue(v) {
+        const idx = Math.max(0, Math.min(STEPS, Math.round((v - MIN) / STEP)));
+        const val = MIN + idx * STEP;
+        wrap.style.setProperty('--gs-pct', (idx / STEPS * 100) + '%');
+        if (valueEl) valueEl.textContent = val.toFixed(1);
+        wrap.dataset.value = val;
+        track.setAttribute('aria-valuenow', val);
+        track.setAttribute('aria-valuetext', val.toFixed(1));
+    }
+    wrap._setValue = setValue;
+
+    function valueFromClientX(clientX) {
+        const r = rail.getBoundingClientRect();
+        const ratio = Math.max(0, Math.min(1, (clientX - r.left) / r.width));
+        return MIN + Math.round(ratio * STEPS) * STEP;
+    }
+
+    let dragging = false;
+    track.addEventListener('pointerdown', (e) => {
+        dragging = true;
+        track.classList.add('gs-grabbing');
+        wrap.classList.add('gs-active');
+        try { track.setPointerCapture(e.pointerId); } catch (_) {}
+        setValue(valueFromClientX(e.clientX));
+        e.preventDefault();
     });
-});
+    track.addEventListener('pointermove', (e) => {
+        if (dragging) setValue(valueFromClientX(e.clientX));
+    });
+    const endDrag = (e) => {
+        if (!dragging) return;
+        dragging = false;
+        track.classList.remove('gs-grabbing');
+        wrap.classList.remove('gs-active');
+        try { track.releasePointerCapture(e.pointerId); } catch (_) {}
+    };
+    track.addEventListener('pointerup', endDrag);
+    track.addEventListener('pointercancel', endDrag);
+
+    // Trackpad / mouse wheel nudges by one step.
+    track.addEventListener('wheel', (e) => {
+        e.preventDefault();
+        const dir = (e.deltaY || e.deltaX) > 0 ? -STEP : STEP;
+        setValue(parseFloat(wrap.dataset.value) + dir);
+    }, { passive: false });
+
+    // Keyboard.
+    track.addEventListener('keydown', (e) => {
+        const cur = parseFloat(wrap.dataset.value);
+        if (e.key === 'ArrowLeft' || e.key === 'ArrowDown') { setValue(cur - STEP); e.preventDefault(); }
+        else if (e.key === 'ArrowRight' || e.key === 'ArrowUp') { setValue(cur + STEP); e.preventDefault(); }
+        else if (e.key === 'Home') { setValue(MIN); e.preventDefault(); }
+        else if (e.key === 'End') { setValue(MAX); e.preventDefault(); }
+    });
+
+    setValue(parseFloat(wrap.dataset.value || '4'));
+}
+
+const gradeSliderAdd = document.getElementById('grade-slider');
+const gradeSliderEdit = document.getElementById('edit-grade-slider');
+initGradeSlider(gradeSliderAdd);
+initGradeSlider(gradeSliderEdit);
 
 document.querySelectorAll('#type-chips .chip-btn').forEach(btn => {
     btn.addEventListener('click', () => {
         document.querySelectorAll('#type-chips .chip-btn').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-    });
-});
-
-document.querySelectorAll('#edit-grade-chips .chip-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-        document.querySelectorAll('#edit-grade-chips .chip-btn').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
     });
 });
@@ -2394,7 +2465,10 @@ function handleSubjectInteractionClick(e) {
                 typeGroup.style.display = 'block';
             }
         }
-        
+
+        // Reset the grade slider to the default 4.0 for each new entry.
+        if (gradeSliderAdd && gradeSliderAdd._setValue) gradeSliderAdd._setValue(4);
+
         openModal(addGradeModal);
     }
 
@@ -2539,10 +2613,8 @@ function handleSubjectInteractionClick(e) {
                 editGradeDate.value = dateYMD;
                 editGradeComment.value = gradeObj.comment || "";
                 
-                // Highlight edit mode active chips
-                document.querySelectorAll('#edit-grade-chips .chip-btn').forEach(btn => {
-                    btn.classList.toggle('active', parseFloat(btn.getAttribute('data-value')) === gradeObj.value);
-                });
+                // Set the edit slider to this grade's value
+                if (gradeSliderEdit && gradeSliderEdit._setValue) gradeSliderEdit._setValue(gradeObj.value);
                 document.querySelectorAll('#edit-type-chips .chip-btn').forEach(btn => {
                     btn.classList.toggle('active', btn.getAttribute('data-value') === gradeObj.type);
                 });
@@ -2656,9 +2728,8 @@ document.getElementById('save-edit-btn').addEventListener('click', (e) => {
     const dateVal = editGradeDate.value;
     const commentVal = editGradeComment.value.trim() || null;
 
-    const activeGradeBtn = document.querySelector('#edit-grade-chips .chip-btn.active');
     const activeTypeBtn = document.querySelector('#edit-type-chips .chip-btn.active');
-    const value = activeGradeBtn ? parseFloat(activeGradeBtn.getAttribute('data-value')) : 4.0;
+    const value = gradeSliderEdit ? parseFloat(gradeSliderEdit.dataset.value) : 4.0;
     const type = activeTypeBtn ? activeTypeBtn.getAttribute('data-value') : 'TS';
 
     const proceedSavingEdits = () => {
@@ -2832,10 +2903,9 @@ document.getElementById('add-grade-form').addEventListener('submit', (e) => {
         const subId = document.getElementById('grade-subject-id').value;
         const name = document.getElementById('grade-name').value.trim() || 'Évaluation';
         
-        const activeGradeBtn = document.querySelector('#grade-chips .chip-btn.active');
         const activeTypeBtn = document.querySelector('#type-chips .chip-btn.active');
-        
-        value = activeGradeBtn ? parseFloat(activeGradeBtn.getAttribute('data-value')) : 4.0;
+
+        value = gradeSliderAdd ? parseFloat(gradeSliderAdd.dataset.value) : 4.0;
         const type = activeTypeBtn ? activeTypeBtn.getAttribute('data-value') : 'TS';
 
         const currentSubjects = getCurrentSubjects();

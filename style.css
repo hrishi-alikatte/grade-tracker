@@ -3670,6 +3670,124 @@ body.theme-light .exam-input-field:focus {
     }
 }
 
+/* ==========================================================================
+   Grade slider — smooth, snapping 1.0–6.0 (0.5 step) grade picker.
+   Custom pointer-driven control so ticks align exactly and the knob glides
+   between the 11 discrete stops. Brand-aligned, works in every palette.
+   ========================================================================== */
+.grade-slider {
+    --gs-pct: 60%;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    padding: 0.15rem 0 0.1rem;
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+.grade-slider-value-badge {
+    align-self: center;
+    font-family: var(--font-family-mono);
+    font-size: 1.7rem;
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    line-height: 1;
+    color: var(--color-text-primary);
+    min-width: 3.4ch;
+    text-align: center;
+    padding: 0.3rem 0.9rem;
+    border-radius: var(--radius-full);
+    background: var(--color-bg-elevated);
+    border: 1px solid var(--color-border-subtle);
+    transition: transform 0.09s var(--ease-out);
+}
+.grade-slider.gs-active .grade-slider-value-badge {
+    transform: scale(1.06);
+}
+
+.grade-slider-track {
+    position: relative;
+    height: 44px;              /* comfortable touch target */
+    cursor: pointer;
+    touch-action: none;        /* we own the horizontal drag */
+    outline: none;
+}
+
+.grade-slider-rail {
+    position: absolute;
+    left: 14px;
+    right: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    height: 7px;
+    border-radius: var(--radius-full);
+    background: var(--color-bg-elevated);
+    border: 1px solid var(--color-border-subtle);
+}
+
+.grade-slider-fill {
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+    width: var(--gs-pct);
+    border-radius: var(--radius-full);
+    background: var(--color-primary);
+    transition: width 0.09s var(--ease-out);
+}
+
+.grade-slider-ticks {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    justify-content: space-between;
+    pointer-events: none;
+}
+.grade-slider-ticks span {
+    width: 2px;
+    height: 6px;
+    border-radius: 1px;
+    background: var(--color-border-subtle);
+}
+.grade-slider-ticks span:nth-child(odd) {
+    height: 12px;
+    background: var(--color-text-muted);
+}
+
+.grade-slider-knob {
+    position: absolute;
+    left: var(--gs-pct);
+    top: 50%;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    background: var(--color-bg-surface);
+    border: 2.5px solid var(--color-primary);
+    transform: translate(-50%, -50%);
+    transition: left 0.09s var(--ease-out), transform 0.09s var(--ease-out);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.28) !important;
+    z-index: 3;
+}
+.grade-slider-track.gs-grabbing .grade-slider-knob {
+    transform: translate(-50%, -50%) scale(1.14);
+}
+.grade-slider-track:focus-visible .grade-slider-knob {
+    box-shadow: var(--ring-focus), 0 4px 12px rgba(0, 0, 0, 0.28) !important;
+}
+
+.grade-slider-scale {
+    display: flex;
+    justify-content: space-between;
+    margin: 0 8px;
+    font-family: var(--font-family-mono);
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: var(--color-text-muted);
+}
+
 /* --- Interaction polish --- */
 /* Keyboard focus rings — shown only for keyboard users, a finished a11y touch. */
 .btn:focus-visible,

@@ -438,19 +438,17 @@
                 </div>
                 
                 <div class="form-group">
-                    <label class="form-label">Note (1.0 - 6.0)</label>
-                    <div class="chip-container" id="grade-chips">
-                        <button type="button" class="chip-btn" data-value="1.0">1.0</button>
-                        <button type="button" class="chip-btn" data-value="1.5">1.5</button>
-                        <button type="button" class="chip-btn" data-value="2.0">2.0</button>
-                        <button type="button" class="chip-btn" data-value="2.5">2.5</button>
-                        <button type="button" class="chip-btn" data-value="3.0">3.0</button>
-                        <button type="button" class="chip-btn" data-value="3.5">3.5</button>
-                        <button type="button" class="chip-btn active" data-value="4.0">4.0</button>
-                        <button type="button" class="chip-btn" data-value="4.5">4.5</button>
-                        <button type="button" class="chip-btn" data-value="5.0">5.0</button>
-                        <button type="button" class="chip-btn" data-value="5.5">5.5</button>
-                        <button type="button" class="chip-btn" data-value="6.0">6.0</button>
+                    <label class="form-label">Note (1.0 – 6.0)</label>
+                    <div class="grade-slider" id="grade-slider" data-value="4">
+                        <div class="grade-slider-value-badge"><span class="gs-value">4.0</span></div>
+                        <div class="grade-slider-track" tabindex="0" role="slider" aria-valuemin="1" aria-valuemax="6" aria-valuenow="4" aria-valuetext="4.0" aria-label="Note de 1.0 à 6.0">
+                            <div class="grade-slider-rail">
+                                <div class="grade-slider-fill"></div>
+                                <div class="grade-slider-ticks"></div>
+                                <div class="grade-slider-knob"></div>
+                            </div>
+                        </div>
+                        <div class="grade-slider-scale"></div>
                     </div>
                 </div>
                 
@@ -560,19 +558,17 @@
                     <input type="date" id="edit-grade-date" class="form-input">
                 </div>
                 <div class="form-group" style="margin-bottom: 0.75rem;">
-                    <label class="form-label">Note (1.0 - 6.0)</label>
-                    <div class="chip-container" id="edit-grade-chips">
-                        <button type="button" class="chip-btn" data-value="1.0">1.0</button>
-                        <button type="button" class="chip-btn" data-value="1.5">1.5</button>
-                        <button type="button" class="chip-btn" data-value="2.0">2.0</button>
-                        <button type="button" class="chip-btn" data-value="2.5">2.5</button>
-                        <button type="button" class="chip-btn" data-value="3.0">3.0</button>
-                        <button type="button" class="chip-btn" data-value="3.5">3.5</button>
-                        <button type="button" class="chip-btn" data-value="4.0">4.0</button>
-                        <button type="button" class="chip-btn" data-value="4.5">4.5</button>
-                        <button type="button" class="chip-btn" data-value="5.0">5.0</button>
-                        <button type="button" class="chip-btn" data-value="5.5">5.5</button>
-                        <button type="button" class="chip-btn" data-value="6.0">6.0</button>
+                    <label class="form-label">Note (1.0 – 6.0)</label>
+                    <div class="grade-slider" id="edit-grade-slider" data-value="4">
+                        <div class="grade-slider-value-badge"><span class="gs-value">4.0</span></div>
+                        <div class="grade-slider-track" tabindex="0" role="slider" aria-valuemin="1" aria-valuemax="6" aria-valuenow="4" aria-valuetext="4.0" aria-label="Note de 1.0 à 6.0">
+                            <div class="grade-slider-rail">
+                                <div class="grade-slider-fill"></div>
+                                <div class="grade-slider-ticks"></div>
+                                <div class="grade-slider-knob"></div>
+                            </div>
+                        </div>
+                        <div class="grade-slider-scale"></div>
                     </div>
                 </div>
                 <div class="form-group" style="margin-bottom: 0.75rem;">
