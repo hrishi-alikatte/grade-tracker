@@ -3476,9 +3476,14 @@ function init() {
         const el = document.getElementById('live-datetime');
         if (!el) return;
         const now = new Date();
-        const dateStr = now.toLocaleDateString('fr-CH', { weekday: 'short', day: 'numeric', month: 'short' });
-        const timeStr = now.toLocaleTimeString('fr-CH', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-        el.textContent = `${dateStr} — ${timeStr}`;
+        const weekdays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+        const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+        const weekday = weekdays[now.getDay()];
+        const month = months[now.getMonth()];
+        const date = now.getDate();
+        const hours = String(now.getHours()).padStart(2, '0');
+        const minutes = String(now.getMinutes()).padStart(2, '0');
+        el.textContent = `${weekday} ${month} ${date}  ${hours}:${minutes}`;
     }
     updateClock();
     setInterval(updateClock, 1000);
