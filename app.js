@@ -3302,11 +3302,13 @@ function init() {
             e.preventDefault();
             
             const activeYearBtn = document.querySelector('.onboarding-year-btn.active');
-            if (!activeYearBtn) return;
+            const selectedYear = activeYearBtn ? parseInt(activeYearBtn.getAttribute('data-year')) : (Math.floor(state.currentYear) || 1);
             
-            const selectedYear = parseInt(activeYearBtn.getAttribute('data-year'));
-            const isRepeating = document.getElementById('onboarding-is-repeating').checked;
-            const showAll = document.getElementById('onboarding-show-all-years').checked;
+            const isRepeatingInput = document.getElementById('onboarding-is-repeating');
+            const isRepeating = isRepeatingInput ? isRepeatingInput.checked : false;
+            
+            const showAllInput = document.getElementById('onboarding-show-all-years');
+            const showAll = showAllInput ? showAllInput.checked : true;
             
             state.currentYear = isRepeating ? selectedYear + 0.5 : selectedYear;
             state.repeatingYears[selectedYear] = isRepeating;
@@ -3314,7 +3316,8 @@ function init() {
             state.currentSemester = 'annual';
             state.hasSeenOnboarding = true;
 
-            const isLightActive = document.getElementById('onboarding-theme-light').classList.contains('active');
+            const obLightBtn = document.getElementById('onboarding-theme-light');
+            const isLightActive = obLightBtn ? obLightBtn.classList.contains('active') : true;
             state.isLightTheme = isLightActive;
             
             if (!isLightActive) {
@@ -3346,18 +3349,27 @@ function init() {
     if (settingsBtn) {
         settingsBtn.addEventListener('click', () => {
             const onboardingModal = document.getElementById('onboarding-setup-modal');
+            if (!onboardingModal) return;
+            
             const onboardingTitle = onboardingModal.querySelector('.modal-title');
-            const onboardingSubmitBtn = onboardingForm.querySelector('button[type="submit"]');
+            const onboardingFormEl = document.getElementById('onboarding-setup-form');
+            if (!onboardingFormEl) return;
+            
+            const onboardingSubmitBtn = onboardingFormEl.querySelector('button[type="submit"]');
             
             // Populate current preferences
-            const currentBaseYear = Math.floor(state.currentYear);
-            onboardingYearBtns.forEach(btn => {
+            const currentBaseYear = Math.floor(state.currentYear) || 1;
+            const onboardingYearBtnsLocal = document.querySelectorAll('.onboarding-year-btn');
+            onboardingYearBtnsLocal.forEach(btn => {
                 const yearVal = parseInt(btn.getAttribute('data-year'));
                 btn.classList.toggle('active', yearVal === currentBaseYear);
             });
             
-            document.getElementById('onboarding-is-repeating').checked = !!state.repeatingYears[currentBaseYear];
-            document.getElementById('onboarding-show-all-years').checked = state.showAllYears !== false;
+            const repeatInput = document.getElementById('onboarding-is-repeating');
+            if (repeatInput) repeatInput.checked = !!state.repeatingYears[currentBaseYear];
+            
+            const showAllInput = document.getElementById('onboarding-show-all-years');
+            if (showAllInput) showAllInput.checked = state.showAllYears !== false;
 
             const isLight = state.isLightTheme !== false;
             const obLightBtn = document.getElementById('onboarding-theme-light');
@@ -3372,8 +3384,8 @@ function init() {
             }
             
             // Customize modal labels for Settings mode
-            onboardingTitle.textContent = "Paramètres d'affichage";
-            onboardingSubmitBtn.textContent = "Enregistrer";
+            if (onboardingTitle) onboardingTitle.textContent = "Paramètres d'affichage";
+            if (onboardingSubmitBtn) onboardingSubmitBtn.textContent = "Enregistrer";
             
             openModal(onboardingModal);
         });
