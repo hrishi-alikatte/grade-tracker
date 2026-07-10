@@ -1,6 +1,6 @@
 {
-  "name": "Suivi des notes — Gymnase Vaud",
-  "short_name": "GradeVibe",
+  "name": "notare",
+  "short_name": "notare",
   "description": "Suivi des moyennes par branche, objectifs, double compensation et confettis.",
   "id": "/",
   "start_url": "./index.html",

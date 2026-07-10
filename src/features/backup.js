@@ -64,14 +64,14 @@ async function exportBackup(includePhotos) {
     const backup = buildBackupObject(state, photos);
     const json = JSON.stringify(backup);
     const date = new Date().toISOString().slice(0, 10);
-    const filename = `gradevibe-backup-${date}.json`;
+    const filename = `notare-backup-${date}.json`;
     const file = new File([json], filename, { type: 'application/json' });
 
     // iOS standalone PWAs handle the share sheet ("Enregistrer dans
     // Fichiers") far better than a synthetic <a download> click.
     if (navigator.canShare && navigator.canShare({ files: [file] })) {
         try {
-            await navigator.share({ files: [file], title: 'Sauvegarde GradeVibe' });
+            await navigator.share({ files: [file], title: 'Sauvegarde notare' });
             showSidebarToast('Sauvegarde exportée ✓', 'success');
             return;
         } catch (e) {
@@ -104,7 +104,7 @@ async function importBackupFile(file) {
     if (!verdict.ok) {
         const msg = verdict.reason === 'newer-version'
             ? 'Cette sauvegarde vient d\'une version plus récente de l\'app. Mets à jour d\'abord.'
-            : 'Ce fichier n\'est pas une sauvegarde GradeVibe.';
+            : 'Ce fichier n\'est pas une sauvegarde notare.';
         showSidebarToast(msg, 'error');
         return;
     }
