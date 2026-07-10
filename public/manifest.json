@@ -1,6 +1,6 @@
 {
-  "name": "notare",
-  "short_name": "notare",
+  "name": "Notare",
+  "short_name": "Notare",
   "description": "Suivi des moyennes par branche, objectifs, double compensation et confettis.",
   "id": "/",
   "start_url": "./index.html",

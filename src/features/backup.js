@@ -71,7 +71,7 @@ async function exportBackup(includePhotos) {
     // Fichiers") far better than a synthetic <a download> click.
     if (navigator.canShare && navigator.canShare({ files: [file] })) {
         try {
-            await navigator.share({ files: [file], title: 'Sauvegarde notare' });
+            await navigator.share({ files: [file], title: 'Sauvegarde Notare' });
             showSidebarToast('Sauvegarde exportée ✓', 'success');
             return;
         } catch (e) {
@@ -104,7 +104,7 @@ async function importBackupFile(file) {
     if (!verdict.ok) {
         const msg = verdict.reason === 'newer-version'
             ? 'Cette sauvegarde vient d\'une version plus récente de l\'app. Mets à jour d\'abord.'
-            : 'Ce fichier n\'est pas une sauvegarde notare.';
+            : 'Ce fichier n\'est pas une sauvegarde Notare.';
         showSidebarToast(msg, 'error');
         return;
     }
