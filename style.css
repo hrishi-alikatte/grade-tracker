@@ -4170,4 +4170,17 @@ select:focus-visible,
         scroll-behavior: auto !important;
     }
 }
+/* Active style for onboarding theme mode buttons */
+body.theme-light .onboarding-theme-mode-btn.active {
+    background-color: #000000 !important;
+    color: #ffffff !important;
+    border-color: #000000 !important;
+    font-weight: 800 !important;
+}
 
+body:not(.theme-light) .onboarding-theme-mode-btn.active {
+    background-color: #ffffff !important;
+    color: #000000 !important;
+    border-color: #ffffff !important;
+    font-weight: 800 !important;
+}
