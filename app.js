@@ -3235,6 +3235,18 @@ function init() {
                 document.getElementById('onboarding-is-repeating').checked = !!state.repeatingYears[currentBaseYear];
                 document.getElementById('onboarding-show-all-years').checked = state.showAllYears !== false;
                 
+                const isLight = state.isLightTheme !== false;
+                const obLightBtn = document.getElementById('onboarding-theme-light');
+                const obDarkBtn = document.getElementById('onboarding-theme-dark');
+                if (obLightBtn && obDarkBtn) {
+                    obLightBtn.classList.toggle('active', isLight);
+                    obDarkBtn.classList.toggle('active', !isLight);
+                }
+                const colorThemeGroup = document.getElementById('onboarding-color-theme-group');
+                if (colorThemeGroup) {
+                    colorThemeGroup.style.display = isLight ? 'none' : 'block';
+                }
+                
                 openModal(onboardingModal);
             });
         }
@@ -3255,6 +3267,25 @@ function init() {
             }
         });
     });
+
+    // Onboarding theme mode buttons listener
+    const onboardingThemeLightBtn = document.getElementById('onboarding-theme-light');
+    const onboardingThemeDarkBtn = document.getElementById('onboarding-theme-dark');
+    const colorThemeGroup = document.getElementById('onboarding-color-theme-group');
+
+    if (onboardingThemeLightBtn && onboardingThemeDarkBtn) {
+        onboardingThemeLightBtn.addEventListener('click', () => {
+            onboardingThemeLightBtn.classList.add('active');
+            onboardingThemeDarkBtn.classList.remove('active');
+            if (colorThemeGroup) colorThemeGroup.style.display = 'none';
+        });
+        
+        onboardingThemeDarkBtn.addEventListener('click', () => {
+            onboardingThemeDarkBtn.classList.add('active');
+            onboardingThemeLightBtn.classList.remove('active');
+            if (colorThemeGroup) colorThemeGroup.style.display = 'block';
+        });
+    }
 
     // Close onboarding modal button
     const closeOnboardingBtn = document.getElementById('close-onboarding-setup-modal');
@@ -3282,8 +3313,17 @@ function init() {
             state.showAllYears = showAll;
             state.currentSemester = 'annual';
             state.hasSeenOnboarding = true;
+
+            const isLightActive = document.getElementById('onboarding-theme-light').classList.contains('active');
+            state.isLightTheme = isLightActive;
+            
+            if (!isLightActive) {
+                const themeSelector = document.getElementById('theme-selector');
+                if (themeSelector) state.theme = themeSelector.value;
+            }
             
             saveState();
+            applyTheme();
             
             // Sync active semester tab UI state
             document.querySelectorAll('.semester-tab').forEach(b => {
@@ -3318,6 +3358,18 @@ function init() {
             
             document.getElementById('onboarding-is-repeating').checked = !!state.repeatingYears[currentBaseYear];
             document.getElementById('onboarding-show-all-years').checked = state.showAllYears !== false;
+
+            const isLight = state.isLightTheme !== false;
+            const obLightBtn = document.getElementById('onboarding-theme-light');
+            const obDarkBtn = document.getElementById('onboarding-theme-dark');
+            if (obLightBtn && obDarkBtn) {
+                obLightBtn.classList.toggle('active', isLight);
+                obDarkBtn.classList.toggle('active', !isLight);
+            }
+            const colorThemeGroup = document.getElementById('onboarding-color-theme-group');
+            if (colorThemeGroup) {
+                colorThemeGroup.style.display = isLight ? 'none' : 'block';
+            }
             
             // Customize modal labels for Settings mode
             onboardingTitle.textContent = "Paramètres d'affichage";
