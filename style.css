@@ -1923,6 +1923,43 @@ select.btn {
     animation: landingFadeIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
+/* Landing footer — legal links. */
+.landing-footer {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 2rem 1rem calc(1rem + env(safe-area-inset-bottom));
+    margin-top: 1rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+    font-size: 0.8rem;
+    color: var(--color-text-muted);
+    text-align: center;
+}
+.landing-footer a {
+    color: var(--color-text-secondary);
+    text-decoration: none;
+    transition: color var(--transition-fast);
+}
+.landing-footer a:hover { color: var(--color-primary); }
+.landing-footer-sep { opacity: 0.45; }
+
+/* Legal document body (inside the modal). */
+.legal-body h3 {
+    font-size: 0.95rem;
+    font-weight: 800;
+    margin: 1.25rem 0 0.4rem;
+    color: var(--color-text-primary);
+}
+.legal-body p {
+    font-size: 0.85rem;
+    line-height: 1.6;
+    color: var(--color-text-secondary);
+    margin: 0 0 0.6rem;
+}
+.legal-body a { color: var(--color-primary); }
+
 .creator-word-box {
     background: color-mix(in srgb, var(--color-bg-surface) 80%, transparent);
     backdrop-filter: blur(16px);

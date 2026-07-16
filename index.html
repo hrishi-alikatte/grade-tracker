@@ -262,6 +262,15 @@
                 </div>
             </div>
         </section>
+
+        <!-- Pied de page : mentions légales -->
+        <footer class="landing-footer">
+            <span>© 2026 Notare</span>
+            <span class="landing-footer-sep" aria-hidden="true">·</span>
+            <a href="#" id="footer-link-privacy">Politique de confidentialité</a>
+            <span class="landing-footer-sep" aria-hidden="true">·</span>
+            <a href="#" id="footer-link-terms">Conditions d'utilisation</a>
+        </footer>
     </div>
 
     <div id="view-dashboard" class="page-view app-container" style="display: none;">
@@ -506,6 +515,15 @@
                 </div>
                 <p id="profile-message" style="font-size: 0.82rem; margin: 0.75rem 0 0 0; text-align: center; display: none;"></p>
             </form>
+        </div>
+    </div>
+
+    <!-- MODAL: Documents légaux (Confidentialité / Conditions) -->
+    <div class="modal-backdrop" id="legal-modal">
+        <div class="modal-container" style="max-width: 640px; width: 94%; max-height: 85dvh; display: flex; flex-direction: column;">
+            <button class="modal-close-btn" id="close-legal-modal">&times;</button>
+            <h2 class="modal-title" id="legal-modal-title">Document</h2>
+            <div id="legal-modal-body" class="legal-body" style="overflow-y: auto; -webkit-overflow-scrolling: touch; padding-right: 0.25rem;"></div>
         </div>
     </div>
 

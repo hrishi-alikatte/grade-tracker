@@ -11,6 +11,7 @@ import { playConfettiSound, playFahSound, showSidebarToast, startConfetti, initB
 import { initScrollReveal } from './src/ui/reveal.js';
 import { isSupabaseConfigured, signUp, signIn, signOut, getSession, getProfile, updateProfile, onAuthStateChange } from './src/features/auth.js';
 import { pullAndMerge, initSyncListeners } from './src/features/sync.js';
+import { PRIVACY_TITLE, PRIVACY_HTML, TERMS_TITLE, TERMS_HTML } from './src/features/legal.js';
 import { verifyGradeInText, compressAndResizeImage, ensureTesseract } from './src/features/ocr.js';
 import { initBackupUI } from './src/features/backup.js';
 import './src/features/pwa.js';
@@ -3171,6 +3172,35 @@ function translateAuthError(msg) {
     return 'Une erreur est survenue. Réessayez.';
 }
 
+// Documents légaux : ouvre la modale avec le bon contenu. Câblé sur les liens
+// du pied de page ET sur la case de consentement du formulaire d'inscription.
+function wireLegal() {
+    const legalModal = document.getElementById('legal-modal');
+    const legalTitle = document.getElementById('legal-modal-title');
+    const legalBody = document.getElementById('legal-modal-body');
+    if (!legalModal) return;
+
+    const openLegal = (kind) => {
+        const isPrivacy = kind === 'privacy';
+        legalTitle.textContent = isPrivacy ? PRIVACY_TITLE : TERMS_TITLE;
+        legalBody.innerHTML = isPrivacy ? PRIVACY_HTML : TERMS_HTML;
+        legalBody.scrollTop = 0;
+        openModal(legalModal);
+    };
+
+    const bind = (id, kind) => {
+        const el = document.getElementById(id);
+        if (el) el.addEventListener('click', (e) => { e.preventDefault(); openLegal(kind); });
+    };
+    bind('footer-link-privacy', 'privacy');
+    bind('footer-link-terms', 'terms');
+    bind('link-privacy', 'privacy');
+    bind('link-terms', 'terms');
+
+    const closeBtn = document.getElementById('close-legal-modal');
+    if (closeBtn) closeBtn.addEventListener('click', () => closeModal(legalModal));
+}
+
 // Câble l'UI de compte (Connexion / Inscription / Profil) + la synchro cloud.
 // Si Supabase n'est pas configuré, ne fait rien : l'app reste 100% locale.
 function initAuth() {
@@ -3328,12 +3358,6 @@ function initAuth() {
         showSidebarToast('Vous êtes déconnecté.', 'success');
     });
 
-    // Liens légaux : Phase 4 les pointera vers les vraies pages.
-    ['link-terms', 'link-privacy'].forEach((id) => {
-        const el = document.getElementById(id);
-        if (el) el.addEventListener('click', (e) => e.preventDefault());
-    });
-
     const applySession = (session, doMerge) => {
         currentSession = session;
         accountBtn.title = session ? 'Mon profil' : 'Connexion';
@@ -3350,6 +3374,7 @@ function init() {
     loadState();
     initBackgroundBoxes();
     initBackupUI();
+    wireLegal();
     initAuth();
     
     animateCards = true;
