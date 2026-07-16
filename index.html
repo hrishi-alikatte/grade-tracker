@@ -405,13 +405,13 @@
         <footer class="app-footer">
             Developed by Pranathi Alikatte
         </footer>
-        </div>
+
     </div>
 
     <!-- MODAL: Ajouter une branche -->
     <div class="modal-backdrop" id="add-subject-modal">
         <div class="modal-container">
-            <button class="modal-close-btn" id="close-subject-modal">&times;</button>
+            <button class="modal-close-btn" id="close-subject-modal" aria-label="Fermer">&times;</button>
             <h2 class="modal-title">Ajouter une branche</h2>
             <form id="add-subject-form">
                 <div class="form-group">
@@ -440,7 +440,7 @@
     <!-- MODAL: Ajouter une note -->
     <div class="modal-backdrop" id="add-grade-modal">
         <div class="modal-container">
-            <button class="modal-close-btn" id="close-grade-modal">&times;</button>
+            <button class="modal-close-btn" id="close-grade-modal" aria-label="Fermer">&times;</button>
             <h2 class="modal-title">Ajouter une note pour <span id="modal-subject-name" style="color: var(--color-accent-warm);">Branche</span></h2>
             <form id="add-grade-form">
                 <input type="hidden" id="grade-subject-id">
@@ -521,7 +521,7 @@
                     </div>
                     <div id="grade-photo-preview-container" style="display: none; margin-top: 0.5rem; position: relative;">
                         <img id="grade-photo-preview" src="" style="max-height: 100px; border-radius: 4px; border: 1px solid var(--color-border-subtle);">
-                        <button type="button" id="remove-grade-photo-btn" style="position: absolute; top: -5px; left: 85px; background: #ef4444; color: white; border: none; border-radius: 50%; width: 18px; height: 18px; font-size: 10px; cursor: pointer; display: flex; align-items: center; justify-content: center;">&times;</button>
+                        <button type="button" id="remove-grade-photo-btn" aria-label="Fermer" style="position: absolute; top: -12px; left: 85px; background: #ef4444; color: white; border: none; border-radius: 50%; width: 44px; height: 44px; font-size: 20px; cursor: pointer; display: flex; align-items: center; justify-content: center;">&times;</button>
                     </div>
                 </div>
                 </div><!-- /grade-extras -->
@@ -537,7 +537,7 @@
     <!-- MODAL: Détails de la note (Grade Details Popover) -->
     <div class="modal-backdrop" id="grade-details-modal">
         <div class="modal-container" style="max-width: 400px; width: 90%;">
-            <button class="modal-close-btn" id="close-details-modal">&times;</button>
+            <button class="modal-close-btn" id="close-details-modal" aria-label="Fermer">&times;</button>
             <h2 class="modal-title" style="margin-bottom: 1rem;" id="details-modal-title">Détails de la note</h2>
             
             <!-- View Mode Panel -->
@@ -643,7 +643,7 @@
                     </div>
                     <div id="edit-grade-photo-preview-container" style="display: none; margin-top: 0.5rem; position: relative;">
                         <img id="edit-grade-photo-preview" src="" style="max-height: 80px; border-radius: 4px; border: 1px solid var(--color-border-subtle);">
-                        <button type="button" id="edit-remove-grade-photo-btn" style="position: absolute; top: -5px; left: 85px; background: #ef4444; color: white; border: none; border-radius: 50%; width: 18px; height: 18px; font-size: 10px; cursor: pointer; display: flex; align-items: center; justify-content: center;">&times;</button>
+                        <button type="button" id="edit-remove-grade-photo-btn" aria-label="Fermer" style="position: absolute; top: -12px; left: 85px; background: #ef4444; color: white; border: none; border-radius: 50%; width: 44px; height: 44px; font-size: 20px; cursor: pointer; display: flex; align-items: center; justify-content: center;">&times;</button>
                     </div>
                 </div>
             </form>
