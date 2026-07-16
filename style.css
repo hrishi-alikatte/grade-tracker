@@ -1851,14 +1851,21 @@ select.btn {
     }
 }
 
+/* Sections size to their content instead of each forcing a full viewport band,
+   which previously left large empty gaps above/below the cards on every scroll
+   step. Vertical rhythm now comes from padding + the hairline border-top. */
 .landing-section {
-    min-height: 100vh;
-    min-height: 100dvh;
     display: flex;
     flex-direction: column;
     justify-content: center;
-    padding: 6rem 1rem;
+    padding: clamp(3.5rem, 8vw, 5.5rem) 1rem;
     width: 100%;
+}
+
+@media (max-width: 600px) {
+    .landing-section {
+        padding: 2.5rem 1rem;
+    }
 }
 
 .landing-features-grid {
