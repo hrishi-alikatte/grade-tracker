@@ -11,6 +11,11 @@ import { clientsClaim } from 'workbox-core';
 precacheAndRoute(self.__WB_MANIFEST);
 cleanupOutdatedCaches();
 
+// autoUpdate: a freshly-deployed SW activates immediately instead of waiting
+// for a user tap, so returning visitors get the latest build on their next
+// navigation — no manual cache-clear ever needed.
+self.addEventListener('install', () => self.skipWaiting());
+
 // App-shell navigation: every in-scope navigation serves the precached index.
 registerRoute(new NavigationRoute(createHandlerBoundToURL('index.html')));
 

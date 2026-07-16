@@ -3781,25 +3781,6 @@ function init() {
             }
         }
     });
-
-    // Live date and clock updater
-    function updateClock() {
-        const timeEl = document.getElementById('live-time');
-        const dateEl = document.getElementById('live-date');
-        if (!timeEl || !dateEl) return;
-        const now = new Date();
-        const weekdays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-        const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-        const weekday = weekdays[now.getDay()];
-        const month = months[now.getMonth()];
-        const date = now.getDate();
-        const hours = String(now.getHours()).padStart(2, '0');
-        const minutes = String(now.getMinutes()).padStart(2, '0');
-        timeEl.textContent = `${hours}:${minutes}`;
-        dateEl.textContent = `${weekday} ${month} ${date}`;
-    }
-    updateClock();
-    setInterval(updateClock, 1000);
 }
 
 
