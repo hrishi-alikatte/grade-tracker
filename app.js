@@ -2247,7 +2247,6 @@ function closeModal(modal) {
     modal.classList.remove('active');
     // Release the scroll lock only once no modal remains open.
     if (!document.querySelector('.modal-backdrop.active')) {
->>>>>>> upstream-hrishi/main
         document.body.classList.remove('modal-open');
     }
 }
