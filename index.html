@@ -98,28 +98,143 @@
                 <div class="landing-logo-circle">
                     <svg width="46" height="46" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.42 10.922a1 1 0 0 0-.019-1.838L12.83 5.18a2 2 0 0 0-1.66 0L2.6 9.08a1 1 0 0 0 0 1.832l8.57 3.908a2 2 0 0 0 1.66 0z"/><path d="M6 12v5c0 2 2 3 6 3s6-1 6-3v-5"/><path d="M21.5 12v6"/></svg>
                 </div>
-                <h1 class="landing-title">Notare</h1>
-                <p style="font-size: 0.9rem; color: var(--color-text-secondary); margin-top: -1rem; margin-bottom: 1.5rem; font-style: italic; opacity: 0.8; max-width: 600px; text-align: center; margin-left: auto; margin-right: auto;">
-                    Notare (en latin, signifie "marquer, noter", ce qui symbolise le cœur de cette application : vous aider à noter vos notes)
-                </p>
-                <p class="landing-tagline">
-                    Prenez le contrôle de votre parcours scolaire. Calculez vos moyennes, suivez vos points de promotion et simulez vos cibles en toute simplicité.
-                </p>
-
-                <button type="button" class="btn btn-primary landing-hero-cta" onclick="document.getElementById('tab-nav-dashboard').click()" style="margin-top: 2.25rem; padding: 0.9rem 2rem; font-size: 1rem; gap: 0.6rem;">
-                    Commencer
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-                </button>
+                <div class="landing-definition-container" style="margin: 0 auto 3rem auto; max-width: 600px; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 0.25rem;">
+                    <h1 class="landing-title" style="font-family: 'Playfair Display', Georgia, serif; font-size: clamp(3.5rem, 8vw, 4.5rem); font-weight: 400; color: var(--color-text-primary); line-height: 1; letter-spacing: -0.01em; margin-bottom: 0px; background: none; -webkit-text-fill-color: initial; -webkit-background-clip: unset;">notare</h1>
+                    <div style="font-family: var(--font-family-sans); font-size: 1.05rem; color: var(--color-text-primary); font-weight: 300; margin: 0;">
+                        <span style="color: var(--color-text-secondary);">[noˈta.re]</span> <strong style="font-weight: 700; margin-left: 0.2rem;">verbe</strong>
+                    </div>
+                    <p style="font-family: 'Playfair Display', Georgia, serif; font-size: clamp(0.85rem, 2vw, 1rem); color: var(--color-text-secondary); line-height: 1.5; max-width: 480px; margin: 0.25rem auto 0 auto; font-style: normal;">
+                        dérivé du latin, signifiant "marquer , noter" ; pour vous aider à suivre vos notes
+                    </p>
+                </div>
+                <div style="display: flex; gap: 1rem; margin-top: 1.5rem; justify-content: center; flex-wrap: wrap;">
+                    <button type="button" class="btn btn-primary landing-hero-cta" onclick="document.getElementById('tab-nav-dashboard').click()" style="padding: 0.9rem 2rem; font-size: 1rem; gap: 0.6rem; margin-top: 0;">
+                        Commencer
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+                    </button>
+                    <button type="button" id="landing-signin-btn" class="btn btn-secondary landing-hero-cta" style="padding: 0.9rem 2rem; font-size: 1rem; gap: 0.6rem; margin-top: 0;">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                        Se connecter
+                    </button>
+                </div>
             </div>
 
             <!-- Animated Scroll Down Indicator -->
-            <div class="scroll-down-indicator" onclick="document.getElementById('landing-features').scrollIntoView({ behavior: 'smooth' });">
+            <div class="scroll-down-indicator" onclick="document.getElementById('landing-rules').scrollIntoView({ behavior: 'smooth' });">
                 <span>Faites défiler pour découvrir</span>
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
             </div>
         </section>
 
-        <!-- SECTION 2: FEATURES -->
+        <!-- SECTION 2: APPS VISUAL PREVIEW CAROUSEL -->
+        <section id="landing-rules" class="landing-section" style="border-top: 1px solid rgba(255, 255, 255, 0.05); padding-bottom: 4rem;">
+            <div style="text-align: center; margin-bottom: 3rem;">
+                <h2 style="font-size: clamp(1.8rem, 4vw, 2.5rem); font-weight: 800; color: white; letter-spacing: -0.02em; margin-bottom: 1rem;">Interface Intelligente</h2>
+                <p style="color: var(--color-text-secondary); max-width: 600px; margin: 0 auto; font-size: 0.95rem;">
+                    Découvrez les fonctionnalités de notare en faisant glisser ou défiler les captures d'écran ci-dessous.
+                </p>
+            </div>
+
+            <div class="preview-carousel-wrapper">
+                <!-- Scrollable Container -->
+                <div class="preview-scroll-container" id="preview-scroll-container">
+                    
+                    <!-- Card 1: Dashboard -->
+                    <div class="preview-scroll-card">
+                        <div class="mock-window-shell">
+                            <div class="mock-window-header">
+                                <span class="mock-dot red"></span>
+                                <span class="mock-dot yellow"></span>
+                                <span class="mock-dot green"></span>
+                                <div class="mock-window-address">notare-swiss.ch/dashboard</div>
+                            </div>
+                            <img src="./assets/preview-dashboard.png" alt="Tableau de bord de notare" class="preview-scroll-image" loading="lazy">
+                        </div>
+                    </div>
+
+                    <!-- Card 2: Evolution -->
+                    <div class="preview-scroll-card">
+                        <div class="mock-window-shell">
+                            <div class="mock-window-header">
+                                <span class="mock-dot red"></span>
+                                <span class="mock-dot yellow"></span>
+                                <span class="mock-dot green"></span>
+                                <div class="mock-window-address">notare-swiss.ch/evolution</div>
+                            </div>
+                            <img src="./assets/preview-evolution.png" alt="Graphique d'évolution générale de notare" class="preview-scroll-image" loading="lazy">
+                        </div>
+                    </div>
+
+                    <!-- Card 3: Settings -->
+                    <div class="preview-scroll-card">
+                        <div class="mock-window-shell">
+                            <div class="mock-window-header">
+                                <span class="mock-dot red"></span>
+                                <span class="mock-dot yellow"></span>
+                                <span class="mock-dot green"></span>
+                                <div class="mock-window-address">notare-swiss.ch/settings</div>
+                            </div>
+                            <img src="./assets/preview-settings.png" alt="Paramètres de notare" class="preview-scroll-image" loading="lazy">
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Scroll Indicators -->
+                <div class="carousel-indicators" id="carousel-indicators">
+                    <span class="indicator-dot active" onclick="scrollToCard(0)"></span>
+                    <span class="indicator-dot" onclick="scrollToCard(1)"></span>
+                    <span class="indicator-dot" onclick="scrollToCard(2)"></span>
+                </div>
+            </div>
+
+            <!-- Interactive Dot Indicators Script -->
+            <script>
+                const container = document.getElementById('preview-scroll-container');
+                const dots = document.querySelectorAll('#carousel-indicators .indicator-dot');
+
+                function scrollToCard(index) {
+                    if (!container) return;
+                    const cards = container.querySelectorAll('.preview-scroll-card');
+                    if (cards[index]) {
+                        container.scrollTo({
+                            left: cards[index].offsetLeft - container.offsetLeft,
+                            behavior: 'smooth'
+                        });
+                    }
+                }
+
+                // Update active indicator dot on scroll
+                if (container) {
+                    container.addEventListener('scroll', () => {
+                        const cards = container.querySelectorAll('.preview-scroll-card');
+                        const containerCenter = container.scrollLeft + (container.clientWidth / 2);
+                        
+                        let activeIndex = 0;
+                        let minDistance = Infinity;
+
+                        cards.forEach((card, index) => {
+                            const cardCenter = card.offsetLeft - container.offsetLeft + (card.clientWidth / 2);
+                            const distance = Math.abs(cardCenter - containerCenter);
+                            if (distance < minDistance) {
+                                minDistance = distance;
+                                activeIndex = index;
+                            }
+                        });
+
+                        dots.forEach((dot, index) => {
+                            if (index === activeIndex) {
+                                dot.classList.add('active');
+                            } else {
+                                dot.classList.remove('active');
+                            }
+                        });
+                    });
+                }
+            </script>
+        </section>
+
+        <!-- SECTION 3: FEATURES -->
         <section id="landing-features" class="landing-section" style="border-top: 1px solid rgba(255, 255, 255, 0.05);">
             <div style="text-align: center; margin-bottom: 2.5rem;" data-reveal>
                 <h2 style="font-size: clamp(1.8rem, 4vw, 2.5rem); font-weight: 800; color: white; letter-spacing: -0.02em; margin-bottom: 1rem;">Fonctionnalités Clés</h2>
@@ -162,19 +277,19 @@
             </div>
         </section>
 
-        <!-- SECTION 3: PROMOTION RULES DEEP DIVE -->
-        <section id="landing-rules" class="landing-section" style="border-top: 1px solid rgba(255, 255, 255, 0.05);">
+        <!-- SECTION 4: PROMOTION RULES DEEP DIVE -->
+        <section id="landing-promo-rules" class="landing-section" style="border-top: 1px solid rgba(255, 255, 255, 0.05);">
             <div style="text-align: center; margin-bottom: 3rem;" data-reveal>
                 <h2 style="font-size: clamp(1.8rem, 4vw, 2.5rem); font-weight: 800; color: white; letter-spacing: -0.02em; margin-bottom: 1rem;">Les 4 Règles de Promotion</h2>
                 <p style="color: var(--color-text-secondary); max-width: 600px; margin: 0 auto; font-size: 0.95rem;">
-                    Notare intègre à 100% les exigences du Gymnase vaudois pour déterminer votre réussite.
+                    notare intègre à 100% les exigences du Gymnase vaudois pour déterminer votre réussite.
                 </p>
             </div>
 
             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.5rem; max-width: 1100px; margin: 0 auto 3rem auto; width: 100%;" data-reveal>
                 <!-- Rule 1 -->
                 <div style="background: rgba(0,0,0,0.2); border-left: 4px solid var(--color-primary); padding: 1.5rem; border-radius: var(--radius-md);">
-                    <h3 style="font-size: 1.1rem; color: white; font-weight: 800; margin: 0 0 0.5rem 0; display: flex; align-items: center; gap: 0.5rem;">
+                    <h3 style="font-size: 1.15rem; color: white; font-weight: 800; margin: 0 0 0.5rem 0; display: flex; align-items: center; gap: 0.5rem;">
                         <span style="font-size: 1.25rem;">①</span> Points Groupes 1 & 2
                     </h3>
                     <p style="font-size: 0.8rem; color: var(--color-text-secondary); line-height: 1.5; margin: 0;">
@@ -236,6 +351,49 @@
             </div>
         </section>
 
+        <!-- SECTION 3: FEATURES -->
+        <section id="landing-features" class="landing-section" style="border-top: 1px solid rgba(255, 255, 255, 0.05);">
+            <div style="text-align: center; margin-bottom: 4rem;">
+                <h2 style="font-size: clamp(1.8rem, 4vw, 2.5rem); font-weight: 800; color: white; letter-spacing: -0.02em; margin-bottom: 1rem;">Fonctionnalités Clés</h2>
+                <p style="color: var(--color-text-secondary); max-width: 500px; margin: 0 auto; font-size: 0.95rem;">Tout ce dont vous avez besoin pour naviguer sereinement dans votre scolarité.</p>
+            </div>
+            
+            <div class="landing-features-grid">
+                <!-- Feature 1: Photo Proof -->
+                <div class="landing-feature-card">
+                    <div style="color: var(--color-primary); display: flex; align-items: center; justify-content: center; width: 48px; height: 48px; background: rgba(96,165,250,0.1); border-radius: var(--radius-md);">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+                    </div>
+                    <div>
+                        <h3 style="font-size: 1.15rem; font-weight: 800; color: white; margin-bottom: 0.5rem;">Preuve d'examen (Photo)</h3>
+                        <p style="font-size: 0.85rem; color: var(--color-text-secondary); line-height: 1.5; margin: 0;">Ajoutez simplement une photo de vos épreuves comme preuve pour conserver un historique visuel complet de vos évaluations.</p>
+                    </div>
+                </div>
+                
+                <!-- Feature 2: Real-time Promo -->
+                <div class="landing-feature-card">
+                    <div style="color: var(--color-primary); display: flex; align-items: center; justify-content: center; width: 48px; height: 48px; background: rgba(96,165,250,0.1); border-radius: var(--radius-md);">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+                    </div>
+                    <div>
+                        <h3 style="font-size: 1.15rem; font-weight: 800; color: white; margin-bottom: 0.5rem;">Promotion en temps réel</h3>
+                        <p style="font-size: 0.85rem; color: var(--color-text-secondary); line-height: 1.5; margin: 0;">L'algorithme calcule vos moyennes annuelles, vos insuffisances, et applique la règle officielle du bilan des points doublés.</p>
+                    </div>
+                </div>
+                
+                <!-- Feature 3: Target Grade -->
+                <div class="landing-feature-card">
+                    <div style="color: var(--color-primary); display: flex; align-items: center; justify-content: center; width: 48px; height: 48px; background: rgba(96,165,250,0.1); border-radius: var(--radius-md);">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
+                    </div>
+                    <div>
+                        <h3 style="font-size: 1.15rem; font-weight: 800; color: white; margin-bottom: 0.5rem;">Simulateur de cible</h3>
+                        <p style="font-size: 0.85rem; color: var(--color-text-secondary); line-height: 1.5; margin: 0;">Sachez exactement quelle note obtenir lors de votre prochain examen pour atteindre ou conserver votre objectif de moyenne.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
         <!-- SECTION 4: ABOUT & MOT DE L'AUTEUR -->
         <section id="landing-creator" class="landing-section" style="border-top: 1px solid rgba(255, 255, 255, 0.05);">
             <div style="max-width: 650px; margin: 0 auto; width: 100%; display: flex; flex-direction: column; gap: 2.5rem;" data-reveal>
@@ -247,7 +405,7 @@
                     </p>
                     <div style="text-align: right; z-index: 1; position: relative;">
                         <strong style="color: white; font-size: 0.9rem;">— Pranathi Alikatte</strong>
-                        <span style="color: var(--color-text-secondary); font-size: 0.8rem; display: block;">Développeur de Notare</span>
+                        <span style="color: var(--color-text-secondary); font-size: 0.8rem; display: block;">Développeur de notare</span>
                     </div>
                 </div>
 
@@ -964,10 +1122,10 @@
         <div class="landing-creator-card" style="margin-top: 2rem; background-color: color-mix(in srgb, var(--color-bg-surface) 50%, transparent); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.05); padding: 1.5rem; border-radius: var(--radius-md); max-width: 800px; margin-left: auto; margin-right: auto; text-align: left; line-height: 1.5;">
             <h3 style="color: var(--color-primary); font-size: 0.95rem; margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem;">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-                À propos de Notare
+                À propos de notare
             </h3>
             <p style="color: var(--color-text-primary); font-size: 0.8rem; margin-bottom: 0.5rem;">
-                <strong>Notare</strong> (en latin, signifie <em>"marquer, noter"</em>, ce qui symbolise le cœur de cette application : vous aider à noter vos notes) a été conçu pour résoudre les difficultés de planification académique rencontrées par les élèves durant leur parcours gymnasial. L'algorithme intègre à 100% les directives officielles du Département de la formation, de la jeunesse et de la culture (DFJC) du canton de Vaud.
+                <strong>notare</strong> (en latin, signifie <em>"marquer, noter"</em>, ce qui symbolise le cœur de cette application : vous aider à noter vos notes) a été conçu pour résoudre les difficultés de planification académique rencontrées par les élèves durant leur parcours gymnasial. L'algorithme intègre à 100% les directives officielles du Département de la formation, de la jeunesse et de la culture (DFJC) du canton de Vaud.
             </p>
             <p style="color: var(--color-text-secondary); font-size: 0.75rem;">
                 Créé par un passionné d'ergonomie et d'outils d'apprentissage intelligents. Pour toute question ou suggestion, n'hésitez pas à vous adresser à l'auteur.
@@ -1054,6 +1212,21 @@
                         <input type="checkbox" id="onboarding-show-all-years">
                         <span class="switch-slider"></span>
                     </label>
+                </div>
+
+                <!-- 3b. Messages pour les notes < 3.5 -->
+                <div id="settings-messages-section" style="background: rgba(255,255,255,0.02); padding: 0.75rem 1rem; border-radius: var(--radius-md); border: 1px solid var(--color-border-subtle); display: flex; flex-direction: column; gap: 0.6rem;">
+                    <div>
+                        <label class="form-label" style="font-weight: 700; margin: 0; display: block;">Rox/roasts pour notes insuffisantes (&lt; 3.5)</label>
+                        <span style="font-size: 0.7rem; color: var(--color-text-secondary);">Messages aléatoires s'affichant si la note est inférieure à 3.5.</span>
+                    </div>
+                    <div id="settings-messages-list" style="display: flex; flex-direction: column; gap: 0.35rem; max-height: 120px; overflow-y: auto; padding-right: 4px;">
+                        <!-- Injected dynamically -->
+                    </div>
+                    <div style="display: flex; gap: 0.5rem;">
+                        <input type="text" id="settings-new-message-input" placeholder="Ajouter un message..." class="form-input" style="flex: 1; min-height: 36px; font-size: 0.8rem; padding: 0.3rem 0.6rem; border: 1px solid var(--color-border-subtle); border-radius: var(--radius-sm); background: var(--color-bg-elevated); color: var(--color-text-primary);">
+                        <button type="button" id="settings-add-message-btn" class="btn btn-secondary" style="padding: 0.4rem 0.8rem; font-size: 0.8rem; min-height: 36px; display: flex; align-items: center; justify-content: center; border-radius: var(--radius-sm); border: 1px solid var(--color-border-subtle); font-weight: bold;">+</button>
+                    </div>
                 </div>
                 
                 <!-- 4. Sauvegarde des données -->
