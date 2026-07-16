@@ -111,7 +111,14 @@ function resetStateToDefault() {
 }
 
 function saveState() {
+    // Horodatage pour la synchro cloud (résolution de conflit LWW). Sans effet
+    // sur l'app hors ligne : c'est juste un champ de plus dans le blob.
+    state.updatedAt = Date.now();
     localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    // Signal pour la couche de synchro (inerte si Supabase non configuré).
+    if (typeof window !== 'undefined' && typeof window.dispatchEvent === 'function') {
+        window.dispatchEvent(new CustomEvent('notare:state-saved'));
+    }
 }
 
 /**

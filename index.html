@@ -80,6 +80,9 @@
         </div>
 
         <div class="nav-icons">
+            <button id="btn-account" class="nav-icon-btn" title="Compte" style="display: none;">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            </button>
             <button id="btn-settings-modal" class="nav-icon-btn" title="Paramètres d'affichage">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
             </button>
@@ -395,6 +398,117 @@
     </div>
 
     <!-- MODAL: Ajouter une branche -->
+    <!-- MODAL: Compte (Connexion / Inscription) -->
+    <div class="modal-backdrop" id="auth-modal">
+        <div class="modal-container" style="max-width: 420px; width: 92%;">
+            <button class="modal-close-btn" id="close-auth-modal">&times;</button>
+            <h2 class="modal-title" id="auth-modal-title">Connexion</h2>
+            <p style="font-size: 0.85rem; color: var(--color-text-secondary); margin: -0.25rem 0 1rem 0;">
+                Connectez-vous pour sauvegarder et synchroniser vos notes sur tous vos appareils.
+            </p>
+
+            <div class="auth-tabs" style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin-bottom: 1.25rem;">
+                <button type="button" class="chip-btn active" id="auth-tab-login" data-mode="login">Connexion</button>
+                <button type="button" class="chip-btn" id="auth-tab-signup" data-mode="signup">Inscription</button>
+            </div>
+
+            <!-- Formulaire Connexion -->
+            <form id="login-form">
+                <div class="form-group">
+                    <label class="form-label" for="login-email">Adresse e-mail</label>
+                    <input type="email" id="login-email" class="form-input" autocomplete="email" required placeholder="vous@exemple.ch">
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="login-password">Mot de passe</label>
+                    <input type="password" id="login-password" class="form-input" autocomplete="current-password" required minlength="6" placeholder="••••••••">
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary" style="width: 100%;">Se connecter</button>
+                </div>
+            </form>
+
+            <!-- Formulaire Inscription -->
+            <form id="signup-form" style="display: none;">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
+                    <div class="form-group">
+                        <label class="form-label" for="signup-prenom">Prénom</label>
+                        <input type="text" id="signup-prenom" class="form-input" autocomplete="given-name" required placeholder="Prénom">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="signup-nom">Nom</label>
+                        <input type="text" id="signup-nom" class="form-input" autocomplete="family-name" required placeholder="Nom">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="signup-email">Adresse e-mail</label>
+                    <input type="email" id="signup-email" class="form-input" autocomplete="email" required placeholder="vous@exemple.ch">
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="signup-password">Mot de passe</label>
+                    <input type="password" id="signup-password" class="form-input" autocomplete="new-password" required minlength="6" placeholder="6 caractères minimum">
+                </div>
+                <label style="display: flex; align-items: flex-start; gap: 0.5rem; font-size: 0.8rem; color: var(--color-text-secondary); margin-bottom: 1rem; cursor: pointer;">
+                    <input type="checkbox" id="signup-consent" required style="margin-top: 0.15rem; flex-shrink: 0;">
+                    <span>J'accepte les <a href="#" id="link-terms" style="color: var(--color-primary);">Conditions d'utilisation</a> et la <a href="#" id="link-privacy" style="color: var(--color-primary);">Politique de confidentialité</a>.</span>
+                </label>
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary" style="width: 100%;">Créer mon compte</button>
+                </div>
+            </form>
+
+            <p id="auth-message" style="font-size: 0.82rem; margin: 0.75rem 0 0 0; text-align: center; display: none;"></p>
+        </div>
+    </div>
+
+    <!-- MODAL: Profil -->
+    <div class="modal-backdrop" id="profile-modal">
+        <div class="modal-container" style="max-width: 440px; width: 92%;">
+            <button class="modal-close-btn" id="close-profile-modal">&times;</button>
+            <h2 class="modal-title">Mon profil</h2>
+            <form id="profile-form">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
+                    <div class="form-group">
+                        <label class="form-label" for="profile-prenom">Prénom</label>
+                        <input type="text" id="profile-prenom" class="form-input" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="profile-nom">Nom</label>
+                        <input type="text" id="profile-nom" class="form-input" readonly>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="profile-email">Adresse e-mail</label>
+                    <input type="email" id="profile-email" class="form-input" readonly>
+                </div>
+                <hr style="border: none; border-top: 1px solid var(--color-border-subtle); margin: 1rem 0;">
+                <p style="font-size: 0.8rem; color: var(--color-text-secondary); margin: 0 0 1rem 0;">Informations facultatives</p>
+                <div class="form-group">
+                    <label class="form-label" for="profile-canton">Canton</label>
+                    <input type="text" id="profile-canton" class="form-input" placeholder="Ex : Vaud">
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="profile-ecole">Établissement / École</label>
+                    <input type="text" id="profile-ecole" class="form-input" placeholder="Ex : Gymnase de Nyon">
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
+                    <div class="form-group">
+                        <label class="form-label" for="profile-telephone">Téléphone</label>
+                        <input type="tel" id="profile-telephone" class="form-input" autocomplete="tel" placeholder="+41 ...">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="profile-naissance">Date de naissance</label>
+                        <input type="date" id="profile-naissance" class="form-input">
+                    </div>
+                </div>
+                <div class="form-actions" style="flex-direction: column; gap: 0.6rem;">
+                    <button type="submit" class="btn btn-primary" style="width: 100%;">Enregistrer</button>
+                    <button type="button" class="btn btn-secondary" id="btn-signout" style="width: 100%;">Se déconnecter</button>
+                </div>
+                <p id="profile-message" style="font-size: 0.82rem; margin: 0.75rem 0 0 0; text-align: center; display: none;"></p>
+            </form>
+        </div>
+    </div>
+
     <div class="modal-backdrop" id="add-subject-modal">
         <div class="modal-container">
             <button class="modal-close-btn" id="close-subject-modal">&times;</button>

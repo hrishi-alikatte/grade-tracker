@@ -9,6 +9,8 @@ import { applyTheme } from './src/ui/theme.js';
 import { escapeHTML } from './src/ui/dom.js';
 import { playConfettiSound, playFahSound, showSidebarToast, startConfetti, initBackgroundBoxes } from './src/ui/effects.js';
 import { initScrollReveal } from './src/ui/reveal.js';
+import { isSupabaseConfigured, signUp, signIn, signOut, getSession, getProfile, updateProfile, onAuthStateChange } from './src/features/auth.js';
+import { pullAndMerge, initSyncListeners } from './src/features/sync.js';
 import { verifyGradeInText, compressAndResizeImage, ensureTesseract } from './src/features/ocr.js';
 import { initBackupUI } from './src/features/backup.js';
 import './src/features/pwa.js';
@@ -3156,10 +3158,199 @@ function switchView(viewId) {
     window.scrollTo({ top: 0, behavior: 'instant' });
 }
 
+// Traduit les messages d'erreur Supabase Auth (anglais) en français.
+function translateAuthError(msg) {
+    if (!msg) return 'Une erreur est survenue.';
+    const m = String(msg).toLowerCase();
+    if (m.includes('invalid login')) return 'E-mail ou mot de passe incorrect.';
+    if (m.includes('email not confirmed')) return "Confirmez votre adresse e-mail avant de vous connecter.";
+    if (m.includes('already registered') || m.includes('already exists') || m.includes('user already')) return 'Cette adresse e-mail est déjà utilisée.';
+    if (m.includes('password') && m.includes('short')) return 'Mot de passe trop court (6 caractères minimum).';
+    if (m.includes('rate limit') || m.includes('too many')) return 'Trop de tentatives. Réessayez dans quelques minutes.';
+    if (m.includes('network') || m.includes('fetch')) return 'Problème de connexion réseau.';
+    return 'Une erreur est survenue. Réessayez.';
+}
+
+// Câble l'UI de compte (Connexion / Inscription / Profil) + la synchro cloud.
+// Si Supabase n'est pas configuré, ne fait rien : l'app reste 100% locale.
+function initAuth() {
+    const accountBtn = document.getElementById('btn-account');
+    if (!isSupabaseConfigured) {
+        if (accountBtn) accountBtn.style.display = 'none';
+        return;
+    }
+    if (accountBtn) accountBtn.style.display = 'inline-flex';
+
+    initSyncListeners();
+
+    const authModal = document.getElementById('auth-modal');
+    const profileModal = document.getElementById('profile-modal');
+    const authMessage = document.getElementById('auth-message');
+    const loginForm = document.getElementById('login-form');
+    const signupForm = document.getElementById('signup-form');
+    const tabLogin = document.getElementById('auth-tab-login');
+    const tabSignup = document.getElementById('auth-tab-signup');
+    const authTitle = document.getElementById('auth-modal-title');
+
+    let currentSession = null;
+
+    const reloadUI = () => {
+        renderYearSelector();
+        if (state.currentYear !== 4) {
+            renderSubjects();
+            updateDashboard();
+        }
+        applyTheme();
+    };
+
+    function showAuthMessage(text, kind) {
+        authMessage.textContent = text;
+        authMessage.style.display = 'block';
+        authMessage.style.color = kind === 'error' ? '#c0392b' : '#2b6747';
+    }
+    function clearAuthMessage() {
+        authMessage.style.display = 'none';
+        authMessage.textContent = '';
+    }
+
+    function setMode(mode) {
+        const login = mode === 'login';
+        tabLogin.classList.toggle('active', login);
+        tabSignup.classList.toggle('active', !login);
+        loginForm.style.display = login ? 'block' : 'none';
+        signupForm.style.display = login ? 'none' : 'block';
+        authTitle.textContent = login ? 'Connexion' : 'Inscription';
+        clearAuthMessage();
+    }
+    tabLogin.addEventListener('click', () => setMode('login'));
+    tabSignup.addEventListener('click', () => setMode('signup'));
+
+    accountBtn.addEventListener('click', () => {
+        if (currentSession) {
+            openProfile();
+        } else {
+            setMode('login');
+            openModal(authModal);
+        }
+    });
+
+    document.getElementById('close-auth-modal').addEventListener('click', () => closeModal(authModal));
+    document.getElementById('close-profile-modal').addEventListener('click', () => closeModal(profileModal));
+
+    loginForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        clearAuthMessage();
+        const email = document.getElementById('login-email').value.trim();
+        const password = document.getElementById('login-password').value;
+        const btn = loginForm.querySelector('button[type=submit]');
+        btn.disabled = true;
+        try {
+            const { error } = await signIn({ email, password });
+            if (error) {
+                showAuthMessage(translateAuthError(error.message), 'error');
+            } else {
+                closeModal(authModal);
+                showSidebarToast('Connexion réussie.', 'success');
+            }
+        } catch (err) {
+            showAuthMessage(translateAuthError(err.message), 'error');
+        } finally {
+            btn.disabled = false;
+        }
+    });
+
+    signupForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        clearAuthMessage();
+        const prenom = document.getElementById('signup-prenom').value.trim();
+        const nom = document.getElementById('signup-nom').value.trim();
+        const email = document.getElementById('signup-email').value.trim();
+        const password = document.getElementById('signup-password').value;
+        const btn = signupForm.querySelector('button[type=submit]');
+        btn.disabled = true;
+        try {
+            const { error } = await signUp({ email, password, nom, prenom });
+            if (error) {
+                showAuthMessage(translateAuthError(error.message), 'error');
+            } else {
+                showAuthMessage("Compte créé ! Vérifiez votre boîte mail pour confirmer votre adresse, puis connectez-vous.", 'success');
+                signupForm.reset();
+            }
+        } catch (err) {
+            showAuthMessage(translateAuthError(err.message), 'error');
+        } finally {
+            btn.disabled = false;
+        }
+    });
+
+    async function openProfile() {
+        const profile = await getProfile();
+        const email = (profile && profile.email)
+            || (currentSession && currentSession.user && currentSession.user.email) || '';
+        document.getElementById('profile-prenom').value = (profile && profile.prenom) || '';
+        document.getElementById('profile-nom').value = (profile && profile.nom) || '';
+        document.getElementById('profile-email').value = email;
+        document.getElementById('profile-canton').value = (profile && profile.canton) || '';
+        document.getElementById('profile-ecole').value = (profile && profile.nom_ecole) || '';
+        document.getElementById('profile-telephone').value = (profile && profile.telephone) || '';
+        document.getElementById('profile-naissance').value = (profile && profile.date_naissance) || '';
+        openModal(profileModal);
+    }
+
+    document.getElementById('profile-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const msg = document.getElementById('profile-message');
+        const fields = {
+            canton: document.getElementById('profile-canton').value.trim() || null,
+            nom_ecole: document.getElementById('profile-ecole').value.trim() || null,
+            telephone: document.getElementById('profile-telephone').value.trim() || null,
+            date_naissance: document.getElementById('profile-naissance').value || null,
+        };
+        msg.style.display = 'block';
+        try {
+            const { error } = await updateProfile(fields);
+            if (error) {
+                msg.textContent = "Échec de l'enregistrement.";
+                msg.style.color = '#c0392b';
+            } else {
+                msg.textContent = 'Profil enregistré.';
+                msg.style.color = '#2b6747';
+            }
+        } catch (err) {
+            msg.textContent = translateAuthError(err.message);
+            msg.style.color = '#c0392b';
+        }
+    });
+
+    document.getElementById('btn-signout').addEventListener('click', async () => {
+        await signOut();
+        closeModal(profileModal);
+        showSidebarToast('Vous êtes déconnecté.', 'success');
+    });
+
+    // Liens légaux : Phase 4 les pointera vers les vraies pages.
+    ['link-terms', 'link-privacy'].forEach((id) => {
+        const el = document.getElementById(id);
+        if (el) el.addEventListener('click', (e) => e.preventDefault());
+    });
+
+    const applySession = (session, doMerge) => {
+        currentSession = session;
+        accountBtn.title = session ? 'Mon profil' : 'Connexion';
+        if (session && doMerge) {
+            pullAndMerge({ onReplaced: reloadUI });
+        }
+    };
+
+    onAuthStateChange((session) => applySession(session, true));
+    getSession().then((session) => applySession(session, true));
+}
+
 function init() {
     loadState();
     initBackgroundBoxes();
     initBackupUI();
+    initAuth();
     
     animateCards = true;
     // View Router toggle on startup
