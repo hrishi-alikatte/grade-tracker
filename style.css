@@ -1899,6 +1899,30 @@ select.btn {
     background: color-mix(in srgb, var(--color-bg-surface) 90%, transparent);
 }
 
+/* Touch press feedback (no :hover on phones) — snappy scale-down. */
+.landing-feature-card:active {
+    transform: scale(0.985);
+    transition: transform 0.1s ease;
+}
+
+/* Scroll reveal: elements tagged [data-reveal] start hidden ONLY once JS has
+   confirmed it can reveal them (adds .reveal-init), so the page is fully
+   readable if JS fails. GPU-only (opacity/transform), 200ms. */
+[data-reveal].reveal-init {
+    opacity: 0;
+    transform: translateY(14px);
+}
+[data-reveal].reveal-init.is-visible {
+    opacity: 1;
+    transform: none;
+    transition: opacity 0.2s ease, transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Landing page fades in on view entry, matching the guide page. */
+.landing-page-container {
+    animation: landingFadeIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
 .creator-word-box {
     background: color-mix(in srgb, var(--color-bg-surface) 80%, transparent);
     backdrop-filter: blur(16px);

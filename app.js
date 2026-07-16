@@ -8,6 +8,7 @@ import { storePhoto, getPhoto, deletePhoto } from './src/state/photos.js';
 import { applyTheme } from './src/ui/theme.js';
 import { escapeHTML } from './src/ui/dom.js';
 import { playConfettiSound, playFahSound, showSidebarToast, startConfetti, initBackgroundBoxes } from './src/ui/effects.js';
+import { initScrollReveal } from './src/ui/reveal.js';
 import { verifyGradeInText, compressAndResizeImage, ensureTesseract } from './src/features/ocr.js';
 import { initBackupUI } from './src/features/backup.js';
 import './src/features/pwa.js';
@@ -3137,6 +3138,12 @@ function switchView(viewId) {
         } else {
             selectedView.style.display = 'block';
         }
+    }
+
+    // Arm scroll-reveal the first time the landing page becomes visible
+    // (IntersectionObserver needs the elements laid out, not display:none).
+    if (viewId === 'view-landing') {
+        requestAnimationFrame(() => initScrollReveal());
     }
     
     // Update top navigation active tabs class
