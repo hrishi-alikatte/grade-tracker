@@ -2797,7 +2797,7 @@ select.btn {
 @media (max-width: 599px) {
     body {
         padding: 1rem;
-        padding: calc(1rem + env(safe-area-inset-top)) calc(1rem + env(safe-area-inset-right)) calc(1rem + env(safe-area-inset-bottom)) calc(1rem + env(safe-area-inset-left));
+        padding: 1rem calc(1rem + env(safe-area-inset-right)) calc(1rem + env(safe-area-inset-bottom)) calc(1rem + env(safe-area-inset-left));
     }
     
     .app-container {
@@ -2876,7 +2876,7 @@ select.btn {
     .top-nav-bar {
         flex-direction: column;
         gap: 0.75rem;
-        padding: 0.8rem 1rem;
+        padding: calc(0.8rem + env(safe-area-inset-top)) calc(1rem + env(safe-area-inset-right)) 0.8rem calc(1rem + env(safe-area-inset-left));
         border-radius: 0;
         margin-bottom: 1rem;
         align-items: center;
@@ -3609,6 +3609,22 @@ body.theme-light .landing-feature-card svg {
     color: var(--color-text-primary) !important;
 }
 
+/* Light mode overrides for landing preview carousel & sections */
+body.theme-light .landing-section {
+    border-top: 1px solid rgba(0, 0, 0, 0.08) !important;
+}
+body.theme-light .preview-scroll-card {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+}
+body.theme-light .indicator-dot {
+    background: rgba(28, 25, 23, 0.2) !important;
+}
+body.theme-light .indicator-dot.active {
+    background: var(--color-primary) !important;
+}
+
 /* Subject Card Styles */
 body.theme-light .subject-card {
     background-color: var(--color-bg-surface) !important;
@@ -4019,6 +4035,7 @@ body.theme-light .filter-pill:hover {
 @media (max-width: 768px) {
     body {
         padding: 0.75rem;
+        padding: 0.75rem calc(0.75rem + env(safe-area-inset-right)) calc(0.75rem + env(safe-area-inset-bottom)) calc(0.75rem + env(safe-area-inset-left));
     }
     .app-container {
         gap: 1.25rem;
@@ -4066,7 +4083,7 @@ body.theme-light .filter-pill:hover {
     .modal-container {
         padding: 1.25rem;
         margin: 0.5rem;
-        max-height: 92vh;
+        max-height: calc(100dvh - 1.5rem - env(safe-area-inset-bottom) - env(safe-area-inset-top));
         overflow-y: auto;
         border-radius: var(--radius-lg);
     }
@@ -4311,8 +4328,7 @@ body.theme-light .exam-input-field:focus {
        No orphaned controls. */
     .top-nav-bar {
         row-gap: 0.7rem;
-        padding-top: calc(0.7rem + env(safe-area-inset-top));
-        padding-bottom: 0.7rem;
+        padding: calc(0.7rem + env(safe-area-inset-top)) calc(1rem + env(safe-area-inset-right)) 0.7rem calc(1rem + env(safe-area-inset-left));
     }
     .top-nav-brand {
         flex: 1 1 auto;
@@ -4821,17 +4837,18 @@ body.theme-light .nav-icon-btn.logged-in {
     display: none;
 }
 
+/*.preview-scroll-card */
 .preview-scroll-card {
     flex: 0 0 100%;
     scroll-snap-align: center;
     border-radius: 12px;
-    overflow: hidden;
-    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.25);
-    background: #ffffff;
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: transparent;
+    border: none;
+    box-shadow: none;
     display: flex;
     justify-content: center;
     align-items: center;
+    padding: 0.5rem 1rem;
 }
 
 .preview-scroll-image {
@@ -4839,6 +4856,82 @@ body.theme-light .nav-icon-btn.logged-in {
     height: auto;
     display: block;
     object-fit: contain;
+}
+
+/* Mock Browser Window Shell */
+.mock-window-shell {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    background: var(--color-bg-surface);
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid var(--color-border-subtle);
+    box-shadow: 0 12px 36px rgba(0, 0, 0, 0.3);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.mock-window-shell:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 16px 48px rgba(0, 0, 0, 0.4);
+}
+
+.mock-window-header {
+    height: 38px;
+    background: color-mix(in srgb, var(--color-bg-elevated) 90%, transparent);
+    border-bottom: 1px solid var(--color-border-subtle);
+    display: flex;
+    align-items: center;
+    padding: 0 1rem;
+    gap: 0.45rem;
+    position: relative;
+}
+
+.mock-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    display: inline-block;
+}
+
+.mock-dot.red { background-color: #ef4444; }
+.mock-dot.yellow { background-color: #f59e0b; }
+.mock-dot.green { background-color: #10b981; }
+
+.mock-window-address {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--color-bg-base);
+    border: 1px solid var(--color-border-subtle);
+    padding: 0.15rem 2rem;
+    border-radius: var(--radius-sm);
+    font-size: 0.65rem;
+    color: var(--color-text-secondary);
+    font-family: var(--font-family-mono);
+    max-width: 240px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    text-align: center;
+}
+
+/* Light mode overrides for mock window */
+body.theme-light .mock-window-shell {
+    background: var(--color-bg-surface) !important;
+    border: 1px solid rgba(0, 0, 0, 0.08) !important;
+    box-shadow: 0 12px 36px rgba(0, 0, 0, 0.08) !important;
+}
+
+body.theme-light .mock-window-header {
+    background: var(--color-bg-elevated) !important;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.08) !important;
+}
+
+body.theme-light .mock-window-address {
+    background: var(--color-bg-surface) !important;
+    border: 1px solid rgba(0, 0, 0, 0.08) !important;
+    color: var(--color-text-secondary) !important;
 }
 
 /* Indicators */

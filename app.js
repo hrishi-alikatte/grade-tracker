@@ -3076,15 +3076,19 @@ document.getElementById('add-grade-form').addEventListener('submit', (e) => {
                         playConfettiSound();
                     } else if (value < 4.0) {
                         playFahSound();
-                        if (value < 3.0) {
-                            const badGradeMessages = [
+                        if (value < 3.5) {
+                            const badGradeMessages = state.badGradeMessages || [
                                 "t'a revisé ou ...",
                                 "bruh",
                                 "rappelle toi de ton objective!",
                                 "bye."
                             ];
-                            const randomMsg = badGradeMessages[Math.floor(Math.random() * badGradeMessages.length)];
-                            showSidebarToast(randomMsg);
+                            if (badGradeMessages.length > 0) {
+                                const randomMsg = badGradeMessages[Math.floor(Math.random() * badGradeMessages.length)];
+                                if (randomMsg && randomMsg.trim()) {
+                                    showSidebarToast(randomMsg);
+                                }
+                            }
                         }
                     }
 
@@ -3237,6 +3241,71 @@ function updateProfileUI() {
     if (profileMobile) profileMobile.textContent = state.studentMobile || '-';
 }
 
+function renderSettingsMessages() {
+    const listContainer = document.getElementById('settings-messages-list');
+    if (!listContainer) return;
+    listContainer.innerHTML = '';
+    
+    // Ensure state.badGradeMessages exists
+    if (!state.badGradeMessages) {
+        state.badGradeMessages = [
+            "t'a revisé ou ...",
+            "bruh",
+            "rappelle toi de ton objective!",
+            "bye."
+        ];
+    }
+    
+    state.badGradeMessages.forEach((msg, idx) => {
+        const item = document.createElement('div');
+        item.style.display = 'flex';
+        item.style.gap = '0.4rem';
+        item.style.alignItems = 'center';
+        
+        const input = document.createElement('input');
+        input.type = 'text';
+        input.value = msg;
+        input.className = 'form-input';
+        input.style.flex = '1';
+        input.style.minHeight = '32px';
+        input.style.fontSize = '0.75rem';
+        input.style.padding = '0.2rem 0.5rem';
+        input.style.border = '1px solid var(--color-border-subtle)';
+        input.style.borderRadius = 'var(--radius-sm)';
+        input.style.background = 'var(--color-bg-surface)';
+        input.style.color = 'var(--color-text-primary)';
+        
+        input.addEventListener('input', (e) => {
+            state.badGradeMessages[idx] = e.target.value;
+        });
+        
+        const deleteBtn = document.createElement('button');
+        deleteBtn.type = 'button';
+        deleteBtn.innerHTML = '&times;';
+        deleteBtn.className = 'btn btn-secondary';
+        deleteBtn.style.padding = '0';
+        deleteBtn.style.width = '32px';
+        deleteBtn.style.height = '32px';
+        deleteBtn.style.minHeight = '32px';
+        deleteBtn.style.display = 'flex';
+        deleteBtn.style.alignItems = 'center';
+        deleteBtn.style.justifyContent = 'center';
+        deleteBtn.style.fontSize = '1.1rem';
+        deleteBtn.style.borderRadius = 'var(--radius-sm)';
+        deleteBtn.style.border = '1px solid var(--color-border-subtle)';
+        deleteBtn.style.fontWeight = 'bold';
+        
+        deleteBtn.addEventListener('click', () => {
+            state.badGradeMessages.splice(idx, 1);
+            renderSettingsMessages();
+        });
+        
+        item.appendChild(input);
+        item.appendChild(deleteBtn);
+        listContainer.appendChild(item);
+    });
+}
+
 function init() {
     loadState();
     updateProfileUI();
@@ -3244,12 +3313,8 @@ function init() {
     initBackupUI();
     
     animateCards = true;
-    // View Router toggle on startup
-    if (state.hasSeenOnboarding) {
-        switchView('view-dashboard');
-    } else {
-        switchView('view-landing');
-    }
+    // View Router on startup: always start on the landing page
+    switchView('view-landing');
     
     const themeSelector = document.getElementById('theme-selector');
     if (themeSelector) {
@@ -3336,6 +3401,7 @@ function init() {
                     colorThemeGroup.style.display = isLight ? 'none' : 'block';
                 }
                 
+                renderSettingsMessages();
                 openModal(onboardingModal);
             });
         }
@@ -3373,6 +3439,27 @@ function init() {
             onboardingThemeDarkBtn.classList.add('active');
             onboardingThemeLightBtn.classList.remove('active');
             if (colorThemeGroup) colorThemeGroup.style.display = 'block';
+        });
+    }
+
+    // Low grade messages add button inside settings form
+    const addMessageBtn = document.getElementById('settings-add-message-btn');
+    const newMessageInput = document.getElementById('settings-new-message-input');
+    if (addMessageBtn && newMessageInput) {
+        addMessageBtn.addEventListener('click', () => {
+            const val = newMessageInput.value.trim();
+            if (val) {
+                if (!state.badGradeMessages) state.badGradeMessages = [];
+                state.badGradeMessages.push(val);
+                newMessageInput.value = '';
+                renderSettingsMessages();
+            }
+        });
+        newMessageInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                addMessageBtn.click();
+            }
         });
     }
 
@@ -3476,6 +3563,7 @@ function init() {
             if (onboardingTitle) onboardingTitle.textContent = "Paramètres d'affichage";
             if (onboardingSubmitBtn) onboardingSubmitBtn.textContent = "Enregistrer";
             
+            renderSettingsMessages();
             openModal(onboardingModal);
         });
     }

@@ -64,6 +64,14 @@ export function normalizeState(state) {
     for (const key of Object.keys(DEFAULT_SETTINGS)) {
         if (state.settings[key] === undefined) state.settings[key] = DEFAULT_SETTINGS[key];
     }
+    if (!state.badGradeMessages) {
+        state.badGradeMessages = [
+            "t'a revisé ou ...",
+            "bruh",
+            "rappelle toi de ton objective!",
+            "bye."
+        ];
+    }
 
     if (!state.subjectsYear1 || state.subjectsYear1.length === 0) {
         state.subjectsYear1 = JSON.parse(JSON.stringify(defaultSubjectsYear1));
