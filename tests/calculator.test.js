@@ -105,15 +105,32 @@ describe('calculateSubjectDataForSem', () => {
 // --- annual combination -------------------------------------------------
 
 describe('calculateSubjectData (annual)', () => {
-    it('annual = mean of the two already-rounded semester averages, re-rounded', () => {
+    it('annual = mean of all pooled grades (TS grades + rounded TAs) across both semesters, re-rounded', () => {
         // sem1 [4.1, 4.2 TS] → raw 4.15 → rounded 4.0
         // sem2 [4.6 TS] → rounded 4.5
-        // annual = (4.0 + 4.5) / 2 = 4.25 → rounded 4.5
+        // annual (pooled) = (4.1 + 4.2 + 4.6) / 3 = 4.3 → rounded 4.5
         const s = subject({ sem1: [ts(4.1), ts(4.2)], sem2: [ts(4.6)] });
         const data = calculateSubjectData(s, 'annual', ctx());
         expect(data.sem1Data.roundedAverage).toBe(4.0);
         expect(data.sem2Data.roundedAverage).toBe(4.5);
-        expect(data.rawAverage).toBeCloseTo(4.25, 5);
+        expect(data.rawAverage).toBeCloseTo(4.3, 5);
+        expect(data.roundedAverage).toBe(4.5);
+    });
+
+    it('annual in dual mode pools TS grades with virtual TA averages from both semesters', () => {
+        // sem1 [5.5 TS, 6.0 TA] → TA rounded = 6.0; Sem 1 average = (5.5 + 6.0)/2 = 5.75 → rounded 6.0
+        // sem2 [4.0 TS, 4.0 TS, 4.0 TS, 4.0 TA] → TA rounded = 4.0; Sem 2 average = (4+4+4+4)/4 = 4.0 → rounded 4.0
+        // annual pooled = [5.5, 4.0, 4.0, 4.0 (TSs)] + [6.0 (TA1), 4.0 (TA2)]
+        // sum = 27.5, count = 6 → raw = 27.5 / 6 = 4.5833... → rounded 4.5 (vs 5.0 with old (6.0+4.0)/2 formula)
+        const s = subject({
+            evaluationMode: 'dual',
+            sem1: [ts(5.5), ta(6.0)],
+            sem2: [ts(4.0), ts(4.0), ts(4.0), ta(4.0)]
+        });
+        const data = calculateSubjectData(s, 'annual', ctx());
+        expect(data.sem1Data.roundedAverage).toBe(6.0);
+        expect(data.sem2Data.roundedAverage).toBe(4.0);
+        expect(data.rawAverage).toBeCloseTo(4.5833, 4);
         expect(data.roundedAverage).toBe(4.5);
     });
 

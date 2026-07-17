@@ -128,10 +128,54 @@ export function calculateSubjectData(subject, semester, ctx) {
         const data1 = calculateSubjectDataForSem(subject, 'sem1');
         const data2 = calculateSubjectDataForSem(subject, 'sem2');
 
-        const avg1 = data1.roundedAverage;
-        const avg2 = data2.roundedAverage;
+        const grades1 = (subject.grades && subject.grades.sem1) ? subject.grades.sem1 : [];
+        const grades2 = (subject.grades && subject.grades.sem2) ? subject.grades.sem2 : [];
 
-        if (avg1 === null && avg2 === null) {
+        const mode = subject.evaluationMode || 'dual';
+        let rawAverage = null;
+
+        if (mode === 'standard') {
+            const allGrades = [...grades1, ...grades2];
+            if (allGrades.length > 0) {
+                const sum = allGrades.reduce((s, g) => s + g.value, 0);
+                rawAverage = sum / allGrades.length;
+            }
+        } else {
+            // Dual mode: pool TS grades + rounded TA average for sem1 + rounded TA average for sem2
+            const tas1 = grades1.filter(g => g.type === 'TA');
+            const tss1 = grades1.filter(g => g.type === 'TS');
+            const tas2 = grades2.filter(g => g.type === 'TA');
+            const tss2 = grades2.filter(g => g.type === 'TS');
+
+            let ta1AvgRounded = null;
+            if (tas1.length > 0) {
+                const ta1Sum = tas1.reduce((sum, g) => sum + g.value, 0);
+                ta1AvgRounded = roundToHalfPoint(ta1Sum / tas1.length);
+            }
+
+            let ta2AvgRounded = null;
+            if (tas2.length > 0) {
+                const ta2Sum = tas2.reduce((sum, g) => sum + g.value, 0);
+                ta2AvgRounded = roundToHalfPoint(ta2Sum / tas2.length);
+            }
+
+            const combinedTS = [
+                ...tss1.map(g => g.value),
+                ...tss2.map(g => g.value)
+            ];
+            if (ta1AvgRounded !== null) {
+                combinedTS.push(ta1AvgRounded);
+            }
+            if (ta2AvgRounded !== null) {
+                combinedTS.push(ta2AvgRounded);
+            }
+
+            if (combinedTS.length > 0) {
+                rawAverage = combinedTS.reduce((sum, val) => sum + val, 0) / combinedTS.length;
+            }
+        }
+
+        if (rawAverage === null) {
             // No semester grades: the maturity exam alone can still produce a grade.
             const examConfig = getSubjectExamConfig(subject, ctx);
             const examGradeRaw = examConfig ? getExamGradeRaw(subject, examConfig) : null;
@@ -152,13 +196,6 @@ export function calculateSubjectData(subject, semester, ctx) {
             return { rawAverage: null, roundedAverage: null, taAverage: null, tsAverage: null };
         }
 
-        // Annual average is the average of both semesters' rounded averages
-        let rawAverage = 0;
-        if (avg1 !== null && avg2 !== null) {
-            rawAverage = (avg1 + avg2) / 2;
-        } else {
-            rawAverage = avg1 !== null ? avg1 : avg2;
-        }
         const roundedAverage = roundToHalfPoint(rawAverage);
 
         // Factor in Maturity Exams: final = mean(rounded annual, raw exam), re-rounded
