@@ -4754,17 +4754,12 @@ select:focus-visible,
     }
 }
 /* Active style for onboarding theme mode buttons */
-body.theme-light .onboarding-theme-mode-btn.active {
-    background-color: #000000 !important;
-    color: #ffffff !important;
-    border-color: #000000 !important;
-    font-weight: 800 !important;
-}
-
-body:not(.theme-light) .onboarding-theme-mode-btn.active {
-    background-color: #ffffff !important;
-    color: #000000 !important;
-    border-color: #ffffff !important;
+body.theme-light .onboarding-theme-mode-btn.active,
+body:not(.theme-light) .onboarding-theme-mode-btn.active,
+body .onboarding-theme-mode-btn.active {
+    background-color: var(--color-primary) !important;
+    color: var(--color-bg-base) !important;
+    border-color: var(--color-primary) !important;
     font-weight: 800 !important;
 }
 
