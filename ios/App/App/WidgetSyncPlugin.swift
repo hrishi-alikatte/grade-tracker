@@ -12,8 +12,8 @@ public class WidgetSyncPlugin: CAPPlugin {
             return
         }
         
-        guard let defaults = UserDefaults(suiteName: "group.com.gradevibe.vaud") else {
-            call.reject("Failed to initialize UserDefaults for App Group group.com.gradevibe.vaud. Verify capabilities in Xcode.")
+        guard let defaults = UserDefaults(suiteName: "group.ch.notare.app") else {
+            call.reject("Failed to initialize UserDefaults for App Group group.ch.notare.app. Verify capabilities in Xcode.")
             return
         }
         
