@@ -2221,14 +2221,21 @@ select.btn {
     }
 }
 
+/* Sections size to their content instead of each forcing a full viewport band,
+   which previously left large empty gaps above/below the cards on every scroll
+   step. Vertical rhythm now comes from padding + the hairline border-top. */
 .landing-section {
-    min-height: 100vh;
-    min-height: 100dvh;
     display: flex;
     flex-direction: column;
     justify-content: center;
-    padding: 6rem 1rem;
+    padding: clamp(3.5rem, 8vw, 5.5rem) 1rem;
     width: 100%;
+}
+
+@media (max-width: 600px) {
+    .landing-section {
+        padding: 2.5rem 1rem;
+    }
 }
 
 .landing-features-grid {
@@ -2261,6 +2268,67 @@ select.btn {
     box-shadow: 0 12px 30px rgba(0, 0, 0, 0.3);
     background: color-mix(in srgb, var(--color-bg-surface) 90%, transparent);
 }
+
+/* Touch press feedback (no :hover on phones) — snappy scale-down. */
+.landing-feature-card:active {
+    transform: scale(0.985);
+    transition: transform 0.1s ease;
+}
+
+/* Scroll reveal: elements tagged [data-reveal] start hidden ONLY once JS has
+   confirmed it can reveal them (adds .reveal-init), so the page is fully
+   readable if JS fails. GPU-only (opacity/transform), 200ms. */
+[data-reveal].reveal-init {
+    opacity: 0;
+    transform: translateY(14px);
+}
+[data-reveal].reveal-init.is-visible {
+    opacity: 1;
+    transform: none;
+    transition: opacity 0.2s ease, transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Landing page fades in on view entry, matching the guide page. */
+.landing-page-container {
+    animation: landingFadeIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Landing footer — legal links. */
+.landing-footer {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 2rem 1rem calc(1rem + env(safe-area-inset-bottom));
+    margin-top: 1rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+    font-size: 0.8rem;
+    color: var(--color-text-muted);
+    text-align: center;
+}
+.landing-footer a {
+    color: var(--color-text-secondary);
+    text-decoration: none;
+    transition: color var(--transition-fast);
+}
+.landing-footer a:hover { color: var(--color-primary); }
+.landing-footer-sep { opacity: 0.45; }
+
+/* Legal document body (inside the modal). */
+.legal-body h3 {
+    font-size: 0.95rem;
+    font-weight: 800;
+    margin: 1.25rem 0 0.4rem;
+    color: var(--color-text-primary);
+}
+.legal-body p {
+    font-size: 0.85rem;
+    line-height: 1.6;
+    color: var(--color-text-secondary);
+    margin: 0 0 0.6rem;
+}
+.legal-body a { color: var(--color-primary); }
 
 .creator-word-box {
     background: color-mix(in srgb, var(--color-bg-surface) 80%, transparent);
@@ -2816,6 +2884,10 @@ select.btn {
         align-items: center;
         gap: 0.5rem;
     }
+
+    .brand-logo-container {
+        justify-content: center;
+    }
     
     .header-text {
         display: flex;
@@ -2874,13 +2946,30 @@ select.btn {
 @media (max-width: 640px) {
     /* Top Navigation Bar Responsiveness */
     .top-nav-bar {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        top: auto;
+        background: var(--color-bg-elevated);
+        border-top: 1px solid var(--color-border-subtle);
+        border-bottom: none;
+        padding: 0.75rem 1rem;
+        padding-bottom: calc(0.75rem + env(safe-area-inset-bottom));
+        z-index: 100;
+        box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.35);
         flex-direction: column;
         gap: 0.75rem;
-        padding: calc(0.8rem + env(safe-area-inset-top)) calc(1rem + env(safe-area-inset-right)) 0.8rem calc(1rem + env(safe-area-inset-left));
         border-radius: 0;
-        margin-bottom: 1rem;
+        margin-bottom: 0;
         align-items: center;
         text-align: center;
+    }
+
+    body.theme-light .top-nav-bar {
+        background: var(--color-bg-surface) !important;
+        border-top: 1px solid rgba(0,0,0,0.08) !important;
+        box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.05) !important;
     }
     
     .top-nav-brand {
@@ -2888,6 +2977,13 @@ select.btn {
         width: 100%;
     }
     
+    .nav-tabs-wrapper {
+        width: 100%;
+        display: flex;
+        justify-content: space-around;
+        flex-wrap: wrap;
+    }
+
     .nav-tabs {
         width: 100%;
         display: flex;
@@ -4852,6 +4948,194 @@ body.theme-light .nav-icon-btn.logged-in {
     object-fit: cover;
     object-position: top;
     display: block;
+}
+
+/* Mock Browser Window Shell */
+.mock-window-shell {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    background: var(--color-bg-surface);
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid var(--color-border-subtle);
+    box-shadow: 0 12px 36px rgba(0, 0, 0, 0.3);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.mock-window-shell:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 16px 48px rgba(0, 0, 0, 0.4);
+}
+
+.mock-window-header {
+    height: 38px;
+    background: color-mix(in srgb, var(--color-bg-elevated) 90%, transparent);
+    border-bottom: 1px solid var(--color-border-subtle);
+    display: flex;
+    align-items: center;
+    padding: 0 1rem;
+    gap: 0.45rem;
+    position: relative;
+}
+
+.mock-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    display: inline-block;
+}
+
+.mock-dot.red { background-color: #ef4444; }
+.mock-dot.yellow { background-color: #f59e0b; }
+.mock-dot.green { background-color: #10b981; }
+
+.mock-window-address {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--color-bg-base);
+    border: 1px solid var(--color-border-subtle);
+    padding: 0.15rem 2rem;
+    border-radius: var(--radius-sm);
+    font-size: 0.65rem;
+    color: var(--color-text-secondary);
+    font-family: var(--font-family-mono);
+    max-width: 240px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    text-align: center;
+}
+
+/* Light mode overrides for mock window */
+body.theme-light .mock-window-shell {
+    background: var(--color-bg-surface) !important;
+    border: 1px solid rgba(0, 0, 0, 0.08) !important;
+    box-shadow: 0 12px 36px rgba(0, 0, 0, 0.08) !important;
+}
+
+body.theme-light .mock-window-header {
+    background: var(--color-bg-elevated) !important;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.08) !important;
+}
+
+body.theme-light .mock-window-address {
+    background: var(--color-bg-surface) !important;
+    border: 1px solid rgba(0, 0, 0, 0.08) !important;
+    color: var(--color-text-secondary) !important;
+}
+
+/* Indicators */
+.carousel-indicators {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    margin-top: 1.5rem;
+}
+
+.indicator-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.2);
+    cursor: pointer;
+    transition: background 0.3s ease, transform 0.3s ease;
+}
+
+.indicator-dot.active {
+    background: var(--color-primary);
+    transform: scale(1.25);
+}
+
+/* --- User Sign-In Styles --- */
+.auth-toggle-container {
+    display: flex;
+    background: var(--color-bg-elevated);
+    padding: 4px;
+    border-radius: var(--radius-md);
+    margin-bottom: 1.5rem;
+    border: 1px solid var(--color-border-subtle);
+}
+
+.auth-toggle-btn {
+    flex: 1;
+    padding: 0.6rem;
+    font-size: 0.85rem;
+    font-weight: 700;
+    border-radius: var(--radius-sm);
+    border: none;
+    background: transparent;
+    color: var(--color-text-secondary);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.auth-toggle-btn.active {
+    background: var(--color-primary);
+    color: var(--color-bg-base);
+    box-shadow: 0 4px 12px rgba(96, 165, 250, 0.2);
+}
+
+body.theme-light .auth-toggle-btn.active {
+    color: #ffffff;
+}
+
+.nav-icon-btn.logged-in {
+    color: var(--color-primary);
+    background-color: rgba(96, 165, 250, 0.1);
+    border: 1px solid var(--color-primary);
+}
+
+body.theme-light .nav-icon-btn.logged-in {
+    background-color: rgba(0, 0, 0, 0.05);
+}
+
+/* --- Landing App Preview Carousel --- */
+.preview-carousel-wrapper {
+    max-width: 900px;
+    margin: 0 auto 3rem auto;
+    position: relative;
+    padding: 0 1rem;
+}
+
+.preview-scroll-container {
+    display: flex;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    gap: 1.5rem;
+    padding: 1rem 0;
+    /* Hide scrollbar for Firefox */
+    scrollbar-width: none;
+    /* Hide scrollbar for IE/Edge */
+    -ms-overflow-style: none;
+    -webkit-overflow-scrolling: touch;
+}
+
+/* Hide scrollbar for Chrome/Safari/Opera */
+.preview-scroll-container::-webkit-scrollbar {
+    display: none;
+}
+
+/*.preview-scroll-card */
+.preview-scroll-card {
+    flex: 0 0 100%;
+    scroll-snap-align: center;
+    border-radius: 12px;
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0.5rem 1rem;
+}
+
+.preview-scroll-image {
+    width: 100%;
+    height: auto;
+    display: block;
+    object-fit: contain;
 }
 
 /* Mock Browser Window Shell */

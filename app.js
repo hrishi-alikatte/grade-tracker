@@ -8,6 +8,10 @@ import { storePhoto, getPhoto, deletePhoto } from './src/state/photos.js';
 import { applyTheme } from './src/ui/theme.js';
 import { escapeHTML } from './src/ui/dom.js';
 import { playConfettiSound, playFahSound, showSidebarToast, startConfetti, initBackgroundBoxes } from './src/ui/effects.js';
+import { initScrollReveal } from './src/ui/reveal.js';
+import { isSupabaseConfigured, signUp, signIn, signOut, getSession, getProfile, updateProfile, onAuthStateChange } from './src/features/auth.js';
+import { pullAndMerge, initSyncListeners } from './src/features/sync.js';
+import { PRIVACY_TITLE, PRIVACY_HTML, TERMS_TITLE, TERMS_HTML } from './src/features/legal.js';
 import { verifyGradeInText, compressAndResizeImage, ensureTesseract } from './src/features/ocr.js';
 import { initBackupUI } from './src/features/backup.js';
 import { initNativeIntegration, syncNativeWidget, handleImportFromWeb } from './src/features/native-integration.js';
@@ -3175,6 +3179,12 @@ function switchView(viewId) {
             selectedView.style.display = 'block';
         }
     }
+
+    // Arm scroll-reveal the first time the landing page becomes visible
+    // (IntersectionObserver needs the elements laid out, not display:none).
+    if (viewId === 'view-landing') {
+        requestAnimationFrame(() => initScrollReveal());
+    }
     
     // Update top navigation active tabs class
     document.querySelectorAll('.nav-tab-btn').forEach(btn => {
@@ -3247,6 +3257,217 @@ function updateProfileUI() {
     if (profileMobile) profileMobile.textContent = state.studentMobile || '-';
 }
 
+// Traduit les messages d'erreur Supabase Auth (anglais) en français.
+function translateAuthError(msg) {
+    if (!msg) return 'Une erreur est survenue.';
+    const m = String(msg).toLowerCase();
+    if (m.includes('invalid login')) return 'E-mail ou mot de passe incorrect.';
+    if (m.includes('email not confirmed')) return "Confirmez votre adresse e-mail avant de vous connecter.";
+    if (m.includes('already registered') || m.includes('already exists') || m.includes('user already')) return 'Cette adresse e-mail est déjà utilisée.';
+    if (m.includes('password') && m.includes('short')) return 'Mot de passe trop court (6 caractères minimum).';
+    if (m.includes('rate limit') || m.includes('too many')) return 'Trop de tentatives. Réessayez dans quelques minutes.';
+    if (m.includes('network') || m.includes('fetch')) return 'Problème de connexion réseau.';
+    return 'Une erreur est survenue. Réessayez.';
+}
+
+// Documents légaux : ouvre la modale avec le bon contenu. Câblé sur les liens
+// du pied de page ET sur la case de consentement du formulaire d'inscription.
+function wireLegal() {
+    const legalModal = document.getElementById('legal-modal');
+    const legalTitle = document.getElementById('legal-modal-title');
+    const legalBody = document.getElementById('legal-modal-body');
+    if (!legalModal) return;
+
+    const openLegal = (kind) => {
+        const isPrivacy = kind === 'privacy';
+        legalTitle.textContent = isPrivacy ? PRIVACY_TITLE : TERMS_TITLE;
+        legalBody.innerHTML = isPrivacy ? PRIVACY_HTML : TERMS_HTML;
+        legalBody.scrollTop = 0;
+        openModal(legalModal);
+    };
+
+    const bind = (id, kind) => {
+        const el = document.getElementById(id);
+        if (el) el.addEventListener('click', (e) => { e.preventDefault(); openLegal(kind); });
+    };
+    bind('footer-link-privacy', 'privacy');
+    bind('footer-link-terms', 'terms');
+    bind('link-privacy', 'privacy');
+    bind('link-terms', 'terms');
+
+    const closeBtn = document.getElementById('close-legal-modal');
+    if (closeBtn) closeBtn.addEventListener('click', () => closeModal(legalModal));
+}
+
+// Câble l'UI de compte (Connexion / Inscription / Profil) + la synchro cloud.
+// Si Supabase n'est pas configuré, ne fait rien : l'app reste 100% locale.
+function initAuth() {
+    const accountBtn = document.getElementById('btn-account');
+    if (!isSupabaseConfigured) {
+        if (accountBtn) accountBtn.style.display = 'none';
+        return;
+    }
+    if (accountBtn) accountBtn.style.display = 'inline-flex';
+
+    initSyncListeners();
+
+    const authModal = document.getElementById('auth-modal');
+    const profileModal = document.getElementById('profile-modal');
+    const authMessage = document.getElementById('auth-message');
+    const loginForm = document.getElementById('login-form');
+    const signupForm = document.getElementById('signup-form');
+    const tabLogin = document.getElementById('auth-tab-login');
+    const tabSignup = document.getElementById('auth-tab-signup');
+    const authTitle = document.getElementById('auth-modal-title');
+
+    let currentSession = null;
+
+    const reloadUI = () => {
+        renderYearSelector();
+        if (state.currentYear !== 4) {
+            renderSubjects();
+            updateDashboard();
+        }
+        applyTheme();
+    };
+
+    function showAuthMessage(text, kind) {
+        authMessage.textContent = text;
+        authMessage.style.display = 'block';
+        authMessage.style.color = kind === 'error' ? '#c0392b' : '#2b6747';
+    }
+    function clearAuthMessage() {
+        authMessage.style.display = 'none';
+        authMessage.textContent = '';
+    }
+
+    function setMode(mode) {
+        const login = mode === 'login';
+        tabLogin.classList.toggle('active', login);
+        tabSignup.classList.toggle('active', !login);
+        loginForm.style.display = login ? 'block' : 'none';
+        signupForm.style.display = login ? 'none' : 'block';
+        authTitle.textContent = login ? 'Connexion' : 'Inscription';
+        clearAuthMessage();
+    }
+    tabLogin.addEventListener('click', () => setMode('login'));
+    tabSignup.addEventListener('click', () => setMode('signup'));
+
+    accountBtn.addEventListener('click', () => {
+        if (currentSession) {
+            openProfile();
+        } else {
+            setMode('login');
+            openModal(authModal);
+        }
+    });
+
+    document.getElementById('close-auth-modal').addEventListener('click', () => closeModal(authModal));
+    document.getElementById('close-profile-modal').addEventListener('click', () => closeModal(profileModal));
+
+    loginForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        clearAuthMessage();
+        const email = document.getElementById('login-email').value.trim();
+        const password = document.getElementById('login-password').value;
+        const btn = loginForm.querySelector('button[type=submit]');
+        btn.disabled = true;
+        try {
+            const { error } = await signIn({ email, password });
+            if (error) {
+                showAuthMessage(translateAuthError(error.message), 'error');
+            } else {
+                closeModal(authModal);
+                showSidebarToast('Connexion réussie.', 'success');
+            }
+        } catch (err) {
+            showAuthMessage(translateAuthError(err.message), 'error');
+        } finally {
+            btn.disabled = false;
+        }
+    });
+
+    signupForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        clearAuthMessage();
+        const prenom = document.getElementById('signup-prenom').value.trim();
+        const nom = document.getElementById('signup-nom').value.trim();
+        const email = document.getElementById('signup-email').value.trim();
+        const password = document.getElementById('signup-password').value;
+        const btn = signupForm.querySelector('button[type=submit]');
+        btn.disabled = true;
+        try {
+            const { error } = await signUp({ email, password, nom, prenom });
+            if (error) {
+                showAuthMessage(translateAuthError(error.message), 'error');
+            } else {
+                showAuthMessage("Compte créé ! Vérifiez votre boîte mail pour confirmer votre adresse, puis connectez-vous.", 'success');
+                signupForm.reset();
+            }
+        } catch (err) {
+            showAuthMessage(translateAuthError(err.message), 'error');
+        } finally {
+            btn.disabled = false;
+        }
+    });
+
+    async function openProfile() {
+        const profile = await getProfile();
+        const email = (profile && profile.email)
+            || (currentSession && currentSession.user && currentSession.user.email) || '';
+        document.getElementById('profile-prenom').value = (profile && profile.prenom) || '';
+        document.getElementById('profile-nom').value = (profile && profile.nom) || '';
+        document.getElementById('profile-email').value = email;
+        document.getElementById('profile-canton').value = (profile && profile.canton) || '';
+        document.getElementById('profile-ecole').value = (profile && profile.nom_ecole) || '';
+        document.getElementById('profile-telephone').value = (profile && profile.telephone) || '';
+        document.getElementById('profile-naissance').value = (profile && profile.date_naissance) || '';
+        openModal(profileModal);
+    }
+
+    document.getElementById('profile-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const msg = document.getElementById('profile-message');
+        const fields = {
+            canton: document.getElementById('profile-canton').value.trim() || null,
+            nom_ecole: document.getElementById('profile-ecole').value.trim() || null,
+            telephone: document.getElementById('profile-telephone').value.trim() || null,
+            date_naissance: document.getElementById('profile-naissance').value || null,
+        };
+        msg.style.display = 'block';
+        try {
+            const { error } = await updateProfile(fields);
+            if (error) {
+                msg.textContent = "Échec de l'enregistrement.";
+                msg.style.color = '#c0392b';
+            } else {
+                msg.textContent = 'Profil enregistré.';
+                msg.style.color = '#2b6747';
+            }
+        } catch (err) {
+            msg.textContent = translateAuthError(err.message);
+            msg.style.color = '#c0392b';
+        }
+    });
+
+    document.getElementById('btn-signout').addEventListener('click', async () => {
+        await signOut();
+        closeModal(profileModal);
+        showSidebarToast('Vous êtes déconnecté.', 'success');
+    });
+
+    const applySession = (session, doMerge) => {
+        currentSession = session;
+        accountBtn.title = session ? 'Mon profil' : 'Connexion';
+        if (session && doMerge) {
+            pullAndMerge({ onReplaced: reloadUI });
+        }
+    };
+
+    onAuthStateChange((session) => applySession(session, true));
+    getSession().then((session) => applySession(session, true));
+}
+
 function renderSettingsMessages() {
     const listContainer = document.getElementById('settings-messages-list');
     if (!listContainer) return;
@@ -3317,6 +3538,8 @@ function init() {
     updateProfileUI();
     initBackgroundBoxes();
     initBackupUI();
+    wireLegal();
+    initAuth();
     
     // Setup native integrations if on Capacitor iOS/Android
     initNativeIntegration(() => {
@@ -3324,7 +3547,7 @@ function init() {
         const results = checkVaudPromotion(currentSubjects, state.currentSemester);
         return { results };
     });
-    
+
     // Wire the clipboard import button for native iOS users
     const clipboardImportBtn = document.getElementById('backup-clipboard-import-btn');
     if (clipboardImportBtn) {
@@ -3333,7 +3556,7 @@ function init() {
             clipboardImportBtn.addEventListener('click', handleImportFromWeb);
         }
     }
-    
+
     animateCards = true;
     // View Router on startup: always start on the landing page
     switchView('view-landing');
@@ -3669,149 +3892,6 @@ function init() {
             }
         }
     });
-
-    // --- User Sign-In & Profile Modal Event Bindings ---
-    const btnProfile = document.getElementById('btn-profile-modal');
-    const authModal = document.getElementById('auth-modal');
-    const profileModal = document.getElementById('profile-modal');
-    const landingSigninBtn = document.getElementById('landing-signin-btn');
-
-    const authToggleSignup = document.getElementById('auth-toggle-signup');
-    const authToggleSignin = document.getElementById('auth-toggle-signin');
-    const signupForm = document.getElementById('auth-signup-form');
-    const signinForm = document.getElementById('auth-signin-form');
-
-    const closeAuthBtn = document.getElementById('close-auth-modal');
-    const closeProfileBtn = document.getElementById('close-profile-modal');
-    const logoutBtn = document.getElementById('profile-logout-btn');
-
-    // Open profile or auth modal
-    if (btnProfile) {
-        btnProfile.addEventListener('click', () => {
-            if (state.isLoggedIn) {
-                openModal(profileModal);
-            } else {
-                openModal(authModal);
-            }
-        });
-    }
-
-    if (landingSigninBtn) {
-        landingSigninBtn.addEventListener('click', () => {
-            if (authToggleSignin) authToggleSignin.click();
-            openModal(authModal);
-        });
-    }
-
-    // Toggle S'inscrire / Se connecter forms
-    if (authToggleSignup && authToggleSignin && signupForm && signinForm) {
-        authToggleSignup.addEventListener('click', () => {
-            authToggleSignup.classList.add('active');
-            authToggleSignin.classList.remove('active');
-            signupForm.style.display = 'flex';
-            signinForm.style.display = 'none';
-        });
-
-        authToggleSignin.addEventListener('click', () => {
-            authToggleSignin.classList.add('active');
-            authToggleSignup.classList.remove('active');
-            signinForm.style.display = 'flex';
-            signupForm.style.display = 'none';
-        });
-    }
-
-    // Close buttons
-    if (closeAuthBtn) {
-        closeAuthBtn.addEventListener('click', () => closeModal(authModal));
-    }
-    if (closeProfileBtn) {
-        closeProfileBtn.addEventListener('click', () => closeModal(profileModal));
-    }
-
-    // Sign Up form submission
-    if (signupForm) {
-        signupForm.addEventListener('submit', (e) => {
-            e.preventDefault();
-            const name = document.getElementById('signup-name').value.trim();
-            const email = document.getElementById('signup-email').value.trim();
-            const mobile = document.getElementById('signup-mobile').value.trim();
-
-            if (!name || !email || !mobile) {
-                showSidebarToast("Veuillez remplir tous les champs.", "error");
-                return;
-            }
-
-            if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-                showSidebarToast("Format d'adresse e-mail invalide.", "error");
-                return;
-            }
-
-            if (!/^\+?[0-9\s\-()]{9,}$/.test(mobile)) {
-                showSidebarToast("Format de numéro mobile invalide.", "error");
-                return;
-            }
-
-            state.studentName = name;
-            state.studentEmail = email;
-            state.studentMobile = mobile;
-            state.isLoggedIn = true;
-
-            saveRegisteredStudent({ name, email, mobile }, state);
-            saveState();
-
-            closeModal(authModal);
-            updateProfileUI();
-            
-            renderSubjects();
-            updateDashboard();
-
-            showSidebarToast(`Bienvenue, ${name} ! Votre compte a été créé.`, "success");
-        });
-    }
-
-    // Sign In form submission
-    if (signinForm) {
-        signinForm.addEventListener('submit', (e) => {
-            e.preventDefault();
-            const email = document.getElementById('signin-email').value.trim();
-
-            if (!email) {
-                showSidebarToast("Veuillez entrer votre adresse e-mail.", "error");
-                return;
-            }
-
-            const registered = findRegisteredStudent(email);
-            if (registered) {
-                const savedState = registered.state;
-                savedState.isLoggedIn = true;
-                savedState.studentName = registered.name;
-                savedState.studentEmail = registered.email;
-                savedState.studentMobile = registered.mobile;
-
-                replaceState(savedState);
-                closeModal(authModal);
-
-                location.reload();
-            } else {
-                showSidebarToast("Aucun compte trouvé avec cet e-mail. Veuillez vous inscrire.", "error");
-            }
-        });
-    }
-
-    // Log out action
-    if (logoutBtn) {
-        logoutBtn.addEventListener('click', () => {
-            state.isLoggedIn = false;
-            state.studentName = 'Étudiant';
-            state.studentEmail = '';
-            state.studentMobile = '';
-
-            resetStateToDefault();
-            closeModal(profileModal);
-
-            location.reload();
-        });
-    }
 }
 
 

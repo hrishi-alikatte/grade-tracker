@@ -160,11 +160,14 @@ async function queuePreferencesWrite(data, profilesData = null) {
 }
 
 function saveState() {
+    // Horodatage pour la synchro cloud (résolution de conflit LWW). Sans effet
+    // sur l'app hors ligne : c'est juste un champ de plus dans le blob.
+    state.updatedAt = Date.now();
     localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-    
+
     // Sync state backup to preferences
     queuePreferencesWrite(state);
-    
+
     if (state.isLoggedIn && state.studentEmail) {
         try {
             const REG_STUDENTS_KEY = 'notare_registered_students';
@@ -176,7 +179,7 @@ function saveState() {
                 students[index].mobile = state.studentMobile;
                 students[index].state = JSON.parse(JSON.stringify(state));
                 localStorage.setItem(REG_STUDENTS_KEY, JSON.stringify(students));
-                
+
                 // Sync profiles backup to preferences
                 queuePreferencesWrite(null, students);
             }
@@ -190,6 +193,11 @@ function saveState() {
                 queuePreferencesWrite(null, JSON.parse(registered));
             } catch (e) {}
         }
+    }
+
+    // Signal pour la couche de synchro (inerte si Supabase non configuré).
+    if (typeof window !== 'undefined' && typeof window.dispatchEvent === 'function') {
+        window.dispatchEvent(new CustomEvent('notare:state-saved'));
     }
 }
 
