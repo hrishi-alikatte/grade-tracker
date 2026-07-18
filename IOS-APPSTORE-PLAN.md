@@ -21,7 +21,7 @@ Native iOS via **Capacitor 8** wrapping the Vite web PWA. Target: App Store.
   - [x] `npx cap sync ios` (4 plugins via SPM)
   - [x] Xcode 26.6 installed, iOS 26.5 sim
   - [x] **`xcodebuild` BUILD SUCCEEDED** (simulator), app runs — Notare renders, bottom tab bar working
-- [ ] **Phase 2 — Device QA** (`/ios-qa`) — grades, promotion calc, OCR scanner, local notifications, widget sync, offline/Preferences
+- [x] **Phase 2 — QA** (browser, mobile viewport) — 0 JS errors, landing/dashboard/subjects/promotion-bilan render, Supabase auth wired, add-branch write-path + Capacitor Preferences mirror verified, 68/68 unit tests. No bugs. (Native notifications/widget/OCR need real-device pass.)
 - [ ] **Phase 3 — Design polish** (`/ios-design-review`) — safe areas, notch, touch targets, app icon, splash
 - [ ] **Phase 4 — Release + ship** (`/ship` + App Store Connect) — version, icons, screenshots, privacy nutrition labels, archive, TestFlight
 - [ ] **Phase 5 — Canary** (`/canary`) — post-release / TestFlight feedback monitor
