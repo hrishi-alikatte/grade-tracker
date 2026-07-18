@@ -7,7 +7,7 @@ Operating manual: `LOOP-PROMPT.md`.
 
 | # | Item | Status |
 |---|------|--------|
-| 1 | Haptics + juice (celebration, view transition, chip fix, reduced-motion, toggle) | IN PROGRESS (iter 1) |
+| 1 | Haptics + juice (celebration, view transition, chip fix, reduced-motion, toggle) | DONE (iter 1, `5131732`) — pending real-device haptic feel check at ship gate |
 | 2 | De-slop UI (design-review 0 findings, contrast AA, tokens, breakpoints) | TODO |
 | 3 | Backend hardened (schema reconcile, LWW, account deletion, site_url, advisors, sync test) | TODO |
 | 4 | Perf/a11y/ship (60fps, Release build, QA, screenshots, verify) | TODO |
@@ -36,10 +36,38 @@ Operating manual: `LOOP-PROMPT.md`.
   dead haptics setting migrations.js:18, confetti engine + confetti.mp3/fah.mp3 in
   src/ui/effects.js (playFah consumer app.js:3088), reduced-motion block style.css:4842.
   File sizes: app.js 3974 L, style.css 5237 L, index.html 1230 L.
-- ACT: install @capacitor/haptics + cap sync; Workflow `haptics-juice` fan-out
-  (recon 3 → build 3 file-partitioned → adversarial verify 3 → fix).
-- OBSERVE: pending workflow completion.
+- ACT: installed @capacitor/haptics@8.0.2 + cap sync; Workflow `haptics-juice`
+  (wf_1a52232e-f86): 3 recon → 3 builders (file-partitioned) → 3 adversarial
+  skeptics (11 confirmed findings) → fix pass (all 11 applied, incl. enter-only
+  view transition, haptic-grammar unification, celebration/save haptic priority
+  chain, non-native toggle hiding).
+- OBSERVE (all green): vite build OK; vitest 78/78 (was 68 — +10 haptics tests);
+  `xcodebuild` iphonesimulator BUILD SUCCEEDED; iPhone 17 Pro sim fresh-install
+  renders landing (evidence: scratchpad/iter1-sim-fresh.png); seeded native
+  Preferences v5 state (upgrade path) renders dark landing
+  (iter1-sim-seeded.png); browse QA 390x844: 0 console errors (only known
+  WidgetSyncPlugin web warning), onboard→dashboard, dark theme, Guide↔Mes Notes
+  round-trip (view opacity settles 1, no stuck classes), reload-with-state boots
+  clean (iter1-web-dark.png, iter1-web-dark-landing.png).
+- INCIDENT during observe: first sim launch showed empty void (dark bg + tab bar
+  only). Root-caused: stale app data from the pre-update Phase-2 install; same
+  binary renders fine on fresh install AND with realistic seeded v5 state.
+  Bootstrap guards (shape validation + corrupt-blob quarantine) cover bad blobs.
+  Not a code regression; no band-aid applied.
+- COMMIT: `5131732` feat(ios): haptics engine + native-feel motion pass.
+- Known residual risks (from fix agent): year-selector show-all still fires
+  hapticImpact('light') (kept deliberately); lastDashboardCelebrated only valid
+  synchronously after updateDashboard; real-device haptic feel unverified until
+  TestFlight.
 - Blockers: none.
+
+### Iteration 2 — next
+- REASON candidates: item 2 (de-slop UI: design-review gate, contrast AA, token
+  migration, breakpoints, gradient remnant) is highest leverage — item 1 polish
+  gate (/design-review 0 findings) overlaps it; run them together. Item 3
+  (backend) independent — can pair if capacity.
+- Note: vite preview server still running on :4179 (background task bmdyjyed5);
+  browse daemon warm.
 
 ## Blockers
 
