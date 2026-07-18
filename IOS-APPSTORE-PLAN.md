@@ -13,12 +13,14 @@ Native iOS via **Capacitor 8** wrapping the Vite web PWA. Target: App Store.
 
 ## Phase roadmap
 
-- [ ] **Phase 0 — Plan & lock** — this doc; decisions locked
-- [ ] **Phase 1 — Integrate & build**
-  - [ ] Integration branch off `pranathi/main`, merge feat, resolve conflicts
-  - [ ] Rebrand: appName → Notare, appId → `ch.notare.app` (capacitor.config, Xcode, Info.plist)
-  - [ ] `npm i` → `vite build` → `npx cap sync ios`
-  - [ ] Open Xcode, set signing team, build to simulator + device
+- [x] **Phase 0 — Plan & lock** — decisions locked
+- [x] **Phase 1 — Integrate & build** — COMPLETE
+  - [x] Integration branch `feat/ios-appstore-notare` off `pranathi/main`, merge feat, resolve 6-file conflict (commit `5dffefc`)
+  - [x] Build passes (`vite build`), 68/68 tests pass
+  - [x] Rebrand: Notare / `ch.notare.app` (capacitor.config, Info.plist, pbxproj, widget App Group) — commit `e2a23e4`
+  - [x] `npx cap sync ios` (4 plugins via SPM)
+  - [x] Xcode 26.6 installed, iOS 26.5 sim
+  - [x] **`xcodebuild` BUILD SUCCEEDED** (simulator), app runs — Notare renders, bottom tab bar working
 - [ ] **Phase 2 — Device QA** (`/ios-qa`) — grades, promotion calc, OCR scanner, local notifications, widget sync, offline/Preferences
 - [ ] **Phase 3 — Design polish** (`/ios-design-review`) — safe areas, notch, touch targets, app icon, splash
 - [ ] **Phase 4 — Release + ship** (`/ship` + App Store Connect) — version, icons, screenshots, privacy nutrition labels, archive, TestFlight
