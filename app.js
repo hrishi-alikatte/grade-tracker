@@ -15,6 +15,7 @@ import { PRIVACY_TITLE, PRIVACY_HTML, TERMS_TITLE, TERMS_HTML } from './src/feat
 import { verifyGradeInText, compressAndResizeImage, ensureTesseract } from './src/features/ocr.js';
 import { initBackupUI } from './src/features/backup.js';
 import { initNativeIntegration, syncNativeWidget, handleImportFromWeb } from './src/features/native-integration.js';
+import { hapticImpact, hapticNotification, hapticSelection } from './src/features/haptics.js';
 import { Capacitor } from '@capacitor/core';
 import './src/features/pwa.js';
 
@@ -200,6 +201,7 @@ function renderYearSelector() {
     container.querySelectorAll('.lang-toggle-btn').forEach(btn => {
         btn.addEventListener('click', () => {
             if (btn.id === 'btn-toggle-show-all') {
+                hapticImpact('light');
                 state.showAllYears = !state.showAllYears;
                 saveState();
                 renderYearSelector();
@@ -208,16 +210,18 @@ function renderYearSelector() {
 
             const rawYear = btn.getAttribute('data-year');
             const targetYear = rawYear.includes('.') ? parseFloat(rawYear) : parseInt(rawYear);
-            
+
             // If they click on the tab they ALREADY have active:
             if (state.currentYear === targetYear) {
                 // Toggle showAllYears!
+                hapticImpact('light');
                 state.showAllYears = !state.showAllYears;
                 saveState();
                 renderYearSelector();
                 return;
             }
 
+            hapticSelection();
             container.querySelectorAll('.lang-toggle-btn').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
             
@@ -320,7 +324,37 @@ studentNameEl.addEventListener('keydown', (e) => {
 
 // --- 9. UI Rendering ---
 
+// Last observed promotion status per (year:semester) view, in memory only:
+// a reload (launch, backup import) re-baselines silently, so the celebration
+// fires only when a recalculation genuinely flips the viewed status to promoted.
+const lastKnownPromotion = new Map();
+
+// True when the most recent updateDashboard() call fired the promotion
+// celebration — save handlers read it to skip their own local feedback.
+let lastDashboardCelebrated = false;
+
+function maybeCelebratePromotion(isPromoted) {
+    const key = `${state.currentYear}:${state.currentSemester}`;
+    const previous = lastKnownPromotion.get(key);
+    lastKnownPromotion.set(key, isPromoted);
+    if (previous !== false || !isPromoted) return false;
+
+    startConfetti();
+    playConfettiSound();
+    hapticNotification('success');
+    if (promoDashboard) {
+        // updateDashboard reset promoDashboard.className just before calling
+        // this, so remove + reflow only matters for any future caller that
+        // needs to restart a still-running pulse.
+        promoDashboard.classList.remove('promo-celebrate');
+        void promoDashboard.offsetWidth;
+        promoDashboard.classList.add('promo-celebrate');
+    }
+    return true;
+}
+
 function updateDashboard() {
+    lastDashboardCelebrated = false;
     const currentSubjects = getCurrentSubjects();
     const results = checkVaudPromotion(currentSubjects, state.currentSemester);
 
@@ -337,6 +371,9 @@ function updateDashboard() {
         renderEvolutionGraph();
         updateGroupsBilan();
         syncNativeWidget(0.0, true, 0);
+        // An empty view has no promotion status: forget the baseline so the
+        // first computed status after grades reappear stays silent.
+        lastKnownPromotion.delete(`${state.currentYear}:${state.currentSemester}`);
         return;
     }
 
@@ -389,6 +426,8 @@ function updateDashboard() {
             promoSubtitle.textContent = "";
         }
     }
+
+    lastDashboardCelebrated = maybeCelebratePromotion(results.isPromoted);
 
     // Update Bilan lists
     updateGroupsBilan();
@@ -1132,6 +1171,7 @@ function renderMultiSubjectGraph() {
     // Attach click listeners to filter pills
     wrapper.querySelectorAll('.filter-pill').forEach(btn => {
         btn.addEventListener('click', () => {
+            hapticSelection();
             const key = btn.getAttribute('data-key');
             if (activeSubjectFilters.has(key)) {
                 activeSubjectFilters.delete(key);
@@ -1936,6 +1976,7 @@ function renderSubjects() {
     const chkGrid = document.getElementById('chk-repeat-year');
     if (chkGrid) {
         chkGrid.addEventListener('change', (e) => {
+            hapticSelection();
             const baseYear = getBaseYear();
             const isChecked = e.target.checked;
             state.repeatingYears[baseYear] = isChecked;
@@ -1958,6 +1999,7 @@ function renderSubjects() {
     const chkGem = document.getElementById('chk-repeat-year-gem');
     if (chkGem) {
         chkGem.addEventListener('change', (e) => {
+            hapticSelection();
             const baseYear = getBaseYear();
             const isChecked = e.target.checked;
             state.repeatingYears[baseYear] = isChecked;
@@ -2341,6 +2383,7 @@ document.querySelectorAll('.semester-tab').forEach(btn => {
         const targetSem = btn.getAttribute('data-sem');
         if (state.currentSemester === targetSem) return;
 
+        hapticSelection();
         document.querySelectorAll('.semester-tab').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
         state.currentSemester = targetSem;
@@ -2404,10 +2447,15 @@ function initGradeSlider(wrap) {
         wrap.classList.add('gs-active');
         try { track.setPointerCapture(e.pointerId); } catch (_) {}
         setValue(valueFromClientX(e.clientX));
+        hapticSelection();
         e.preventDefault();
     });
     track.addEventListener('pointermove', (e) => {
-        if (dragging) setValue(valueFromClientX(e.clientX));
+        if (!dragging) return;
+        // Tick only when the snapped value actually changes (max ~10 per drag).
+        const prev = wrap.dataset.value;
+        setValue(valueFromClientX(e.clientX));
+        if (wrap.dataset.value !== prev) hapticSelection();
     });
     const endDrag = (e) => {
         if (!dragging) return;
@@ -2429,10 +2477,12 @@ function initGradeSlider(wrap) {
     // Keyboard.
     track.addEventListener('keydown', (e) => {
         const cur = parseFloat(wrap.dataset.value);
+        const prev = wrap.dataset.value;
         if (e.key === 'ArrowLeft' || e.key === 'ArrowDown') { setValue(cur - STEP); e.preventDefault(); }
         else if (e.key === 'ArrowRight' || e.key === 'ArrowUp') { setValue(cur + STEP); e.preventDefault(); }
         else if (e.key === 'Home') { setValue(MIN); e.preventDefault(); }
         else if (e.key === 'End') { setValue(MAX); e.preventDefault(); }
+        if (wrap.dataset.value !== prev) hapticSelection();
     });
 
     setValue(parseFloat(wrap.dataset.value || '4'));
@@ -2458,6 +2508,7 @@ if (gradeExtrasToggle) {
 
 document.querySelectorAll('#type-chips .chip-btn').forEach(btn => {
     btn.addEventListener('click', () => {
+        hapticSelection();
         document.querySelectorAll('#type-chips .chip-btn').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
     });
@@ -2465,6 +2516,7 @@ document.querySelectorAll('#type-chips .chip-btn').forEach(btn => {
 
 document.querySelectorAll('#edit-type-chips .chip-btn').forEach(btn => {
     btn.addEventListener('click', () => {
+        hapticSelection();
         document.querySelectorAll('#edit-type-chips .chip-btn').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
     });
@@ -2472,6 +2524,7 @@ document.querySelectorAll('#edit-type-chips .chip-btn').forEach(btn => {
 
 document.querySelectorAll('#subject-mode-chips .chip-btn').forEach(btn => {
     btn.addEventListener('click', () => {
+        hapticSelection();
         document.querySelectorAll('#subject-mode-chips .chip-btn').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
     });
@@ -2484,6 +2537,8 @@ document.getElementById('add-subject-form').addEventListener('submit', (e) => {
     const target = parseFloat(document.getElementById('subject-target').value);
     
     if(!name || isNaN(target)) return;
+
+    hapticImpact('medium');
 
     // Detect role based on subject name
     let role = 'general';
@@ -2583,6 +2638,7 @@ function handleSubjectInteractionClick(e) {
     // Delete branch
     if (e.target.classList.contains('btn-delete-subject')) {
         if (confirm(`Voulez-vous vraiment supprimer la branche "${subject.name}"?`)) {
+            hapticNotification('warning');
             const cy = state.currentYear;
             if (cy === 3) state.subjectsYear3 = state.subjectsYear3.filter(s => s.id !== subId);
             else if (cy === 3.5) state.subjectsYear3_rep = state.subjectsYear3_rep.filter(s => s.id !== subId);
@@ -2602,6 +2658,7 @@ function handleSubjectInteractionClick(e) {
         const newName = prompt("Entrez le nom de votre Option Complémentaire (OC) :", subject.name);
         if (newName && newName.trim() !== "") {
             subject.name = newName.trim();
+            hapticImpact('medium');
             saveState();
             renderSubjects();
             updateDashboard();
@@ -2616,6 +2673,7 @@ function handleSubjectInteractionClick(e) {
         if (newName && newName.trim() !== "") {
             const nameVal = newName.trim();
             subject.name = nameVal;
+            hapticImpact('medium');
             
             // Propagate OS name to all years
             state.subjectsYear1.forEach(s => { if (s.role === 'os') s.name = nameVal; });
@@ -2660,6 +2718,7 @@ function handleSubjectInteractionClick(e) {
         const newTargetVal = parseFloat(newTargetStr);
         if (!isNaN(newTargetVal) && newTargetVal >= 1.0 && newTargetVal <= 6.0) {
             subject.target = newTargetVal;
+            hapticImpact('medium');
             saveState();
             renderSubjects();
             updateDashboard();
@@ -2763,7 +2822,7 @@ function handleSubjectInteractionClick(e) {
                 if (delBtn) {
                     delBtn.style.display = isCurrentYearLocked() ? 'none' : 'inline-block';
                 }
-                
+
                 openModal(gradeDetailsModal);
             }
         }
@@ -2815,6 +2874,7 @@ if (subjectDetailsModal) {
 if (deleteDetailGradeBtn) {
     deleteDetailGradeBtn.addEventListener('click', () => {
         if (isCurrentYearLocked()) {
+            hapticNotification('error');
             alert("Cette tentative est verrouillée.");
             return;
         }
@@ -2823,6 +2883,7 @@ if (deleteDetailGradeBtn) {
             const subject = currentSubjects.find(s => s.id === selectedSubjectIdForDetails);
             if (subject) {
                 if (confirm("Supprimer cette note?")) {
+                    hapticNotification('warning');
                     migrateSubjectGrades(subject);
                     const sem = state.currentSemester;
                     if (sem !== 'annual') {
@@ -2846,6 +2907,7 @@ document.getElementById('edit-details-btn').addEventListener('click', () => {
 document.getElementById('save-edit-btn').addEventListener('click', (e) => {
     e.preventDefault();
     if (isCurrentYearLocked()) {
+        hapticNotification('error');
         alert("Cette tentative est verrouillée.");
         return;
     }
@@ -2889,6 +2951,9 @@ document.getElementById('save-edit-btn').addEventListener('click', (e) => {
                 closeDetailsModalAndReset();
                 renderSubjects();
                 updateDashboard();
+                // One haptic per save: skip when the edit flipped promotion
+                // and the celebration already fired its own.
+                if (!lastDashboardCelebrated) hapticImpact('medium');
             });
         }
     };
@@ -2927,6 +2992,7 @@ if (btnCloseCamera) {
 if (btnCaptureFrame) {
     btnCaptureFrame.addEventListener('click', () => {
         if (!cameraStream) return;
+        hapticImpact('medium');
         const capturedData = captureFrame(cameraStream, false);
         if (capturedData) {
             currentUploadedPhotoBase64 = capturedData;
@@ -2973,6 +3039,7 @@ if (editBtnCloseCamera) {
 if (editBtnCaptureFrame) {
     editBtnCaptureFrame.addEventListener('click', () => {
         if (!editCameraStream) return;
+        hapticImpact('medium');
         const capturedData = captureFrame(editCameraStream, true);
         if (capturedData) {
             editUploadedPhotoBase64 = capturedData;
@@ -3026,6 +3093,7 @@ document.getElementById('add-grade-form').addEventListener('submit', (e) => {
     e.preventDefault();
     const submitBtn = e.target.querySelector('button[type="submit"]');
     if (isCurrentYearLocked()) {
+        hapticNotification('error');
         alert("Cette tentative est verrouillée.");
         closeModal(addGradeModal);
         return;
@@ -3080,11 +3148,16 @@ document.getElementById('add-grade-form').addEventListener('submit', (e) => {
                     renderSubjects();
                     updateDashboard();
 
-                    // Celebratory effect for perfect grade (=== 6.0) or warning for insufficient grades (< 4.0)
-                    if (value === 6.0) {
+                    // One feedback per save: promotion flip > 6.0 > insufficient > plain confirm.
+                    if (lastDashboardCelebrated) {
+                        // The promotion celebration (updateDashboard) already
+                        // played confetti, sound and haptic for this save.
+                    } else if (value === 6.0) {
+                        hapticNotification('success');
                         startConfetti();
                         playConfettiSound();
                     } else if (value < 4.0) {
+                        hapticNotification('warning');
                         playFahSound();
                         if (value < 3.5) {
                             const badGradeMessages = state.badGradeMessages || [
@@ -3100,6 +3173,8 @@ document.getElementById('add-grade-form').addEventListener('submit', (e) => {
                                 }
                             }
                         }
+                    } else {
+                        hapticImpact('medium');
                     }
 
                     // Reset form and variables
@@ -3160,23 +3235,60 @@ const viewLanding = document.getElementById('view-landing');
 const viewGuide = document.getElementById('view-guide');
 const viewDashboard = document.getElementById('view-dashboard');
 
+// Page-level view transition: enter-only — the outgoing view swaps out
+// synchronously and .view-enter plays on the incoming one. Keyframe-based
+// (not transition) so the global reduced-motion CSS block collapses it
+// cleanly; the JS gate in switchView skips it entirely. The class is removed
+// on animationend — matched by keyframe name, since child animationend events
+// bubble and the view could carry animations of its own — with a timeout
+// fallback so a missing CSS rule can never leave the class behind.
+let pendingViewAnim = null;
+
+function playViewAnim(view) {
+    if (pendingViewAnim) pendingViewAnim();
+    let timer = null;
+    const onEnd = (e) => { if (e.animationName === 'viewEnter') finish(); };
+    const finish = () => {
+        if (pendingViewAnim !== finish) return;
+        pendingViewAnim = null;
+        clearTimeout(timer);
+        view.removeEventListener('animationend', onEnd);
+        view.classList.remove('view-enter');
+    };
+    pendingViewAnim = finish;
+    view.addEventListener('animationend', onEnd);
+    timer = setTimeout(finish, 350);
+    view.classList.remove('view-enter');
+    void view.offsetWidth;
+    view.classList.add('view-enter');
+    // If the class maps to no animation (rule absent), settle immediately.
+    if (!getComputedStyle(view).animationName.split(', ').includes('viewEnter')) finish();
+}
+
 function switchView(viewId) {
     // Stop any active camera scanner before leaving views
     stopScanning(false);
     stopScanning(true);
-    
+
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const selectedView = document.getElementById(viewId);
+    const currentView = [viewLanding, viewGuide, viewDashboard]
+        .find(v => v && v.style.display !== 'none');
+
     // Hide all top-level page views
     if (viewLanding) viewLanding.style.display = 'none';
     if (viewGuide) viewGuide.style.display = 'none';
     if (viewDashboard) viewDashboard.style.display = 'none';
-    
+
     // Show selected view
-    const selectedView = document.getElementById(viewId);
     if (selectedView) {
         if (viewId === 'view-landing' || viewId === 'view-guide') {
             selectedView.style.display = 'flex';
         } else {
             selectedView.style.display = 'block';
+        }
+        if (!reduceMotion && currentView !== selectedView) {
+            playViewAnim(selectedView);
         }
     }
 
@@ -3185,12 +3297,12 @@ function switchView(viewId) {
     if (viewId === 'view-landing') {
         requestAnimationFrame(() => initScrollReveal());
     }
-    
+
     // Update top navigation active tabs class
     document.querySelectorAll('.nav-tab-btn').forEach(btn => {
         btn.classList.toggle('active', btn.getAttribute('data-view') === viewId);
     });
-    
+
     animateCards = true;
     // Scroll to top
     window.scrollTo({ top: 0, behavior: 'instant' });
@@ -3350,8 +3462,8 @@ function initAuth() {
         authTitle.textContent = login ? 'Connexion' : 'Inscription';
         clearAuthMessage();
     }
-    tabLogin.addEventListener('click', () => setMode('login'));
-    tabSignup.addEventListener('click', () => setMode('signup'));
+    tabLogin.addEventListener('click', () => { hapticSelection(); setMode('login'); });
+    tabSignup.addEventListener('click', () => { hapticSelection(); setMode('signup'); });
 
     accountBtn.addEventListener('click', () => {
         if (currentSession) {
@@ -3375,12 +3487,15 @@ function initAuth() {
         try {
             const { error } = await signIn({ email, password });
             if (error) {
+                hapticNotification('error');
                 showAuthMessage(translateAuthError(error.message), 'error');
             } else {
+                hapticNotification('success');
                 closeModal(authModal);
                 showSidebarToast('Connexion réussie.', 'success');
             }
         } catch (err) {
+            hapticNotification('error');
             showAuthMessage(translateAuthError(err.message), 'error');
         } finally {
             btn.disabled = false;
@@ -3399,12 +3514,15 @@ function initAuth() {
         try {
             const { error } = await signUp({ email, password, nom, prenom });
             if (error) {
+                hapticNotification('error');
                 showAuthMessage(translateAuthError(error.message), 'error');
             } else {
+                hapticNotification('success');
                 showAuthMessage("Compte créé ! Vérifiez votre boîte mail pour confirmer votre adresse, puis connectez-vous.", 'success');
                 signupForm.reset();
             }
         } catch (err) {
+            hapticNotification('error');
             showAuthMessage(translateAuthError(err.message), 'error');
         } finally {
             btn.disabled = false;
@@ -3438,13 +3556,16 @@ function initAuth() {
         try {
             const { error } = await updateProfile(fields);
             if (error) {
+                hapticNotification('error');
                 msg.textContent = "Échec de l'enregistrement.";
                 msg.style.color = '#c0392b';
             } else {
+                hapticNotification('success');
                 msg.textContent = 'Profil enregistré.';
                 msg.style.color = '#2b6747';
             }
         } catch (err) {
+            hapticNotification('error');
             msg.textContent = translateAuthError(err.message);
             msg.style.color = '#c0392b';
         }
@@ -3452,6 +3573,7 @@ function initAuth() {
 
     document.getElementById('btn-signout').addEventListener('click', async () => {
         await signOut();
+        hapticNotification('success');
         closeModal(profileModal);
         showSidebarToast('Vous êtes déconnecté.', 'success');
     });
@@ -3557,6 +3679,12 @@ function init() {
         }
     }
 
+    // The vibrations setting only does something in the native app
+    const hapticsRow = document.getElementById('haptics-setting-row');
+    if (hapticsRow && !Capacitor.isNativePlatform()) {
+        hapticsRow.style.display = 'none';
+    }
+
     animateCards = true;
     // View Router on startup: always start on the landing page
     switchView('view-landing');
@@ -3586,6 +3714,7 @@ function init() {
     const themeBtn = document.getElementById('theme-toggle-btn');
     if (themeBtn) {
         themeBtn.addEventListener('click', () => {
+            hapticSelection();
             state.isLightTheme = (state.isLightTheme === false) ? true : false;
             saveState();
             applyTheme();
@@ -3633,7 +3762,9 @@ function init() {
                 });
                 document.getElementById('onboarding-is-repeating').checked = !!state.repeatingYears[currentBaseYear];
                 document.getElementById('onboarding-show-all-years').checked = state.showAllYears !== false;
-                
+                const hapticsSwitch = document.getElementById('onboarding-haptics');
+                if (hapticsSwitch) hapticsSwitch.checked = !state.settings || state.settings.haptics !== false;
+
                 const isLight = state.isLightTheme !== false;
                 const obLightBtn = document.getElementById('onboarding-theme-light');
                 const obDarkBtn = document.getElementById('onboarding-theme-dark');
@@ -3656,6 +3787,7 @@ function init() {
     const onboardingYearBtns = document.querySelectorAll('.onboarding-year-btn');
     onboardingYearBtns.forEach(btn => {
         btn.addEventListener('click', () => {
+            hapticSelection();
             onboardingYearBtns.forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
             
@@ -3675,17 +3807,25 @@ function init() {
 
     if (onboardingThemeLightBtn && onboardingThemeDarkBtn) {
         onboardingThemeLightBtn.addEventListener('click', () => {
+            hapticSelection();
             onboardingThemeLightBtn.classList.add('active');
             onboardingThemeDarkBtn.classList.remove('active');
             if (colorThemeGroup) colorThemeGroup.style.display = 'none';
         });
-        
+
         onboardingThemeDarkBtn.addEventListener('click', () => {
+            hapticSelection();
             onboardingThemeDarkBtn.classList.add('active');
             onboardingThemeLightBtn.classList.remove('active');
             if (colorThemeGroup) colorThemeGroup.style.display = 'block';
         });
     }
+
+    // Switch ticks in the settings modal (the values themselves are read on submit).
+    ['onboarding-is-repeating', 'onboarding-show-all-years', 'onboarding-haptics'].forEach(id => {
+        const sw = document.getElementById(id);
+        if (sw) sw.addEventListener('change', () => hapticSelection());
+    });
 
     // Low grade messages add button inside settings form
     const addMessageBtn = document.getElementById('settings-add-message-btn');
@@ -3730,7 +3870,10 @@ function init() {
             
             const showAllInput = document.getElementById('onboarding-show-all-years');
             const showAll = showAllInput ? showAllInput.checked : true;
-            
+
+            const hapticsInput = document.getElementById('onboarding-haptics');
+            if (hapticsInput && state.settings) state.settings.haptics = hapticsInput.checked;
+
             state.currentYear = isRepeating ? selectedYear + 0.5 : selectedYear;
             state.repeatingYears[selectedYear] = isRepeating;
             state.showAllYears = showAll;
@@ -3748,7 +3891,8 @@ function init() {
             
             saveState();
             applyTheme();
-            
+            hapticNotification('success');
+
             // Sync active semester tab UI state
             document.querySelectorAll('.semester-tab').forEach(b => {
                 b.classList.toggle('active', b.getAttribute('data-sem') === 'annual');
@@ -3792,6 +3936,9 @@ function init() {
             const showAllInput = document.getElementById('onboarding-show-all-years');
             if (showAllInput) showAllInput.checked = state.showAllYears !== false;
 
+            const hapticsSwitch = document.getElementById('onboarding-haptics');
+            if (hapticsSwitch) hapticsSwitch.checked = !state.settings || state.settings.haptics !== false;
+
             const isLight = state.isLightTheme !== false;
             const obLightBtn = document.getElementById('onboarding-theme-light');
             const obDarkBtn = document.getElementById('onboarding-theme-dark');
@@ -3816,8 +3963,9 @@ function init() {
     // Bind Top Navigation Tabs
     document.querySelectorAll('.nav-tab-btn').forEach(btn => {
         btn.addEventListener('click', () => {
+            if (!btn.classList.contains('active')) hapticSelection();
             const targetView = btn.getAttribute('data-view');
-            
+
             // If they click dashboard or guide, they implicitly accept onboarding
             if (targetView === 'view-dashboard' || targetView === 'view-guide') {
                 if (!state.hasSeenOnboarding) {
@@ -3847,6 +3995,7 @@ function init() {
             const subject = currentSubjects.find(s => s.id === subId);
             if (subject) {
                 if (confirm(`Voulez-vous vraiment supprimer la branche "${subject.name}"?`)) {
+                    hapticNotification('warning');
                     const cy = state.currentYear;
                     if (cy === 3) state.subjectsYear3 = state.subjectsYear3.filter(s => s.id !== subId);
                     else if (cy === 3.5) state.subjectsYear3_rep = state.subjectsYear3_rep.filter(s => s.id !== subId);
@@ -3870,6 +4019,7 @@ function init() {
             let rawVal = e.target.value.trim().replace(',', '.');
             let val = parseFloat(rawVal);
             if (isNaN(val) || val < 1.0 || val > 6.0) {
+                if (rawVal) hapticNotification('error');
                 val = null;
                 e.target.value = '';
             } else {

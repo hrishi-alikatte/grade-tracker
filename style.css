@@ -344,6 +344,17 @@ select.btn {
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35), inset 0 1px 1px rgba(255, 255, 255, 0.05);
 }
 
+/* One-shot pulse when the status flips to promoted (see maybeCelebratePromotion).
+   Keyframe-based so the reduced-motion block collapses it. */
+.promo-dashboard-container.promo-celebrate {
+    animation: promoPulse 0.5s var(--ease-out);
+}
+
+@keyframes promoPulse {
+    0%, 100% { transform: scale(1); }
+    35% { transform: scale(1.02); }
+}
+
 .promo-header {
     display: flex;
     align-items: center;
@@ -858,9 +869,16 @@ select.btn {
     min-width: 44px;
 }
 
-.grade-pill:hover {
-    transform: scale(1.05);
-    filter: brightness(1.1);
+@media (hover: hover) {
+    .grade-pill:hover {
+        transform: scale(1.05);
+        filter: brightness(1.1);
+    }
+}
+
+.grade-pill:active {
+    transform: scale(0.96);
+    transition: transform 0.1s ease;
 }
 
 .grade-pill.passing {
@@ -1071,7 +1089,6 @@ select.btn {
     cursor: pointer;
     text-align: center;
     position: relative;
-    will-change: transform;
     transition: transform 0.15s cubic-bezier(0.2, 1, 0.3, 1),
                 background-color 0.12s ease,
                 border-color 0.12s ease,
@@ -1082,12 +1099,14 @@ select.btn {
     min-height: 44px;
 }
 
-.chip-btn:hover {
-    background-color: var(--color-bg-elevated);
-    color: white;
-    transform: scale(1.18);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
-    z-index: 2;
+@media (hover: hover) {
+    .chip-btn:hover {
+        background-color: var(--color-bg-elevated);
+        color: var(--color-text-primary);
+        transform: scale(1.05);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+        z-index: 2;
+    }
 }
 
 .chip-btn.active {
@@ -2288,11 +2307,6 @@ select.btn {
     transition: opacity 0.2s ease, transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-/* Landing page fades in on view entry, matching the guide page. */
-.landing-page-container {
-    animation: landingFadeIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-}
-
 /* Landing footer — legal links. */
 .landing-footer {
     display: flex;
@@ -2369,24 +2383,12 @@ select.btn {
     }
 }
 
-@keyframes landingFadeIn {
-    from {
-        opacity: 0;
-        transform: scale(0.98) translateY(10px);
-    }
-    to {
-        opacity: 1;
-        transform: scale(1) translateY(0);
-    }
-}
-
 /* --- Visual Guide Page Styles --- */
 .guide-page-container {
     width: 100%;
     max-width: 1200px;
     margin: 0 auto;
     padding: 2rem 1.5rem;
-    animation: landingFadeIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
     display: flex;
     flex-direction: column;
     gap: var(--section-gap);
@@ -4361,7 +4363,6 @@ body.theme-light .exam-input-field:focus {
 /* View Transition Animations */
 .view-fade-in {
     animation: gentleFadeIn 0.1s ease-out forwards;
-    will-change: opacity, transform;
 }
 
 @keyframes gentleFadeIn {
@@ -4372,6 +4373,22 @@ body.theme-light .exam-input-field:focus {
     to {
         opacity: 1;
         transform: translateY(0) scale(1);
+    }
+}
+
+/* Page-level view switch: enter-only fade + rise (see switchView). */
+.view-enter {
+    animation: viewEnter 0.2s var(--ease-out);
+}
+
+@keyframes viewEnter {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
     }
 }
 
