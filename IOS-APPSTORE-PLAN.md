@@ -26,7 +26,15 @@ Native iOS via **Capacitor 8** wrapping the Vite web PWA. Target: App Store.
   - [x] Notare app icon (gradient cap) — replaced default Capacitor icon, verified on sim home screen (commit `31ef54e`)
   - [ ] Splash screen (still default Capacitor) — optional polish
   - [ ] Real-device safe-area / notch / touch-target pass (needs device)
-- [ ] **Phase 4 — Release + ship** (`/ship` + App Store Connect) — version, icons, screenshots, privacy nutrition labels, archive, TestFlight
+- [~] **Phase 4 — Release + ship** (Xcode GUI archive → TestFlight first)
+  - [x] Version 1.0 / build 1, Release config builds clean
+  - [x] Notare splash screen
+  - [x] `NSCameraUsageDescription` (OCR scanner) + `ITSAppUsesNonExemptEncryption=false`
+  - [x] 6.9" landing screenshot (1320×2868)
+  - [x] Submission guide + metadata + privacy-label drafts → `APPSTORE-SUBMISSION.md`
+  - [ ] **YOU: Xcode → set Team → Archive → Distribute → TestFlight** (see APPSTORE-SUBMISSION.md)
+  - [ ] Create App Store Connect app record; confirm privacy-policy public URL + privacy labels
+  - [ ] More screenshots after device testing
 - [ ] **Phase 5 — Canary** (`/canary`) — post-release / TestFlight feedback monitor
 
 ## Key facts
