@@ -9,7 +9,7 @@ Operating manual: `LOOP-PROMPT.md`.
 |---|------|--------|
 | 1 | Haptics + juice (celebration, view transition, chip fix, reduced-motion, toggle) | DONE (iter 1, `5131732`) — pending real-device haptic feel check at ship gate |
 | 2 | De-slop UI (design-review 0 findings, contrast AA, tokens, breakpoints) | DONE (iter 2, `efb5eab`) — residuals noted in iteration log |
-| 3 | Backend hardened (schema reconcile, LWW, account deletion, site_url, advisors, sync test) | TODO |
+| 3 | Backend hardened (schema reconcile, LWW, account deletion, site_url, advisors, sync test) | DONE (iter 3, `ba77440`) — live + repo in lockstep |
 | 4 | Perf/a11y/ship (60fps, Release build, QA, screenshots, verify) | TODO |
 | 5 | Ledger evidence complete | TODO |
 
@@ -98,13 +98,50 @@ Operating manual: `LOOP-PROMPT.md`.
   partially deferred as outside census mandate; safe-area env() = 0 in headless —
   eyeball notch padding once on simulator at ship gate.
 
-### Iteration 3 — next
-- REASON: item 3 (backend hardening) — schema reconcile repo↔live, LWW timestamp
-  clobber fix, account-deletion RPC + "Supprimer mon compte" UI, auth
-  site_url=localhost→notare-swiss.ch, advisors pass, sync integration test.
-  Management API via curl + PAT (creds: session-ace167fa scratchpad
-  notare-secrets.env, chmod 600, verified 2026-07-18).
-- Item 4 (perf/a11y/ship) after; then item 5 ledger close-out.
+### Iteration 3 — 2026-07-19 (backend hardening) — DONE
+- MODE CHANGE: Workflow launch blocked by permission classifier (prod mutations
+  + creds); user chose "inline + per-call approvals" via AskUserQuestion. Recon
+  split: Explore subagent (client code map) + inline curl (live state).
+- RECON findings: LWW clobber = server trigger overwrote client updated_at on
+  every push (edit-time semantics destroyed) + unguarded upsert + online-flush
+  blind push + tie-goes-to-local; signOut left stale state + pending flag
+  (cross-account bleed); duplicate DOM IDs (dead 2nd auth modal, not touched —
+  future cleanup); version column dead; grades/subjects had NO user_id FK, no
+  updated_at triggers; site_url localhost:3000, allow-list empty; advisors: 3
+  security warns + initplan on 8 policies + unindexed FK.
+- ACT server (migration 20260719160000, applied live, history recorded):
+  delete_my_account() secdef pinned authenticated-only; user_id FKs w/ cascade;
+  user_state trigger DROPPED (client owns updated_at); handle_new_user epoch-
+  stamps pre-created row + REST execute revoked; policies rebuilt (select
+  auth.uid()); search_path pins; FK index; repo migrations rewritten to
+  reproduce live exactly (init_schema reconstructed from pg catalog, 0001
+  removed). Auth config PATCHed: site_url notare-swiss.ch + www/apex/capacitor
+  allow-list.
+- ACT client: guarded push (lte updated_at) adopts-newer-instead-of-overwrite +
+  notare:remote-adopted UI event; online flush via pullAndMerge; last-user
+  device guard (never push another account's local state; switch → cloud truth
+  or clean slate); resetSyncState on signout; "Supprimer mon compte" (double
+  confirm, RPC, full local wipe incl. Preferences + IndexedDB photos + corrupt-
+  blob quarantine keys, FIFO-safe wipe ordering, signout + reload); +13 tests.
+- VERIFY: 91/91 vitest; LIVE integration (disposable users, cleaned): trigger
+  row epoch-stamped; fresh-account first push accepted (caught+fixed: now()-
+  stamped empty row silently blocked first sync — found by integration test,
+  epoch fix applied); newer push accepted; stale push refused (0 rows); final
+  snapshot correct; anon RPC 401; user RPC 204; cascades verified; DB pristine
+  (all counts 0). Advisors: security clean except delete_my_account
+  authenticated-exec (BY DESIGN — the feature itself, auth.uid()-scoped); perf:
+  2 unused-index INFO (empty DB, expected).
+- Residuals: clock-skew device can still win LWW (whole-blob design, accepted);
+  aspirated-h elision + StatusBar plugin install from iter 2 unchanged; dead
+  second auth modal markup (duplicate IDs) not removed — candidate for iter 4;
+  deletion UI visual not screenshotted (needs authed session; CSS reuses
+  existing token classes).
+
+### Iteration 4 — next
+- REASON: item 4 (perf/a11y/ship): 60fps scroll/animation check, Release build,
+  a11y pass (VoiceOver labels, contrast recheck, tap targets), 6.9" App Store
+  screenshots, full QA sweep, then item 5 ledger close-out + Archive/TestFlight
+  hand-off doc.
 
 ## Blockers
 
