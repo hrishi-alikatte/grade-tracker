@@ -2,15 +2,15 @@
  * GradeVibe Vaud - PWA App Logic & Customizations v3
  */
 
-import { state, loadState, saveState, resetStateToDefault, replaceState, migrateSubjectGrades, getBaseYear, getCurrentSubjects, isCurrentYearLocked } from './src/state/store.js';
+import { state, loadState, saveState, resetStateToDefault, replaceState, migrateSubjectGrades, getBaseYear, getCurrentSubjects, isCurrentYearLocked, wipeLocalData } from './src/state/store.js';
 import { defaultSubjectsYear1, defaultSubjectsYear2, defaultSubjectsYear3 } from './src/state/defaults.js';
-import { storePhoto, getPhoto, deletePhoto } from './src/state/photos.js';
+import { storePhoto, getPhoto, deletePhoto, clearAllPhotos } from './src/state/photos.js';
 import { applyTheme } from './src/ui/theme.js';
 import { escapeHTML } from './src/ui/dom.js';
 import { playConfettiSound, playFahSound, showSidebarToast, startConfetti, initBackgroundBoxes } from './src/ui/effects.js';
 import { initScrollReveal } from './src/ui/reveal.js';
-import { isSupabaseConfigured, signUp, signIn, signOut, getSession, getProfile, updateProfile, onAuthStateChange } from './src/features/auth.js';
-import { pullAndMerge, initSyncListeners } from './src/features/sync.js';
+import { isSupabaseConfigured, signUp, signIn, signOut, getSession, getProfile, updateProfile, onAuthStateChange, deleteAccount } from './src/features/auth.js';
+import { pullAndMerge, initSyncListeners, resetSyncState } from './src/features/sync.js';
 import { PRIVACY_TITLE, PRIVACY_HTML, TERMS_TITLE, TERMS_HTML } from './src/features/legal.js';
 import { verifyGradeInText, compressAndResizeImage, ensureTesseract } from './src/features/ocr.js';
 import { initBackupUI } from './src/features/backup.js';
@@ -3548,9 +3548,36 @@ function initAuth() {
 
     document.getElementById('btn-signout').addEventListener('click', async () => {
         await signOut();
+        resetSyncState();
         hapticNotification('success');
         closeModal(profileModal);
         showSidebarToast('Vous êtes déconnecté.', 'success');
+    });
+
+    document.getElementById('btn-delete-account').addEventListener('click', async () => {
+        const btn = document.getElementById('btn-delete-account');
+        if (btn.disabled) return;
+        if (!confirm('Supprimer définitivement votre compte ?\n\nToutes vos données (notes, branches, photos, profil) seront effacées du cloud et de cet appareil. Cette action est irréversible.')) return;
+        if (!confirm('Dernière confirmation : voulez-vous vraiment supprimer votre compte ?')) return;
+        const prevLabel = btn.textContent;
+        btn.disabled = true;
+        btn.textContent = 'Suppression…';
+        try {
+            await deleteAccount();
+            resetSyncState();
+            await clearAllPhotos();
+            await wipeLocalData();
+            await signOut().catch(() => {});
+            hapticNotification('success');
+            closeModal(profileModal);
+            showSidebarToast('Votre compte a été supprimé.', 'success');
+            setTimeout(() => window.location.reload(), 1200);
+        } catch (err) {
+            hapticNotification('error');
+            btn.disabled = false;
+            btn.textContent = prevLabel;
+            showSidebarToast('La suppression a échoué. Réessayez plus tard.', 'error');
+        }
     });
 
     const applySession = (session, doMerge) => {
@@ -3560,6 +3587,10 @@ function initAuth() {
             pullAndMerge({ onReplaced: reloadUI });
         }
     };
+
+    // L'état distant a été adopté hors pullAndMerge (poussée refusée car le
+    // cloud était plus récent) : redessine l'interface.
+    window.addEventListener('notare:remote-adopted', reloadUI);
 
     onAuthStateChange((session) => applySession(session, true));
     getSession().then((session) => applySession(session, true));

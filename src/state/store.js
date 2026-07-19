@@ -240,4 +240,35 @@ function isCurrentYearLocked() {
     return false;
 }
 
-export { migrateSubjectGrades, loadState, resetStateToDefault, saveState, replaceState, getBaseYear, getCurrentSubjects, isCurrentYearLocked, queuePreferencesWrite };
+// Efface TOUTES les données locales (suppression de compte) : état en mémoire,
+// localStorage (y compris copies de quarantaine), Preferences natives. Les
+// photos IndexedDB sont vidées par l'appelant via clearAllPhotos().
+async function wipeLocalData() {
+    const keys = [
+        STORAGE_KEY,
+        BACKUP_KEY,
+        'gymnase_vaud_state_preimport',
+        'notare_registered_students',
+        'notare_sync_pending',
+        'notare_last_user',
+    ];
+    try {
+        for (let i = localStorage.length - 1; i >= 0; i--) {
+            const k = localStorage.key(i);
+            if (k && k.startsWith('gymnase_vaud_state_corrupt_')) keys.push(k);
+        }
+        keys.forEach((k) => localStorage.removeItem(k));
+    } catch (e) { /* ignore */ }
+    try {
+        await Preferences.remove({ key: 'gymnase_vaud_state_v5' });
+        await Preferences.remove({ key: 'notare_registered_students' });
+    } catch (e) {
+        console.error('Preferences wipe failed:', e);
+    }
+    // En dernier : la remise à zéro persiste les valeurs par défaut (sans PII)
+    // APRÈS les suppressions — la file d'écriture Preferences étant FIFO, ce
+    // sont elles qui gagnent sur toute écriture retardataire.
+    resetStateToDefault();
+}
+
+export { migrateSubjectGrades, loadState, resetStateToDefault, saveState, replaceState, getBaseYear, getCurrentSubjects, isCurrentYearLocked, queuePreferencesWrite, wipeLocalData };

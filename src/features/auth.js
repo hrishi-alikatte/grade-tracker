@@ -34,6 +34,16 @@ export async function signOut() {
     return sb.auth.signOut();
 }
 
+// Suppression définitive du compte (exigence App Store 5.1.1(v)). La RPC
+// delete_my_account (SECURITY DEFINER) supprime la ligne auth.users ; les
+// cascades effacent profil, état, branches et notes côté serveur.
+export async function deleteAccount() {
+    const sb = await getSupabase();
+    if (!sb) throw new Error(NON_CONFIG);
+    const { error } = await sb.rpc('delete_my_account');
+    if (error) throw error;
+}
+
 export async function getSession() {
     const sb = await getSupabase();
     if (!sb) return null;

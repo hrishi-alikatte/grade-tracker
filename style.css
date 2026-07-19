@@ -4905,6 +4905,17 @@ body.theme-light .mock-window-address {
     gap: 0.35rem;
 }
 
+.btn-account-danger {
+    color: var(--color-avg-failing-text);
+    border-color: var(--color-failing-bg);
+    background-color: transparent;
+}
+
+.btn-account-danger:hover {
+    background-color: var(--color-failing-bg);
+    color: var(--color-avg-failing-text);
+}
+
 .detail-btn-neutral {
     flex: 1;
     background-color: var(--color-bg-elevated);

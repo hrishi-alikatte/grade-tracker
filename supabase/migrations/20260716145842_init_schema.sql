@@ -1,6 +1,8 @@
--- Notare — schéma initial (profils + état applicatif par utilisateur).
--- Conçu pour Supabase (Postgres 17). NON APPLIQUÉ automatiquement : à exécuter
--- via `apply_migration` sur le projet Supabase choisi, après validation.
+-- Notare — schéma initial (baseline du projet live).
+-- Reconstruit le 2026-07-19 depuis le catalogue Postgres du projet de
+-- production (migration live `20260716145842 init_schema`), afin que le dépôt
+-- reproduise exactement l'état déployé. Remplace l'ancien brouillon
+-- `0001_profiles_and_state.sql` (profiles + user_state uniquement).
 --
 -- Champs profil :
 --   Obligatoires (à l'inscription, NOT NULL) : nom, prenom, email (unique).
@@ -20,7 +22,6 @@ create table if not exists public.profiles (
     date_naissance date,
     created_at     timestamptz not null default now(),
     updated_at     timestamptz not null default now(),
-    -- Garde-fous : les champs obligatoires ne peuvent pas être vides.
     constraint profiles_nom_non_vide    check (length(btrim(nom))    > 0),
     constraint profiles_prenom_non_vide check (length(btrim(prenom)) > 0)
 );
@@ -28,10 +29,7 @@ create table if not exists public.profiles (
 comment on table public.profiles is 'Profils utilisateurs Notare (PII — protégé par RLS).';
 
 -- ---------------------------------------------------------------------------
--- 2. État applicatif par utilisateur (synchronisation cloud du localStorage).
---    Snapshot jsonb + horodatage pour une résolution de conflit « dernière
---    écriture gagnante » (LWW) côté client. localStorage reste le cache hors
---    ligne ; ce blob est la source de vérité en ligne.
+-- 2. État applicatif par utilisateur (snapshot jsonb, LWW côté client).
 -- ---------------------------------------------------------------------------
 create table if not exists public.user_state (
     user_id     uuid primary key references auth.users(id) on delete cascade,
@@ -43,10 +41,53 @@ create table if not exists public.user_state (
 comment on table public.user_state is 'Snapshot de l''état Notare (gymnase_vaud_state) par utilisateur.';
 
 -- ---------------------------------------------------------------------------
--- 3. Row Level Security — chaque utilisateur ne voit/écrit QUE sa ligne.
+-- 3. Branches et notes normalisées (modèle cible ; non consommé par le client
+--    v1, qui synchronise le snapshot user_state).
+-- ---------------------------------------------------------------------------
+create table if not exists public.subjects (
+    id          uuid primary key,
+    user_id     uuid not null,
+    name        text not null,
+    target      numeric default 4.5,
+    mode        text default 'dual',
+    year        smallint not null,
+    grade_group smallint,
+    deleted     boolean default false,
+    updated_at  timestamptz default now(),
+    constraint subjects_target_check      check (target >= 1 and target <= 6),
+    constraint subjects_mode_check        check (mode in ('dual', 'standard')),
+    constraint subjects_year_check        check (year >= 1 and year <= 3),
+    constraint subjects_grade_group_check check (grade_group in (1, 2))
+);
+
+create table if not exists public.grades (
+    id         uuid primary key,
+    subject_id uuid not null references public.subjects(id) on delete cascade,
+    user_id    uuid not null,
+    semester   text not null,
+    name       text,
+    value      numeric not null,
+    type       text,
+    comment    text,
+    exam_date  date,
+    photo_path text,
+    deleted    boolean default false,
+    updated_at timestamptz default now(),
+    constraint grades_semester_check check (semester in ('sem1', 'sem2')),
+    constraint grades_value_check    check (value >= 1 and value <= 6),
+    constraint grades_type_check     check (type in ('TS', 'TA'))
+);
+
+create index if not exists subjects_user_id_updated_at_idx on public.subjects (user_id, updated_at);
+create index if not exists grades_user_id_updated_at_idx   on public.grades (user_id, updated_at);
+
+-- ---------------------------------------------------------------------------
+-- 4. Row Level Security — chaque utilisateur ne voit/écrit QUE ses lignes.
 -- ---------------------------------------------------------------------------
 alter table public.profiles   enable row level security;
 alter table public.user_state enable row level security;
+alter table public.subjects   enable row level security;
+alter table public.grades     enable row level security;
 
 create policy "profiles_select_own" on public.profiles
     for select using (auth.uid() = id);
@@ -63,8 +104,13 @@ create policy "user_state_insert_own" on public.user_state
 create policy "user_state_update_own" on public.user_state
     for update using (auth.uid() = user_id) with check (auth.uid() = user_id);
 
+create policy "own rows" on public.subjects
+    for all using (auth.uid() = user_id) with check (auth.uid() = user_id);
+create policy "own rows" on public.grades
+    for all using (auth.uid() = user_id) with check (auth.uid() = user_id);
+
 -- ---------------------------------------------------------------------------
--- 4. Horodatage automatique de updated_at.
+-- 5. Horodatage automatique de updated_at.
 -- ---------------------------------------------------------------------------
 create or replace function public.set_updated_at()
 returns trigger
@@ -85,9 +131,7 @@ create trigger user_state_set_updated_at
     for each row execute function public.set_updated_at();
 
 -- ---------------------------------------------------------------------------
--- 5. Création automatique du profil à l'inscription.
---    nom/prenom proviennent des métadonnées d'inscription (options.data),
---    email de auth.users. security definer pour écrire malgré la RLS.
+-- 6. Création automatique du profil à l'inscription.
 -- ---------------------------------------------------------------------------
 create or replace function public.handle_new_user()
 returns trigger

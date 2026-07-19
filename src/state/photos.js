@@ -129,4 +129,27 @@ function getAllPhotos() {
     });
 }
 
-export { initDB, storePhoto, getPhoto, deletePhoto, getAllPhotos };
+/** Vide toutes les photos stockées (suppression de compte). */
+function clearAllPhotos() {
+    return new Promise((resolve) => {
+        if (!db) {
+            resolve(false);
+            return;
+        }
+        try {
+            const transaction = db.transaction([STORE_NAME], 'readwrite');
+            const store = transaction.objectStore(STORE_NAME);
+            const request = store.clear();
+            request.onsuccess = () => resolve(true);
+            request.onerror = (e) => {
+                console.error('clearAllPhotos error:', e.target.error);
+                resolve(false);
+            };
+        } catch (err) {
+            console.error('clearAllPhotos transaction error:', err);
+            resolve(false);
+        }
+    });
+}
+
+export { initDB, storePhoto, getPhoto, deletePhoto, getAllPhotos, clearAllPhotos };
