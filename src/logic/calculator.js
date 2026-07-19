@@ -409,15 +409,40 @@ export function checkVaudPromotion(subjects, semester, ctx) {
     g1Sum += osRound !== null ? osRound : 0;
     g1Sum += l2l3AvgRounded !== null ? l2l3AvgRounded : 0;
 
-    const hasCoreGrades = (mathRound !== null || frRound !== null || osRound !== null || l2l3AvgRounded !== null);
-    const coreSumPassed = !hasCoreGrades || g1Sum >= 16.0;
+    // Under 3M grading system, there is no group or anything, all subjects are in 1 single group.
+    // Therefore, coreSumPassed is always true.
+    const coreSumPassed = true;
+
+    // Calculate average of all entered exam grades (written + oral)
+    let examSum = 0;
+    let examCount = 0;
+    subjects.forEach(s => {
+        const config = getSubjectExamConfig(s, ctx);
+        if (config) {
+            const exams = s.exams || { written: null, oral: null };
+            if (config.written && exams.written !== null && exams.written !== undefined && !isNaN(exams.written)) {
+                examSum += exams.written;
+                examCount++;
+            }
+            if (config.oral && exams.oral !== null && exams.oral !== undefined && !isNaN(exams.oral)) {
+                examSum += exams.oral;
+                examCount++;
+            }
+        }
+    });
+    const examAverage = examCount > 0 ? examSum / examCount : null;
+    const examAveragePassed = examAverage === null || examAverage >= 3.5;
 
     const overallAverage = activeSubjectsCount > 0 ? (roundedAveragesSum / activeSubjectsCount) : null;
     const requiredCompensation = (ctx.baseYear === 3) ? (2 * pointsManquants) : 0;
+    
+    // Points de bilan = total sum of rounded grades - sum of deficits
+    const pointsBilan = roundedAveragesSum - pointsManquants;
+    const pointsBilanMin = activeSubjectsCount * 4.0;
+
     let isPromoted = false;
     if (ctx.baseYear === 1 || ctx.baseYear === 2) {
         isPromoted = activeSubjectsCount > 0 &&
-                     coreSumPassed &&
                      roundedAveragesSum >= activeSubjectsCount * 4.0 &&
                      insuffisances <= 4;
     } else {
@@ -427,7 +452,7 @@ export function checkVaudPromotion(subjects, semester, ctx) {
                      insuffisances <= 4 &&
                      pointsEnPlus >= requiredCompensation &&
                      pointsManquants <= 3.0 &&
-                     coreSumPassed;
+                     examAveragePassed;
     }
 
     return {
@@ -441,7 +466,11 @@ export function checkVaudPromotion(subjects, semester, ctx) {
         g1Sum,
         coreSumPassed,
         g2Sum: roundedAveragesSum,
-        g2Min: activeSubjectsCount * 4.0
+        g2Min: activeSubjectsCount * 4.0,
+        examAverage: examAverage !== null ? Math.round(examAverage * 100) / 100 : null,
+        examAveragePassed,
+        pointsBilan: Math.round(pointsBilan * 100) / 100,
+        pointsBilanMin
     };
 }
 

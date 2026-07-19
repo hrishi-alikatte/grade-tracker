@@ -342,7 +342,8 @@ function updateDashboard() {
         promoTitle.textContent = "Promotion garantie";
         const periodLabel = state.currentSemester === 'sem1' ? 'du 1er semestre' : state.currentSemester === 'sem2' ? 'du 2ème semestre' : 'annuelle (combinée)';
         if (getBaseYear() === 3) {
-            promoSubtitle.textContent = `Félicitations, vous remplissez toutes les conditions de promotion avec une moyenne générale arithmétique de ${results.overallAverage.toFixed(2)} (${periodLabel}) !`;
+            const examAvgText = results.examAverage !== null ? ` et une moyenne d'examens de ${results.examAverage.toFixed(2)}` : '';
+            promoSubtitle.textContent = `Félicitations, vous remplissez toutes les conditions de promotion avec une moyenne générale arithmétique de ${results.overallAverage.toFixed(2)}${examAvgText} (${periodLabel}) !`;
         } else {
             promoSubtitle.textContent = `Félicitations, vous remplissez toutes les conditions de promotion (${periodLabel}) !`;
         }
@@ -354,14 +355,10 @@ function updateDashboard() {
         if (results.g2Sum < results.g2Min) {
             const diff = (results.g2Min - results.g2Sum).toFixed(1);
             if (getBaseYear() === 3) {
-                reasons.push(`Votre moyenne générale arithmétique (${results.overallAverage.toFixed(2)}) est inférieure à 4.0 (il vous manque ${diff} point(s) pour atteindre les ${results.g2Min.toFixed(1)} points requis dans le Groupe 2)`);
+                reasons.push(`Votre moyenne générale arithmétique (${results.overallAverage.toFixed(2)}) est inférieure à 4.0 (il vous manque ${diff} point(s) pour atteindre le total de ${results.g2Min.toFixed(1)} points requis)`);
             } else {
-                reasons.push(`Il vous manque ${diff} point(s) pour atteindre les ${results.g2Min.toFixed(1)} points requis dans le Groupe 2 (toutes les disciplines)`);
+                reasons.push(`Il vous manque ${diff} point(s) pour atteindre le total de ${results.g2Min.toFixed(1)} points requis (toutes les disciplines)`);
             }
-        }
-        if (!results.coreSumPassed) {
-            const diff = (16.0 - results.g1Sum).toFixed(1);
-            reasons.push(`Il vous manque ${diff} point(s) pour atteindre les 16.0 points requis dans le Groupe 1 (disciplines fondamentales)`);
         }
         if (results.insuffisances > 4) {
             reasons.push(`Vous avez ${results.insuffisances} branches insuffisantes (maximum 4 autorisées)`);
@@ -372,8 +369,11 @@ function updateDashboard() {
                 reasons.push(`Votre déficit total de branches insuffisantes (${results.pointsManquants.toFixed(1)}) dépasse de ${diff} point(s) la limite autorisée (3.0)`);
             }
             if (results.pointsEnPlus < results.requiredCompensation) {
-                const diff = (results.requiredCompensation - results.pointsEnPlus).toFixed(1);
-                reasons.push(`Il vous manque ${diff} point(s) de compensation (le surplus au-dessus de 4.0 doit combler le double du déficit)`);
+                const diff = (results.pointsBilanMin - results.pointsBilan).toFixed(1);
+                reasons.push(`Il vous manque ${diff} point(s) de bilan après double compensation (votre total de points de bilan: ${results.pointsBilan.toFixed(1)} / ${results.pointsBilanMin.toFixed(1)} requis)`);
+            }
+            if (results.examAverage !== null && results.examAverage < 3.5) {
+                reasons.push(`Votre moyenne aux examens (${results.examAverage.toFixed(2)}) est inférieure à 3.5 (minimum 3.5 requis sur toutes les épreuves écrites et orales)`);
             }
         }
         
@@ -395,50 +395,22 @@ function updateDashboard() {
 }
 
 function updateGroupsBilan() {
+    const g1Card = document.getElementById('g1-card');
+    const g2Card = document.getElementById('g2-card');
+    
+    if (g1Card) g1Card.style.display = 'none';
+    if (g2Card) {
+        g2Card.style.gridColumn = 'span 2';
+        const g2Title = g2Card.querySelector('h3');
+        if (g2Title) g2Title.textContent = 'Bilan des branches';
+    }
+
     g1List.innerHTML = '';
     g2List.innerHTML = '';
 
     const currentSubjects = getCurrentSubjects();
     const sem = state.currentSemester;
     const results = checkVaudPromotion(currentSubjects, sem);
-
-    // --- 1. Compute Group 1 (Branches fondamentales) ---
-    const french = currentSubjects.find(s => s.role === 'french');
-    const math = currentSubjects.find(s => s.role === 'math');
-    const os = currentSubjects.find(s => s.role === 'os');
-    const l2 = currentSubjects.find(s => s.role === 'l2');
-    const l3 = currentSubjects.find(s => s.role === 'l3');
-
-    // Maths
-    const mathData = math ? calculateSubjectData(math, sem) : null;
-    const mathRound = mathData && mathData.rawAverage !== null ? mathData.roundedAverage : null;
-    
-    // Français
-    const frData = french ? calculateSubjectData(french, sem) : null;
-    const frRound = frData && frData.rawAverage !== null ? frData.roundedAverage : null;
-
-    // OS
-    const osObj = os ? calculateSubjectData(os, sem) : null;
-    const osRound = osObj && osObj.rawAverage !== null ? osObj.roundedAverage : null;
-
-    // L2 & L3 combined
-    const l2Data = l2 ? calculateSubjectData(l2, sem) : null;
-    const l3Data = l3 ? calculateSubjectData(l3, sem) : null;
-    let l2l3AvgRounded = null;
-    if (l2Data && l2Data.rawAverage !== null && l3Data && l3Data.rawAverage !== null) {
-        l2l3AvgRounded = roundToHalfPoint((l2Data.roundedAverage + l3Data.roundedAverage) / 2);
-    } else if (l2Data && l2Data.rawAverage !== null) {
-        l2l3AvgRounded = l2Data.roundedAverage;
-    } else if (l3Data && l3Data.rawAverage !== null) {
-        l2l3AvgRounded = l3Data.roundedAverage;
-    }
-
-    g1PointsText.textContent = `Min 16 / tes points: ${results.g1Sum.toFixed(1)} · Max 24`;
-    if (results.g1Sum < 16.0) {
-        g1PointsText.style.color = 'var(--color-avg-failing-text)';
-    } else {
-        g1PointsText.style.color = 'var(--color-avg-passing-text)';
-    }
 
     const createBilanItem = (name, val) => {
         const li = document.createElement('li');
@@ -462,20 +434,7 @@ function updateGroupsBilan() {
         return li;
     };
 
-    g1List.appendChild(createBilanItem('Français', frRound));
-    g1List.appendChild(createBilanItem('Mathématiques', mathRound));
-    g1List.appendChild(createBilanItem(os ? os.name : 'Option Spécifique (OS)', osRound));
-    
-    const l2Name = l2 ? l2.name : 'Langue 2 (L2)';
-    const l3Name = l3 ? l3.name : 'Langue 3 (L3)';
-    g1List.appendChild(createBilanItem(l2Name, l2Data && l2Data.rawAverage !== null ? l2Data.roundedAverage : null));
-    g1List.appendChild(createBilanItem(l3Name, l3Data && l3Data.rawAverage !== null ? l3Data.roundedAverage : null));
-    
-    if (l2l3AvgRounded !== null) {
-        g1List.appendChild(createBilanItem('↳ Moyenne (L2 + L3)', l2l3AvgRounded));
-    }
-
-    // --- 2. Compute Group 2 (Toutes les branches) ---
+    // --- Compute Single Group (Toutes les branches) ---
     let g2Sum = 0;
     let g2Count = 0;
 
@@ -488,10 +447,21 @@ function updateGroupsBilan() {
         g2List.appendChild(createBilanItem(subject.name, rounded));
     });
 
-    const g2Min = g2Count * 4;
-    const g2Max = g2Count * 6;
-    g2PointsText.textContent = `Min ${g2Min} / tes points: ${g2Sum.toFixed(1)} · Max ${g2Max}`;
-    if (g2Sum < g2Min) {
+    const g2Min = results.pointsBilanMin; // activeSubjectsCount * 4
+    const pointsBilan = results.pointsBilan;
+    const pointsManquants = results.pointsManquants;
+
+    let pointsText = `Min ${g2Min} / tes points de bilan: ${pointsBilan.toFixed(1)}`;
+    if (pointsManquants > 0) {
+        pointsText += ` (Brut: ${g2Sum.toFixed(1)} - Déficit: ${pointsManquants.toFixed(1)})`;
+    }
+    if (getBaseYear() === 3 && results.examAverage !== null) {
+        pointsText += ` · Moy. examens: ${results.examAverage.toFixed(2)}`;
+    }
+    
+    g2PointsText.textContent = pointsText;
+    
+    if (pointsBilan < g2Min || (getBaseYear() === 3 && results.examAverage !== null && results.examAverage < 3.5)) {
         g2PointsText.style.color = 'var(--color-avg-failing-text)';
     } else {
         g2PointsText.style.color = 'var(--color-avg-passing-text)';

@@ -272,7 +272,7 @@ describe('checkVaudPromotion — Years 1 & 2', () => {
 
         const fail = checkVaudPromotion([...base, graded('l2', 3.5)], 'sem1', y1);
         expect(fail.g1Sum).toBe(15.5);
-        expect(fail.coreSumPassed).toBe(false);
+        expect(fail.coreSumPassed).toBe(true);
         expect(fail.isPromoted).toBe(false);
     });
 
@@ -399,6 +399,68 @@ describe('checkVaudPromotion — Year 3', () => {
         ];
         const res = checkVaudPromotion(subjects, 'sem1', ctx({ baseYear: 3, currentYear: 3.5 }));
         expect(res.isPromoted).toBe(false);
+    });
+
+    it('exam average constraint (min 3.5 required)', () => {
+        // All subjects are passing at 4.0.
+        // We have French (written+oral config) and Math (written+oral config).
+        // If exams are 4.0 and 4.0 (average 4.0 >= 3.5) → promoted
+        const passingExams = [
+            subject({ id: 'y3_fr', role: 'french', sem1: [ts(4.0)], exams: { written: 4.0, oral: 4.0 } }),
+            subject({ id: 'y3_ma', role: 'math', sem1: [ts(4.0)], exams: { written: 4.0, oral: 4.0 } }),
+            graded('os', 4.0), graded('l2', 4.0), graded('l3', 4.0)
+        ];
+        const resPass = checkVaudPromotion(passingExams, 'sem1', y3);
+        expect(resPass.examAverage).toBeCloseTo(4.0, 5);
+        expect(resPass.examAveragePassed).toBe(true);
+        expect(resPass.isPromoted).toBe(true);
+
+        // If exams are 3.0 and 3.0 (average 3.0 < 3.5) → fails promotion
+        const failingExams = [
+            subject({ id: 'y3_fr', role: 'french', sem1: [ts(4.0)], exams: { written: 3.0, oral: 3.0 } }),
+            subject({ id: 'y3_ma', role: 'math', sem1: [ts(4.0)], exams: { written: 3.0, oral: 3.0 } }),
+            graded('os', 4.0), graded('l2', 4.0), graded('l3', 4.0)
+        ];
+        const resFail = checkVaudPromotion(failingExams, 'sem1', y3);
+        expect(resFail.examAverage).toBeCloseTo(3.0, 5);
+        expect(resFail.examAveragePassed).toBe(false);
+        expect(resFail.isPromoted).toBe(false);
+    });
+
+    it('points de bilan absolute calculation (double compensation)', () => {
+        // Say we have 6 subjects. Baseline is 6 * 4.0 = 24.0 points.
+        // If we have 1 branch at 3.5 (deficit = 0.5) and 5 branches at 4.5 (surplus = 2.5).
+        // Total sum = 3.5 + 5 * 4.5 = 26.0.
+        // Points de bilan = 26.0 - 0.5 = 25.5.
+        // Since 25.5 >= 24.0, promoted = true.
+        const subjectsPass = [
+            graded('french', 3.5),
+            graded('math', 4.5), graded('os', 4.5), graded('l2', 4.5), graded('l3', 4.5),
+            graded('general', 4.5)
+        ];
+        const resPass = checkVaudPromotion(subjectsPass, 'sem1', y3);
+        expect(resPass.activeSubjectsCount).toBe(6);
+        expect(resPass.g2Sum).toBe(26.0);
+        expect(resPass.pointsManquants).toBe(0.5);
+        expect(resPass.pointsBilan).toBe(25.5);
+        expect(resPass.pointsBilanMin).toBe(24.0);
+        expect(resPass.isPromoted).toBe(true);
+
+        // If total sum is 24.0 and 1 branch at 3.5.
+        // 1 at 3.5, 4 at 4.0, 1 at 4.5. Total sum = 24.0.
+        // Points de bilan = 24.0 - 0.5 = 23.5.
+        // Since 23.5 < 24.0, promoted = false.
+        const subjectsFail = [
+            graded('french', 3.5),
+            graded('math', 4.5), graded('os', 4.0), graded('l2', 4.0), graded('l3', 4.0),
+            graded('general', 4.0)
+        ];
+        const resFail = checkVaudPromotion(subjectsFail, 'sem1', y3);
+        expect(resFail.g2Sum).toBe(24.0);
+        expect(resFail.pointsManquants).toBe(0.5);
+        expect(resFail.pointsBilan).toBe(23.5);
+        expect(resFail.pointsBilanMin).toBe(24.0);
+        expect(resFail.isPromoted).toBe(false);
     });
 });
 
