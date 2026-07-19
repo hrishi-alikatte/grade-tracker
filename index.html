@@ -14,7 +14,7 @@
     <meta name="theme-color" content="#fcfbf9">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="apple-mobile-web-app-title" content="Notare">
     <link rel="apple-touch-icon" href="apple-touch-icon.png">
     
@@ -46,21 +46,14 @@
 
     <!-- Persistent Top Navigation Bar -->
     <nav class="top-nav-bar">
-        <div class="top-nav-brand" id="brand-logo-link" style="cursor: pointer; display: flex; flex-direction: column; align-items: flex-start; justify-content: center; gap: 2px; transition: opacity var(--transition-fast);" title="Retour à l'accueil">
-            <div style="display: flex; align-items: center; gap: 0.5rem;">
-                <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="url(#notare-icon-gradient)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="filter: drop-shadow(0 2px 8px color-mix(in srgb, var(--color-primary) 30%, transparent));">
-                    <defs>
-                        <linearGradient id="notare-icon-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                            <stop offset="0%" stop-color="var(--color-primary)" />
-                            <stop offset="50%" stop-color="#a78bfa" />
-                            <stop offset="100%" stop-color="#f472b6" />
-                        </linearGradient>
-                    </defs>
+        <div class="top-nav-brand brand-logo-link" id="brand-logo-link" title="Retour à l'accueil">
+            <div class="row-center">
+                <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="brand-logo-glow">
                     <path d="M21.42 10.922a1 1 0 0 0-.019-1.838L12.83 5.18a2 2 0 0 0-1.66 0L2.6 9.08a1 1 0 0 0 0 1.832l8.57 3.908a2 2 0 0 0 1.66 0z"/>
                     <path d="M6 12v5c0 2 2 3 6 3s6-1 6-3v-5"/>
                     <path d="M21.5 12v6"/>
                 </svg>
-                <strong style="font-size: 1.9rem; letter-spacing: -0.04em; font-weight: 900; color: var(--color-text-primary); display: inline-block; line-height: 1.1;">Notare</strong>
+                <strong class="brand-wordmark">Notare</strong>
             </div>
         </div>
         
@@ -76,7 +69,7 @@
         </div>
 
         <div class="nav-icons">
-            <button id="btn-account" class="nav-icon-btn" title="Compte" style="display: none;">
+            <button id="btn-account" class="nav-icon-btn hidden" title="Compte">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
             </button>
             <button id="btn-settings-modal" class="nav-icon-btn" title="Paramètres d'affichage">
@@ -94,21 +87,21 @@
                 <div class="landing-logo-circle">
                     <svg width="46" height="46" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.42 10.922a1 1 0 0 0-.019-1.838L12.83 5.18a2 2 0 0 0-1.66 0L2.6 9.08a1 1 0 0 0 0 1.832l8.57 3.908a2 2 0 0 0 1.66 0z"/><path d="M6 12v5c0 2 2 3 6 3s6-1 6-3v-5"/><path d="M21.5 12v6"/></svg>
                 </div>
-                <div class="landing-definition-container" style="margin: 0 auto 3rem auto; max-width: 600px; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 0.25rem;">
-                    <h1 class="landing-title" style="font-family: 'Playfair Display', Georgia, serif; font-size: clamp(3.5rem, 8vw, 4.5rem); font-weight: 400; color: var(--color-text-primary); line-height: 1; letter-spacing: -0.01em; margin-bottom: 0px; background: none; -webkit-text-fill-color: initial; -webkit-background-clip: unset;">notare</h1>
-                    <div style="font-family: var(--font-family-sans); font-size: 1.05rem; color: var(--color-text-primary); font-weight: 300; margin: 0;">
+                <div class="landing-definition-container landing-hero">
+                    <h1 class="landing-title landing-hero-title">notare</h1>
+                    <div class="landing-hero-sub">
                         <span style="color: var(--color-text-secondary);">[noˈta.re]</span> <strong style="font-weight: 700; margin-left: 0.2rem;">verbe</strong>
                     </div>
-                    <p style="font-family: 'Playfair Display', Georgia, serif; font-size: clamp(0.85rem, 2vw, 1rem); color: var(--color-text-secondary); line-height: 1.5; max-width: 480px; margin: 0.25rem auto 0 auto; font-style: normal;">
+                    <p class="landing-hero-lede">
                         dérivé du latin, signifiant "marquer , noter" ; pour vous aider à suivre vos notes
                     </p>
                 </div>
-                <div style="display: flex; gap: 1rem; margin-top: 1.5rem; justify-content: center; flex-wrap: wrap;">
-                    <button type="button" class="btn btn-primary landing-hero-cta" onclick="document.getElementById('tab-nav-dashboard').click()" style="padding: 0.9rem 2rem; font-size: 1rem; gap: 0.6rem; margin-top: 0;">
+                <div class="landing-cta-row">
+                    <button type="button" class="btn btn-primary landing-hero-cta landing-cta-btn" onclick="document.getElementById('tab-nav-dashboard').click()">
                         Commencer
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
                     </button>
-                    <button type="button" id="landing-signin-btn" class="btn btn-secondary landing-hero-cta" style="padding: 0.9rem 2rem; font-size: 1rem; gap: 0.6rem; margin-top: 0;">
+                    <button type="button" id="landing-signin-btn" class="btn btn-secondary landing-hero-cta landing-cta-btn">
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
                         Se connecter
                     </button>
@@ -123,10 +116,10 @@
         </section>
 
         <!-- SECTION 2: APPS VISUAL PREVIEW CAROUSEL -->
-        <section id="landing-rules" class="landing-section" style="border-top: 1px solid rgba(255, 255, 255, 0.05); padding-bottom: 4rem;">
-            <div style="text-align: center; margin-bottom: 3rem;">
-                <h2 style="font-size: clamp(1.8rem, 4vw, 2.5rem); font-weight: 800; color: white; letter-spacing: -0.02em; margin-bottom: 1rem;">Interface Intelligente</h2>
-                <p style="color: var(--color-text-secondary); max-width: 600px; margin: 0 auto; font-size: 0.95rem;">
+        <section id="landing-rules" class="landing-section landing-section--rules">
+            <div class="landing-section-head">
+                <h2 class="landing-section-title">Interface Intelligente</h2>
+                <p class="landing-section-sub">
                     Découvrez les fonctionnalités de notare en faisant glisser ou défiler les captures d'écran ci-dessous.
                 </p>
             </div>
@@ -231,54 +224,54 @@
         </section>
 
         <!-- SECTION 3: FEATURES -->
-        <section id="landing-features" class="landing-section" style="border-top: 1px solid rgba(255, 255, 255, 0.05);">
-            <div style="text-align: center; margin-bottom: 4rem;">
-                <h2 style="font-size: clamp(1.8rem, 4vw, 2.5rem); font-weight: 800; color: white; letter-spacing: -0.02em; margin-bottom: 1rem;">Fonctionnalités Clés</h2>
-                <p style="color: var(--color-text-secondary); max-width: 500px; margin: 0 auto; font-size: 0.95rem;">Tout ce dont vous avez besoin pour naviguer sereinement dans votre scolarité.</p>
+        <section id="landing-features" class="landing-section">
+            <div class="landing-section-head landing-section-head--loose">
+                <h2 class="landing-section-title">Fonctionnalités Clés</h2>
+                <p class="landing-section-sub" style="max-width: 500px;">Tout ce dont vous avez besoin pour naviguer sereinement dans votre scolarité.</p>
             </div>
             
             <div class="landing-features-grid">
                 <!-- Feature 1: Photo Proof -->
                 <div class="landing-feature-card">
-                    <div style="color: var(--color-primary); display: flex; align-items: center; justify-content: center; width: 48px; height: 48px; background: rgba(96,165,250,0.1); border-radius: var(--radius-md);">
+                    <div class="feature-icon">
                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
                     </div>
                     <div>
-                        <h3 style="font-size: 1.15rem; font-weight: 800; color: white; margin-bottom: 0.5rem;">Preuve d'examen (Photo)</h3>
-                        <p style="font-size: 0.85rem; color: var(--color-text-secondary); line-height: 1.5; margin: 0;">Ajoutez simplement une photo de vos épreuves comme preuve pour conserver un historique visuel complet de vos évaluations.</p>
+                        <h3 class="feature-title">Preuve d'examen (Photo)</h3>
+                        <p class="feature-text">Ajoutez simplement une photo de vos épreuves comme preuve pour conserver un historique visuel complet de vos évaluations.</p>
                     </div>
                 </div>
                 
                 <!-- Feature 2: Real-time Promo -->
                 <div class="landing-feature-card">
-                    <div style="color: var(--color-primary); display: flex; align-items: center; justify-content: center; width: 48px; height: 48px; background: rgba(96,165,250,0.1); border-radius: var(--radius-md);">
+                    <div class="feature-icon">
                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
                     </div>
                     <div>
-                        <h3 style="font-size: 1.15rem; font-weight: 800; color: white; margin-bottom: 0.5rem;">Promotion en temps réel</h3>
-                        <p style="font-size: 0.85rem; color: var(--color-text-secondary); line-height: 1.5; margin: 0;">L'algorithme calcule vos moyennes annuelles, vos insuffisances, et applique la règle officielle du bilan des points doublés.</p>
+                        <h3 class="feature-title">Promotion en temps réel</h3>
+                        <p class="feature-text">L'algorithme calcule vos moyennes annuelles, vos insuffisances, et applique la règle officielle du bilan des points doublés.</p>
                     </div>
                 </div>
                 
                 <!-- Feature 3: Target Grade -->
                 <div class="landing-feature-card">
-                    <div style="color: var(--color-primary); display: flex; align-items: center; justify-content: center; width: 48px; height: 48px; background: rgba(96,165,250,0.1); border-radius: var(--radius-md);">
+                    <div class="feature-icon">
                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
                     </div>
                     <div>
-                        <h3 style="font-size: 1.15rem; font-weight: 800; color: white; margin-bottom: 0.5rem;">Simulateur de cible</h3>
-                        <p style="font-size: 0.85rem; color: var(--color-text-secondary); line-height: 1.5; margin: 0;">Sachez exactement quelle note obtenir lors de votre prochain examen pour atteindre ou conserver votre objectif de moyenne.</p>
+                        <h3 class="feature-title">Simulateur de cible</h3>
+                        <p class="feature-text">Sachez exactement quelle note obtenir lors de votre prochain examen pour atteindre ou conserver votre objectif de moyenne.</p>
                     </div>
                 </div>
             </div>
         </section>
 
         <!-- SECTION 4: ABOUT & MOT DE L'AUTEUR -->
-        <section id="landing-creator" class="landing-section" style="border-top: 1px solid rgba(255, 255, 255, 0.05);">
+        <section id="landing-creator" class="landing-section">
             <div style="max-width: 650px; margin: 0 auto; width: 100%; display: flex; flex-direction: column; gap: 2.5rem;" data-reveal>
                 <div class="creator-word-box">
                     <span style="color: var(--color-primary); font-size: 3rem; font-family: Georgia, serif; line-height: 1; position: absolute; top: 1rem; left: 1.5rem; opacity: 0.3;">“</span>
-                    <h3 style="font-size: 1.15rem; color: var(--color-primary); font-weight: 800; margin: 0 0 1rem 0; z-index: 1; position: relative;">🚀 Le mot du développeur</h3>
+                    <h3 style="font-size: 1.15rem; color: var(--color-primary); font-weight: 800; margin: 0 0 1rem 0; z-index: 1; position: relative;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: -2px; margin-right: 0.35rem;"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"/><path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"/><path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0"/><path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"/></svg>Le mot du développeur</h3>
                     <p style="color: var(--color-text-primary); font-style: italic; font-size: 1.05rem; line-height: 1.6; margin: 0 0 1.5rem 0; z-index: 1; position: relative;">
                         "Un petit projet tout fun qui pourrait peut être vous aider:)"
                     </p>
@@ -316,20 +309,13 @@
             <!-- Header -->
             <header class="header">
                 <div class="header-left" style="gap: 0.6rem;">
-                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--color-text-primary)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="filter: drop-shadow(0 2px 8px color-mix(in srgb, var(--color-primary) 10%, transparent)); flex-shrink: 0;">
-                        <defs>
-                            <linearGradient id="notare-dashboard-icon-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                                <stop offset="0%" stop-color="var(--color-primary)" />
-                                <stop offset="50%" stop-color="#a78bfa" />
-                                <stop offset="100%" stop-color="#f472b6" />
-                            </linearGradient>
-                        </defs>
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--color-text-primary)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="brand-logo-glow--soft">
                         <path d="M21.42 10.922a1 1 0 0 0-.019-1.838L12.83 5.18a2 2 0 0 0-1.66 0L2.6 9.08a1 1 0 0 0 0 1.832l8.57 3.908a2 2 0 0 0 1.66 0z"/>
                         <path d="M6 12v5c0 2 2 3 6 3s6-1 6-3v-5"/>
                         <path d="M21.5 12v6"/>
                     </svg>
                     <div class="header-text">
-                        <h1 id="title-container">Suivi des notes de <span id="student-name" contenteditable="true" title="Cliquez pour modifier le nom" style="border-bottom: 2px dashed var(--color-text-muted); outline: none;">Étudiant</span></h1>
+                        <h1 id="title-container">Suivi des notes <span id="student-name-prefix">d'</span><span id="student-name" contenteditable="true" title="Cliquez pour modifier le nom" style="border-bottom: 2px dashed var(--color-text-muted); outline: none;">Étudiant</span></h1>
                         <div style="display: flex; align-items: center; gap: 0.75rem; margin-top: 0.25rem;">
                             <span class="header-subtitle">Gymnase · barème 1 à 6</span>
                         </div>
@@ -360,7 +346,7 @@
                             <div class="slice slice-3"></div>
                         </div>
                     </div>
-                    <div class="promo-text-summary" style="flex: 1;">
+                    <div class="promo-text-summary flex-1">
                         <h2 id="promo-title">En route pour réussir l'année</h2>
                         <p id="promo-subtitle">Moyenne générale 4.5 sur 0 branches.</p>
                     </div>
@@ -370,7 +356,7 @@
 
         <!-- Year Selection Tabs (Grouped directly above Semester Tabs, closer to top navigation) -->
         <!-- Year Selection Tabs (Rendered dynamically) -->
-        <div class="year-tabs-container" id="year-tabs-container" style="display: flex; gap: 0.5rem; justify-content: center; width: 100%; margin-top: 1rem;">
+        <div class="year-tabs-container year-tabs-wrap" id="year-tabs-container">
         </div>
 
         <!-- Semester Selection Tabs -->
@@ -381,7 +367,7 @@
         </div>
 
         <!-- Evolution Slide Container -->
-        <section id="evolution-slide-container" style="display: none; flex-direction: column; gap: 1.5rem; width: 100%; margin-top: 1.25rem;"></section>
+        <section id="evolution-slide-container" class="evolution-slide hidden"></section>
 
         <!-- Subjects Container -->
         <main class="subjects-section">
@@ -392,46 +378,46 @@
 
         <!-- Bilan par groupe Section -->
         <section class="bilan-section">
-            <h2 style="font-size: 1.4rem; font-weight: 800; margin-bottom: 1rem; color: white; border-bottom: 1px solid var(--color-border-subtle); padding-bottom: 0.5rem;">Bilan par groupe</h2>
+            <h2 class="bilan-title">Bilan par groupe</h2>
             
-            <div class="bilan-grid" style="display: grid; gap: 1.5rem;">
+            <div class="bilan-grid">
                 <!-- Groupe 1 Card -->
-                <div class="subject-card" style="padding: 1.5rem; display: flex; flex-direction: column; gap: 0.75rem;">
-                    <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--color-border-subtle); padding-bottom: 0.5rem; gap: 0.75rem;">
-                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                <div class="subject-card bilan-card">
+                    <div class="bilan-card-head">
+                        <div class="row-center">
                             <div class="bilan-3d-icon icon-g1">
                                 <div class="collar"></div>
                                 <div class="pebble"></div>
                             </div>
-                            <h3 style="font-size: 1.15rem; font-weight: 800; color: white; margin: 0;">Groupe 1</h3>
+                            <h3 class="bilan-card-title">Groupe 1</h3>
                         </div>
-                        <span id="g1-points-text" style="font-size: 0.85rem; font-weight: 700; color: var(--color-primary);">Min 16 / — · Max 24</span>
+                        <span id="g1-points-text" class="bilan-points">Min 16 / — · Max 24</span>
                     </div>
-                    <ul class="bilan-list" id="g1-list" style="list-style: none; font-size: 0.9rem; color: var(--color-text-secondary); display: flex; flex-direction: column; gap: 0.4rem;">
+                    <ul class="bilan-list" id="g1-list">
                         <!-- Injected branches -->
                     </ul>
                 </div>
 
                 <!-- Groupe 2 Card -->
-                <div class="subject-card" style="padding: 1.5rem; display: flex; flex-direction: column; gap: 0.75rem;">
-                    <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--color-border-subtle); padding-bottom: 0.5rem; gap: 0.75rem;">
-                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                <div class="subject-card bilan-card">
+                    <div class="bilan-card-head">
+                        <div class="row-center">
                             <div class="bilan-3d-icon icon-g2">
                                 <div class="ring ring-1"></div>
                                 <div class="ring ring-2"></div>
                                 <div class="ring ring-3"></div>
                             </div>
-                            <h3 style="font-size: 1.15rem; font-weight: 800; color: white; margin: 0;">Groupe 2</h3>
+                            <h3 class="bilan-card-title">Groupe 2</h3>
                         </div>
-                        <span id="g2-points-text" style="font-size: 0.85rem; font-weight: 700; color: var(--color-primary);">Min 4 / — · Max 6</span>
+                        <span id="g2-points-text" class="bilan-points">Min 4 / — · Max 6</span>
                     </div>
-                    <ul class="bilan-list" id="g2-list" style="list-style: none; font-size: 0.9rem; color: var(--color-text-secondary); display: flex; flex-direction: column; gap: 0.4rem;">
+                    <ul class="bilan-list" id="g2-list">
                         <!-- Injected branches -->
                     </ul>
                 </div>
             </div>
 
-            <p style="font-size: 0.75rem; color: var(--color-text-secondary); margin-top: 1rem; font-style: italic; opacity: 0.8;">
+            <p class="bilan-footnote">
                 * Points = somme des moyennes arrondies au demi-point. Le minimum (4 par branche) correspond à la ligne de réussite, le maximum à un 6 partout.
             </p>
         </section>
@@ -453,7 +439,7 @@
                 Connectez-vous pour sauvegarder et synchroniser vos notes sur tous vos appareils.
             </p>
 
-            <div class="auth-tabs" style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin-bottom: 1.25rem;">
+            <div class="auth-tabs chip-grid-2" style="margin-bottom: 1.25rem;">
                 <button type="button" class="chip-btn active" id="auth-tab-login" data-mode="login">Connexion</button>
                 <button type="button" class="chip-btn" id="auth-tab-signup" data-mode="signup">Inscription</button>
             </div>
@@ -474,8 +460,8 @@
             </form>
 
             <!-- Formulaire Inscription -->
-            <form id="signup-form" style="display: none;">
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
+            <form id="signup-form" class="hidden">
+                <div class="form-grid-2">
                     <div class="form-group">
                         <label class="form-label" for="signup-prenom">Prénom</label>
                         <input type="text" id="signup-prenom" class="form-input" autocomplete="given-name" required placeholder="Prénom">
@@ -493,7 +479,7 @@
                     <label class="form-label" for="signup-password">Mot de passe</label>
                     <input type="password" id="signup-password" class="form-input" autocomplete="new-password" required minlength="6" placeholder="6 caractères minimum">
                 </div>
-                <label style="display: flex; align-items: flex-start; gap: 0.5rem; font-size: 0.8rem; color: var(--color-text-secondary); margin-bottom: 1rem; cursor: pointer;">
+                <label class="consent-label">
                     <input type="checkbox" id="signup-consent" required style="margin-top: 0.15rem; flex-shrink: 0;">
                     <span>J'accepte les <a href="#" id="link-terms" style="color: var(--color-primary);">Conditions d'utilisation</a> et la <a href="#" id="link-privacy" style="color: var(--color-primary);">Politique de confidentialité</a>.</span>
                 </label>
@@ -502,7 +488,7 @@
                 </div>
             </form>
 
-            <p id="auth-message" style="font-size: 0.82rem; margin: 0.75rem 0 0 0; text-align: center; display: none;"></p>
+            <p id="auth-message" class="auth-msg hidden"></p>
         </div>
     </div>
 
@@ -512,7 +498,7 @@
             <button class="modal-close-btn" id="close-profile-modal">&times;</button>
             <h2 class="modal-title">Mon profil</h2>
             <form id="profile-form">
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
+                <div class="form-grid-2">
                     <div class="form-group">
                         <label class="form-label" for="profile-prenom">Prénom</label>
                         <input type="text" id="profile-prenom" class="form-input" readonly>
@@ -536,7 +522,7 @@
                     <label class="form-label" for="profile-ecole">Établissement / École</label>
                     <input type="text" id="profile-ecole" class="form-input" placeholder="Ex : Gymnase de Nyon">
                 </div>
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
+                <div class="form-grid-2">
                     <div class="form-group">
                         <label class="form-label" for="profile-telephone">Téléphone</label>
                         <input type="tel" id="profile-telephone" class="form-input" autocomplete="tel" placeholder="+41 ...">
@@ -550,7 +536,7 @@
                     <button type="submit" class="btn btn-primary" style="width: 100%;">Enregistrer</button>
                     <button type="button" class="btn btn-secondary" id="btn-signout" style="width: 100%;">Se déconnecter</button>
                 </div>
-                <p id="profile-message" style="font-size: 0.82rem; margin: 0.75rem 0 0 0; text-align: center; display: none;"></p>
+                <p id="profile-message" class="auth-msg hidden"></p>
             </form>
         </div>
     </div>
@@ -560,7 +546,7 @@
         <div class="modal-container" style="max-width: 640px; width: 94%; max-height: 85dvh; display: flex; flex-direction: column;">
             <button class="modal-close-btn" id="close-legal-modal">&times;</button>
             <h2 class="modal-title" id="legal-modal-title">Document</h2>
-            <div id="legal-modal-body" class="legal-body" style="overflow-y: auto; -webkit-overflow-scrolling: touch; padding-right: 0.25rem;"></div>
+            <div id="legal-modal-body" class="legal-body modal-scroll-body"></div>
         </div>
     </div>
 
@@ -579,7 +565,7 @@
                 </div>
                 <div class="form-group">
                     <label class="form-label">Mode d'évaluation</label>
-                    <div class="chip-container" id="subject-mode-chips" style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; width: 100%;">
+                    <div class="chip-container chip-grid-2" id="subject-mode-chips">
                         <button type="button" class="chip-btn active" data-value="dual">Double Voie (TA/TS)</button>
                         <button type="button" class="chip-btn" data-value="standard">Moyenne Simple</button>
                     </div>
@@ -646,37 +632,37 @@
 
                 <div class="form-group">
                     <label class="form-label">Photo (preuve)</label>
-                    <div style="display: flex; gap: 0.5rem; margin-bottom: 0.5rem;">
-                        <button type="button" class="btn btn-secondary" id="btn-start-camera" style="flex: 1; padding: 0.65rem 1rem; font-size: 0.85rem; background-color: var(--color-bg-elevated); border-color: var(--color-border-subtle); display: flex; align-items: center; justify-content: center; gap: 0.5rem; border-radius: var(--radius-md);">
+                    <div class="action-row">
+                        <button type="button" class="btn btn-secondary scan-src-btn" id="btn-start-camera">
                             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
                             Caméra
                         </button>
-                        <button type="button" class="btn btn-secondary" id="btn-upload-file" style="flex: 1; padding: 0.65rem 1rem; font-size: 0.85rem; background-color: var(--color-bg-elevated); border-color: var(--color-border-subtle); display: flex; align-items: center; justify-content: center; gap: 0.5rem; border-radius: var(--radius-md);">
+                        <button type="button" class="btn btn-secondary scan-src-btn" id="btn-upload-file">
                             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
                             Importer photo
                         </button>
                     </div>
-                    <input type="file" id="grade-photo-file" accept="image/*" style="display: none;">
+                    <input type="file" id="grade-photo-file" accept="image/*" class="hidden">
                     
                     <!-- Video Scanner Frame (Hidden by default) -->
-                    <div id="camera-scanner-view" class="camera-scanner-view" style="display: none; margin-bottom: 0.5rem;">
-                        <video id="camera-stream" autoplay playsinline muted style="width: 100%; max-height: 200px; object-fit: cover; border-radius: 4px; border: 1px solid var(--color-border-subtle); background-color: black;"></video>
-                        <div class="camera-controls" style="display: flex; gap: 0.5rem; margin-top: 0.25rem;">
-                            <button type="button" class="btn btn-primary" id="btn-capture-frame" style="flex: 1; font-size: 0.8rem; padding: 0.4rem; background-color: var(--color-primary); color: var(--color-bg-base); font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 0.35rem;">
+                    <div id="camera-scanner-view" class="camera-scanner-view hidden" style="margin-bottom: 0.5rem;">
+                        <video id="camera-stream" autoplay playsinline muted class="camera-stream-video"></video>
+                        <div class="camera-controls">
+                            <button type="button" class="btn btn-primary scan-capture-btn" id="btn-capture-frame">
                                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/></svg>
                                 Capturer
                             </button>
-                            <button type="button" class="btn btn-secondary" id="btn-close-camera" style="flex: 1; font-size: 0.8rem; padding: 0.4rem;">Fermer la caméra</button>
+                            <button type="button" class="btn btn-secondary scan-close-btn" id="btn-close-camera">Fermer la caméra</button>
                         </div>
                     </div>
 
-                    <div id="ocr-loading-status" style="display: none; font-size: 0.75rem; color: var(--color-primary); margin-top: 0.25rem; align-items: center; gap: 0.25rem;">
-                        <span class="spinner-small" style="display: inline-block; width: 12px; height: 12px; border: 2px solid var(--color-primary); border-radius: 50%; border-top-color: transparent; animation: spin 0.8s linear infinite;"></span>
+                    <div id="ocr-loading-status" class="ocr-status hidden">
+                        <span class="spinner-small"></span>
                         Analyse OCR du document en cours...
                     </div>
-                    <div id="grade-photo-preview-container" style="display: none; margin-top: 0.5rem; position: relative;">
-                        <img id="grade-photo-preview" src="" style="max-height: 100px; border-radius: 4px; border: 1px solid var(--color-border-subtle);">
-                        <button type="button" id="remove-grade-photo-btn" aria-label="Fermer" style="position: absolute; top: -12px; left: 85px; background: #ef4444; color: white; border: none; border-radius: 50%; width: 44px; height: 44px; font-size: 20px; cursor: pointer; display: flex; align-items: center; justify-content: center;">&times;</button>
+                    <div id="grade-photo-preview-container" class="photo-preview-box hidden">
+                        <img id="grade-photo-preview" src="" class="photo-preview-img">
+                        <button type="button" id="remove-grade-photo-btn" aria-label="Fermer" class="photo-remove-btn">&times;</button>
                     </div>
                 </div>
                 </div><!-- /grade-extras -->
@@ -696,52 +682,52 @@
             <h2 class="modal-title" style="margin-bottom: 1rem;" id="details-modal-title">Détails de la note</h2>
             
             <!-- View Mode Panel -->
-            <div id="grade-details-view-panel" style="background-color: var(--color-bg-base); padding: 1.25rem; border-radius: var(--radius-md); border: 1px solid var(--color-border-subtle); margin-bottom: 1.5rem; display: flex; flex-direction: column; gap: 0.75rem;">
-                <div style="display: flex; justify-content: space-between; font-size: 0.9rem;">
-                    <span style="color: var(--color-text-secondary);">Évaluation:</span>
-                    <strong id="detail-grade-name" style="color: white;">—</strong>
+            <div id="grade-details-view-panel" class="details-panel">
+                <div class="detail-row">
+                    <span class="detail-label">Évaluation:</span>
+                    <strong id="detail-grade-name" class="detail-value">—</strong>
                 </div>
-                <div style="display: flex; justify-content: space-between; font-size: 0.9rem;">
-                    <span style="color: var(--color-text-secondary);">Note:</span>
-                    <strong id="detail-grade-value" class="jetbrains-mono-grade-tracker" style="color: white; font-size: 1.1rem;">—</strong>
+                <div class="detail-row">
+                    <span class="detail-label">Note:</span>
+                    <strong id="detail-grade-value" class="jetbrains-mono-grade-tracker detail-value detail-value--big">—</strong>
                 </div>
-                <div style="display: flex; justify-content: space-between; font-size: 0.9rem;">
-                    <span style="color: var(--color-text-secondary);">Type:</span>
-                    <strong id="detail-grade-type" style="color: white;">—</strong>
+                <div class="detail-row">
+                    <span class="detail-label">Type:</span>
+                    <strong id="detail-grade-type" class="detail-value">—</strong>
                 </div>
-                <div id="detail-exam-date-container" style="display: none; justify-content: space-between; font-size: 0.9rem;">
-                    <span style="color: var(--color-text-secondary);">Date de l'examen:</span>
-                    <strong id="detail-grade-exam-date" style="color: white;">—</strong>
+                <div id="detail-exam-date-container" class="detail-row hidden">
+                    <span class="detail-label">Date de l'examen:</span>
+                    <strong id="detail-grade-exam-date" class="detail-value">—</strong>
                 </div>
-                <div style="display: flex; justify-content: space-between; font-size: 0.9rem;">
-                    <span style="color: var(--color-text-secondary);">Date d'ajout:</span>
-                    <strong id="detail-grade-created" style="color: white;">—</strong>
+                <div class="detail-row">
+                    <span class="detail-label">Date d'ajout:</span>
+                    <strong id="detail-grade-created" class="detail-value">—</strong>
                 </div>
-                
+
                 <!-- Comment Container -->
-                <div id="detail-comment-container" style="display: none; flex-direction: column; gap: 0.25rem; font-size: 0.85rem; border-top: 1px dashed var(--color-border-subtle); padding-top: 0.5rem;">
-                    <span style="color: var(--color-text-secondary);">Commentaire:</span>
-                    <span id="detail-grade-comment" style="color: white; font-style: italic; white-space: pre-wrap;">—</span>
+                <div id="detail-comment-container" class="detail-block hidden">
+                    <span class="detail-label">Commentaire:</span>
+                    <span id="detail-grade-comment" class="detail-comment">—</span>
                 </div>
 
                 <!-- Photo Container -->
-                <div id="detail-photo-container" style="display: none; flex-direction: column; gap: 0.25rem; font-size: 0.85rem; border-top: 1px dashed var(--color-border-subtle); padding-top: 0.5rem;">
-                    <span style="color: var(--color-text-secondary);">Preuve (photo):</span>
-                    <img id="detail-grade-photo" style="max-height: 180px; width: auto; max-width: 100%; border-radius: 4px; border: 1px solid var(--color-border-subtle); margin-top: 0.25rem; object-fit: contain; cursor: zoom-in;">
+                <div id="detail-photo-container" class="detail-block hidden">
+                    <span class="detail-label">Preuve (photo):</span>
+                    <img id="detail-grade-photo" class="detail-photo">
                 </div>
             </div>
 
             <!-- Edit Mode Panel (hidden by default) -->
-            <form id="grade-details-edit-panel" style="display: none; background-color: var(--color-bg-base); padding: 1.25rem; border-radius: var(--radius-md); border: 1px solid var(--color-border-subtle); margin-bottom: 1.5rem; flex-direction: column; gap: 0.75rem; max-height: 50vh; overflow-y: auto;">
-                <div class="form-group" style="margin-bottom: 0.75rem;">
+            <form id="grade-details-edit-panel" class="details-panel details-panel--scroll hidden">
+                <div class="form-group">
                     <label class="form-label" for="edit-grade-name">Nom de l'évaluation</label>
                     <input type="text" id="edit-grade-name" class="form-input">
                 </div>
-                <div class="form-group" style="margin-bottom: 0.75rem;">
+                <div class="form-group">
                     <label class="form-label" for="edit-grade-date">Date de l'évaluation</label>
                     <input type="date" id="edit-grade-date" class="form-input">
                 </div>
-                <div class="form-group" style="margin-bottom: 0.75rem;">
+                <div class="form-group">
                     <label class="form-label">Note (1.0 – 6.0)</label>
                     <div class="grade-slider" id="edit-grade-slider" data-value="4">
                         <div class="grade-slider-value-badge"><span class="gs-value">4.0</span></div>
@@ -755,71 +741,71 @@
                         <div class="grade-slider-scale"></div>
                     </div>
                 </div>
-                <div class="form-group" style="margin-bottom: 0.75rem;">
+                <div class="form-group">
                     <label class="form-label">Type d'évaluation</label>
-                    <div class="chip-container" id="edit-type-chips" style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; width: 100%;">
+                    <div class="chip-container chip-grid-2" id="edit-type-chips">
                         <button type="button" class="chip-btn" data-value="TS">TS</button>
                         <button type="button" class="chip-btn" data-value="TA">TA</button>
                     </div>
                 </div>
-                <div class="form-group" style="margin-bottom: 0.75rem;">
+                <div class="form-group">
                     <label class="form-label" for="edit-grade-comment">Commentaire (optionnel)</label>
                     <input type="text" id="edit-grade-comment" class="form-input" placeholder="Ex: Exercice difficile">
                 </div>
-                <div class="form-group" style="margin-bottom: 0.75rem;">
+                <div class="form-group">
                     <label class="form-label">Modifier la photo (optionnel)</label>
-                    <div style="display: flex; gap: 0.5rem; margin-bottom: 0.5rem;">
-                        <button type="button" class="btn btn-secondary" id="edit-btn-start-camera" style="flex: 1; padding: 0.65rem 1rem; font-size: 0.85rem; background-color: var(--color-bg-elevated); border-color: var(--color-border-subtle); display: flex; align-items: center; justify-content: center; gap: 0.5rem; border-radius: var(--radius-md);">
+                    <div class="action-row">
+                        <button type="button" class="btn btn-secondary scan-src-btn" id="edit-btn-start-camera">
                             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
                             Caméra
                         </button>
-                        <button type="button" class="btn btn-secondary" id="edit-btn-upload-file" style="flex: 1; padding: 0.65rem 1rem; font-size: 0.85rem; background-color: var(--color-bg-elevated); border-color: var(--color-border-subtle); display: flex; align-items: center; justify-content: center; gap: 0.5rem; border-radius: var(--radius-md);">
+                        <button type="button" class="btn btn-secondary scan-src-btn" id="edit-btn-upload-file">
                             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
                             Importer photo
                         </button>
                     </div>
-                    <input type="file" id="edit-grade-photo-file" accept="image/*" style="display: none;">
- 
+                    <input type="file" id="edit-grade-photo-file" accept="image/*" class="hidden">
+
                     <!-- Video Scanner Frame (Hidden by default) -->
-                    <div id="edit-camera-scanner-view" class="camera-scanner-view" style="display: none; margin-bottom: 0.5rem;">
-                        <video id="edit-camera-stream" autoplay playsinline muted style="width: 100%; max-height: 180px; object-fit: cover; border-radius: 4px; border: 1px solid var(--color-border-subtle); background-color: black;"></video>
-                        <div class="camera-controls" style="display: flex; gap: 0.5rem; margin-top: 0.25rem;">
-                            <button type="button" class="btn btn-primary" id="edit-btn-capture-frame" style="flex: 1; font-size: 0.8rem; padding: 0.4rem; background-color: var(--color-primary); color: var(--color-bg-base); font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 0.35rem;">
+                    <div id="edit-camera-scanner-view" class="camera-scanner-view hidden" style="margin-bottom: 0.5rem;">
+                        <video id="edit-camera-stream" autoplay playsinline muted class="camera-stream-video camera-stream-video--sm"></video>
+                        <div class="camera-controls">
+                            <button type="button" class="btn btn-primary scan-capture-btn" id="edit-btn-capture-frame">
                                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/></svg>
                                 Capturer
                             </button>
-                            <button type="button" class="btn btn-secondary" id="edit-btn-close-camera" style="flex: 1; font-size: 0.8rem; padding: 0.4rem;">Fermer la caméra</button>
+                            <button type="button" class="btn btn-secondary scan-close-btn" id="edit-btn-close-camera">Fermer la caméra</button>
                         </div>
                     </div>
 
-                    <div id="edit-ocr-loading-status" style="display: none; font-size: 0.75rem; color: var(--color-primary); margin-top: 0.25rem; align-items: center; gap: 0.25rem;">
-                        <span class="spinner-small" style="display: inline-block; width: 12px; height: 12px; border: 2px solid var(--color-primary); border-radius: 50%; border-top-color: transparent; animation: spin 0.8s linear infinite;"></span>
+                    <div id="edit-ocr-loading-status" class="ocr-status hidden">
+                        <span class="spinner-small"></span>
                         Analyse OCR du document en cours...
                     </div>
-                    <div id="edit-grade-photo-preview-container" style="display: none; margin-top: 0.5rem; position: relative;">
-                        <img id="edit-grade-photo-preview" src="" style="max-height: 80px; border-radius: 4px; border: 1px solid var(--color-border-subtle);">
-                        <button type="button" id="edit-remove-grade-photo-btn" aria-label="Fermer" style="position: absolute; top: -12px; left: 85px; background: #ef4444; color: white; border: none; border-radius: 50%; width: 44px; height: 44px; font-size: 20px; cursor: pointer; display: flex; align-items: center; justify-content: center;">&times;</button>
+                    <div id="edit-grade-photo-preview-container" class="photo-preview-box hidden">
+                        <img id="edit-grade-photo-preview" src="" class="photo-preview-img photo-preview-img--sm">
+                        <button type="button" id="edit-remove-grade-photo-btn" aria-label="Fermer" class="photo-remove-btn">&times;</button>
                     </div>
                 </div>
             </form>
             
             <!-- View Mode Actions -->
-            <div id="grade-details-view-actions" style="display: flex; justify-content: space-between; gap: 0.5rem;">
-                <button type="button" class="btn btn-secondary" id="edit-details-btn" style="flex: 1; background-color: var(--color-bg-elevated); border-color: var(--color-border-subtle); display: flex; align-items: center; justify-content: center; gap: 0.35rem;">
+            <div id="grade-details-view-actions" class="details-actions">
+                <button type="button" class="btn btn-secondary detail-btn-neutral" id="edit-details-btn">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
                     Modifier
                 </button>
-                <button type="button" class="btn btn-primary" id="delete-detail-grade-btn" style="flex: 1; background-color: var(--color-failing-bg); display: flex; align-items: center; justify-content: center; gap: 0.35rem;">
+                <button type="button" class="btn btn-primary detail-btn-danger" id="delete-detail-grade-btn">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>
                     Supprimer
                 </button>
-                <button type="button" class="btn btn-secondary" id="close-details-btn" style="flex: 1;">Fermer</button>
+                <button type="button" class="btn btn-secondary flex-1" id="close-details-btn">Fermer</button>
             </div>
 
             <!-- Edit Mode Actions (hidden by default) -->
-            <div id="grade-details-edit-actions" style="display: none; justify-content: space-between; gap: 1rem;">
-                <button type="button" class="btn btn-secondary" id="cancel-edit-btn" style="flex: 1;">Annuler</button>
-                <button type="button" class="btn btn-primary" id="save-edit-btn" style="flex: 1;">Enregistrer</button>
+            <div id="grade-details-edit-actions" class="details-actions details-actions--wide hidden">
+                <button type="button" class="btn btn-secondary flex-1" id="cancel-edit-btn">Annuler</button>
+                <button type="button" class="btn btn-primary flex-1" id="save-edit-btn">Enregistrer</button>
             </div>
         </div>
     </div>
@@ -832,129 +818,129 @@
 
         <div class="guide-content-grid">
             <!-- 1. Rules Card -->
-            <div class="guide-card main-rules-card" style="grid-column: span 2; background-color: color-mix(in srgb, var(--color-bg-surface) 75%, transparent);">
-                <h2 class="guide-card-title" style="font-size: 1.4rem; justify-content: center;">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 0.35rem;"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            <div class="guide-card main-rules-card guide-card-wide" style="background-color: color-mix(in srgb, var(--color-bg-surface) 75%, transparent);">
+                <h2 class="guide-card-title guide-card-title--center">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
                     Les 4 Règles d'Or du Gymnase Vaudois
                 </h2>
-                <p class="guide-intro" style="text-align: center; font-size: 0.95rem; margin-bottom: 1rem;">Votre promotion est garantie uniquement si <strong>les 4 critères suivants sont validés simultanément</strong> :</p>
-                
-                <div class="rules-visual-list" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.25rem;">
-                    <div class="rule-visual-item passed" style="border-top: 4px solid var(--color-primary); background-color: rgba(0,0,0,0.25); display: flex; align-items: stretch; height: 100%;">
-                        <div class="rule-status-check" style="margin-top: 0.25rem;">✓</div>
-                        <div class="rule-details" style="display: flex; flex-direction: column; justify-content: space-between; flex-grow: 1; height: 100%;">
+                <p class="guide-intro">Votre promotion est garantie uniquement si <strong>les 4 critères suivants sont validés simultanément</strong> :</p>
+
+                <div class="rules-visual-list">
+                    <div class="rule-visual-item passed rule-top--blue">
+                        <div class="rule-status-check">✓</div>
+                        <div class="rule-details">
                             <div>
-                                <h3 style="margin-top: 0;">1. Points des Groupes 1 et 2</h3>
-                                <p style="font-size: 0.8rem; color: var(--color-text-secondary); margin-bottom: 0.5rem;">Au moins 16.0 points dans le Groupe 1 et total suffisant dans le Groupe 2.</p>
+                                <h3>1. Points des Groupes 1 et 2</h3>
+                                <p>Au moins 16.0 points dans le Groupe 1 et total suffisant dans le Groupe 2.</p>
                             </div>
-                            <span style="display:inline-block; font-size: 0.7rem; background: rgba(96,165,250,0.15); color: var(--color-primary); padding: 2px 6px; border-radius: 4px; font-weight: bold; align-self: flex-start; margin-top: auto;">Éliminatoire si insuffisant</span>
+                            <span class="rule-badge rule-badge--blue">Éliminatoire si insuffisant</span>
                         </div>
                     </div>
-                    <div class="rule-visual-item passed" style="border-top: 4px solid #f59e0b; background-color: rgba(0,0,0,0.25); display: flex; align-items: stretch; height: 100%;">
-                        <div class="rule-status-check" style="margin-top: 0.25rem;">✓</div>
-                        <div class="rule-details" style="display: flex; flex-direction: column; justify-content: space-between; flex-grow: 1; height: 100%;">
+                    <div class="rule-visual-item passed rule-top--amber">
+                        <div class="rule-status-check">✓</div>
+                        <div class="rule-details">
                             <div>
-                                <h3 style="margin-top: 0;">2. Max 4 Insuffisances</h3>
-                                <p style="font-size: 0.8rem; color: var(--color-text-secondary); margin-bottom: 0.5rem;">Maximum 4 branches avec une moyenne annuelle inférieure à 4.0.</p>
+                                <h3>2. Max 4 Insuffisances</h3>
+                                <p>Maximum 4 branches avec une moyenne annuelle inférieure à 4.0.</p>
                             </div>
-                            <span style="display:inline-block; font-size: 0.7rem; background: rgba(245,158,11,0.15); color: #f59e0b; padding: 2px 6px; border-radius: 4px; font-weight: bold; align-self: flex-start; margin-top: auto;">Éliminatoire si &gt; 4</span>
+                            <span class="rule-badge rule-badge--amber">Éliminatoire si &gt; 4</span>
                         </div>
                     </div>
-                    <div class="rule-visual-item passed" style="border-top: 4px solid #10b981; background-color: rgba(0,0,0,0.25); display: flex; align-items: stretch; height: 100%;">
-                        <div class="rule-status-check" style="margin-top: 0.25rem;">✓</div>
-                        <div class="rule-details" style="display: flex; flex-direction: column; justify-content: space-between; flex-grow: 1; height: 100%;">
+                    <div class="rule-visual-item passed rule-top--green">
+                        <div class="rule-status-check">✓</div>
+                        <div class="rule-details">
                             <div>
-                                <h3 style="margin-top: 0;">3. Bilan des Points (3M)</h3>
-                                <p style="font-size: 0.8rem; color: var(--color-text-secondary); margin-bottom: 0.5rem;">Règle de la double compensation (les notes en dessous de 4.0 comptent double). Concerne la filière 3M.</p>
+                                <h3>3. Bilan des Points (3M)</h3>
+                                <p>Règle de la double compensation (les notes en dessous de 4.0 comptent double). Concerne la filière 3M.</p>
                             </div>
-                            <span style="display:inline-block; font-size: 0.7rem; background: rgba(16,185,129,0.15); color: #10b981; padding: 2px 6px; border-radius: 4px; font-weight: bold; align-self: flex-start; margin-top: auto;">Éliminatoire si &lt; 0 (3M)</span>
+                            <span class="rule-badge rule-badge--green">Éliminatoire si &lt; 0 (3M)</span>
                         </div>
                     </div>
-                    <div class="rule-visual-item passed" style="border-top: 4px solid #8b5cf6; background-color: rgba(0,0,0,0.25); display: flex; align-items: stretch; height: 100%;">
-                        <div class="rule-status-check" style="margin-top: 0.25rem;">✓</div>
-                        <div class="rule-details" style="display: flex; flex-direction: column; justify-content: space-between; flex-grow: 1; height: 100%;">
+                    <div class="rule-visual-item passed rule-top--violet">
+                        <div class="rule-status-check">✓</div>
+                        <div class="rule-details">
                             <div>
-                                <h3 style="margin-top: 0;">4. Moyenne Générale (3M)</h3>
-                                <p style="font-size: 0.8rem; color: var(--color-text-secondary); margin-bottom: 0.5rem;">La moyenne générale arithmétique de toutes les branches doit être d'au moins 4.0. Concerne la filière 3M.</p>
+                                <h3>4. Moyenne Générale (3M)</h3>
+                                <p>La moyenne générale arithmétique de toutes les branches doit être d'au moins 4.0. Concerne la filière 3M.</p>
                             </div>
-                            <span style="display:inline-block; font-size: 0.7rem; background: rgba(139,92,246,0.15); color: #a78bfa; padding: 2px 6px; border-radius: 4px; font-weight: bold; align-self: flex-start; margin-top: auto;">Éliminatoire si &lt; 4.0 (3M)</span>
+                            <span class="rule-badge rule-badge--violet">Éliminatoire si &lt; 4.0 (3M)</span>
                         </div>
                     </div>
                 </div>
             </div>
 
             <!-- 2. Examples Card (Visual calculation profiles) -->
-            <div class="guide-card examples-card" style="grid-column: span 2;">
+            <div class="guide-card examples-card guide-card-wide">
                 <h2 class="guide-card-title">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 0.35rem;"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
                     Comment fonctionne le Bilan des Points ?
                 </h2>
-                
+
                 <!-- Rule Formula Explainer Box -->
-                <div style="background-color: var(--color-bg-surface); border: 1px solid var(--color-border-subtle); border-left: 4px solid var(--color-primary); padding: 1.25rem 1.25rem 1.25rem 1.5rem; border-radius: var(--radius-md); font-size: 0.825rem; margin-bottom: 1.25rem; line-height: 1.6; color: var(--color-text-primary);">
-                    <strong style="color: var(--color-text-primary); display: flex; align-items: center; gap: 0.5rem; font-size: 0.9rem; margin-bottom: 0.6rem; font-weight: 800;">
+                <div class="formula-box">
+                    <strong class="formula-box-title">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--color-primary)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle;"><path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A5 5 0 0 0 8 8c0 1 .3 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/></svg>
                         Règle de double compensation (filières 3M uniquement) :
                     </strong>
-                    <ul style="margin-left: 1.25rem; display: flex; flex-direction: column; gap: 0.4rem; list-style-type: disc;">
-                        <li>Note de <strong style="color: #059669; font-weight: 700;">5.0</strong> : +1.0 point au-dessus de 4.0 = <span style="color: #059669; font-weight: 800;">+1.0 point de bilan</span>.</li>
-                        <li>Note de <strong style="color: #dc2626; font-weight: 700;">3.5</strong> : -0.5 point en dessous de 4.0 = Écart doublé (double compensation) = <span style="color: #dc2626; font-weight: 800;">-1.0 point de bilan</span>.</li>
-                        <li>Note de <strong style="color: #dc2626; font-weight: 700;">3.0</strong> : -1.0 point en dessous de 4.0 = Écart doublé (double compensation) = <span style="color: #dc2626; font-weight: 800;">-2.0 points de bilan</span>.</li>
+                    <ul class="formula-list">
+                        <li>Note de <strong class="text-pass">5.0</strong> : +1.0 point au-dessus de 4.0 = <span class="text-pass">+1.0 point de bilan</span>.</li>
+                        <li>Note de <strong class="text-fail">3.5</strong> : -0.5 point en dessous de 4.0 = Écart doublé (double compensation) = <span class="text-fail">-1.0 point de bilan</span>.</li>
+                        <li>Note de <strong class="text-fail">3.0</strong> : -1.0 point en dessous de 4.0 = Écart doublé (double compensation) = <span class="text-fail">-2.0 points de bilan</span>.</li>
                     </ul>
                 </div>
 
-                <div class="example-profiles-container" style="max-width: 800px; margin: 0.5rem auto 0 auto;">
+                <div class="example-profiles-container">
                     <!-- Profile 1: Promoted -->
-                    <div class="example-profile-box promoted" style="background-color: rgba(16,185,129,0.03); border: 1px solid rgba(16,185,129,0.2);">
+                    <div class="example-profile-box promoted">
                         <div class="profile-header-status">
-                            <h4 style="font-size: 0.9rem;">Élève A : Promu</h4>
-                            <span class="status-badge promoted" style="font-size: 0.75rem; padding: 0.25rem 0.6rem;">PROMU</span>
+                            <h4>Élève A : Promu</h4>
+                            <span class="status-badge promoted">PROMU</span>
                         </div>
                         <div class="mock-table">
-                            <div class="mock-row" style="padding: 0.25rem 0; border-bottom: 1px solid rgba(255,255,255,0.03);">
+                            <div class="mock-row">
                                 <span>Français</span><span class="val">4.5</span><span class="diff positive">+0.5</span>
                             </div>
-                            <div class="mock-row" style="padding: 0.25rem 0; border-bottom: 1px solid rgba(255,255,255,0.03);">
-                                <span>Mathématiques</span><span class="val">3.5</span><span class="diff negative" style="font-weight:bold;">-1.0 (doublé)</span>
+                            <div class="mock-row">
+                                <span>Mathématiques</span><span class="val">3.5</span><span class="diff negative">-1.0 (doublé)</span>
                             </div>
-                            <div class="mock-row" style="padding: 0.25rem 0; border-bottom: 1px solid rgba(255,255,255,0.03);">
+                            <div class="mock-row">
                                 <span>Anglais</span><span class="val">5.0</span><span class="diff positive">+1.0</span>
                             </div>
-                            <div class="mock-row" style="padding: 0.25rem 0;">
+                            <div class="mock-row">
                                 <span>Physique</span><span class="val">4.0</span><span class="diff neutral">0.0</span>
                             </div>
                         </div>
-                        <div class="profile-summary-stats" style="background-color: rgba(0,0,0,0.2); padding: 0.75rem; border-radius: var(--radius-sm); border-top: none; margin-top: 0.5rem;">
-                            <div style="display:flex; justify-content:space-between;"><span>Moyenne générale:</span><strong>4.25 (&gt;= 4.0)</strong></div>
-                            <div style="display:flex; justify-content:space-between;"><span>Bilan des points:</span><strong class="positive">+0.5 (&gt;= 0)</strong></div>
-                            <div style="display:flex; justify-content:space-between;"><span>Insuffisances:</span><strong>1 (&lt;= 4)</strong></div>
+                        <div class="profile-summary-stats">
+                            <div><span>Moyenne générale:</span><strong>4.25 (&gt;= 4.0)</strong></div>
+                            <div><span>Bilan des points:</span><strong class="positive">+0.5 (&gt;= 0)</strong></div>
+                            <div><span>Insuffisances:</span><strong>1 (&lt;= 4)</strong></div>
                         </div>
                     </div>
 
                     <!-- Profile 2: Not Promoted -->
-                    <div class="example-profile-box failed" style="background-color: rgba(239,68,68,0.03); border: 1px solid rgba(239,68,68,0.2);">
+                    <div class="example-profile-box failed">
                         <div class="profile-header-status">
-                            <h4 style="font-size: 0.9rem;">Élève B : Non Promu</h4>
-                            <span class="status-badge failed" style="font-size: 0.75rem; padding: 0.25rem 0.6rem;">NON PROMU</span>
+                            <h4>Élève B : Non Promu</h4>
+                            <span class="status-badge failed">NON PROMU</span>
                         </div>
                         <div class="mock-table">
-                            <div class="mock-row" style="padding: 0.25rem 0; border-bottom: 1px solid rgba(255,255,255,0.03);">
-                                <span>Français</span><span class="val">3.5</span><span class="diff negative" style="font-weight:bold;">-1.0 (doublé)</span>
+                            <div class="mock-row">
+                                <span>Français</span><span class="val">3.5</span><span class="diff negative">-1.0 (doublé)</span>
                             </div>
-                            <div class="mock-row" style="padding: 0.25rem 0; border-bottom: 1px solid rgba(255,255,255,0.03);">
-                                <span>Mathématiques</span><span class="val">3.0</span><span class="diff negative" style="font-weight:bold;">-2.0 (doublé)</span>
+                            <div class="mock-row">
+                                <span>Mathématiques</span><span class="val">3.0</span><span class="diff negative">-2.0 (doublé)</span>
                             </div>
-                            <div class="mock-row" style="padding: 0.25rem 0; border-bottom: 1px solid rgba(255,255,255,0.03);">
+                            <div class="mock-row">
                                 <span>Anglais</span><span class="val">5.0</span><span class="diff positive">+1.0</span>
                             </div>
-                            <div class="mock-row" style="padding: 0.25rem 0;">
+                            <div class="mock-row">
                                 <span>Physique</span><span class="val">4.0</span><span class="diff neutral">0.0</span>
                             </div>
                         </div>
-                        <div class="profile-summary-stats" style="background-color: rgba(0,0,0,0.2); padding: 0.75rem; border-radius: var(--radius-sm); border-top: none; margin-top: 0.5rem;">
-                            <div style="display:flex; justify-content:space-between;"><span>Moyenne générale:</span><strong>3.88 (&lt; 4.0)</strong></div>
-                            <div style="display:flex; justify-content:space-between;"><span>Bilan des points:</span><strong class="failed">-2.0 (&lt; 0)</strong></div>
-                            <div style="display:flex; justify-content:space-between;"><span>Insuffisances:</span><strong>2 (&lt;= 4)</strong></div>
+                        <div class="profile-summary-stats">
+                            <div><span>Moyenne générale:</span><strong>3.88 (&lt; 4.0)</strong></div>
+                            <div><span>Bilan des points:</span><strong class="failed">-2.0 (&lt; 0)</strong></div>
+                            <div><span>Insuffisances:</span><strong>2 (&lt;= 4)</strong></div>
                         </div>
                     </div>
                 </div>
@@ -963,7 +949,7 @@
             <!-- 3. Simulator features -->
             <div class="guide-card simulation-guide-card">
                 <h2 class="guide-card-title">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 0.35rem;"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
                     Simulateur de Note Cible
                 </h2>
                 <p class="guide-intro">Besoin de savoir quelle note obtenir pour sauver votre moyenne ?</p>
@@ -978,7 +964,7 @@
             <!-- 4. Scanning features -->
             <div class="guide-card scanning-guide-card">
                 <h2 class="guide-card-title">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 0.35rem;"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
                     Photo de l'épreuve
                 </h2>
                 <p class="guide-intro">Ajoutez une photo comme justificatif pour vos évaluations :</p>
@@ -1031,34 +1017,34 @@
     <div class="modal-backdrop" id="onboarding-setup-modal">
         <div class="modal-container" style="max-width: 440px; width: 95%;">
             <button class="modal-close-btn" id="close-onboarding-setup-modal">&times;</button>
-            <h2 class="modal-title" style="margin-bottom: 0.5rem; text-align: center;">Personnalisez votre espace</h2>
-            <p style="color: var(--color-text-secondary); font-size: 0.8rem; text-align: center; margin-bottom: 1.5rem;">
+            <h2 class="modal-title modal-title-center">Personnalisez votre espace</h2>
+            <p class="modal-sub">
                 Choisissez votre année pour adapter le tableau de bord sans détails inutiles.
             </p>
-            
+
             <form id="onboarding-setup-form" style="display: flex; flex-direction: column; gap: 1.25rem;">
                 <!-- 1. Sélection de l'année -->
                 <div class="form-group">
-                    <label class="form-label" style="font-weight: 700; margin-bottom: 0.5rem; display: block;">Votre Année d'Études</label>
-                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.5rem;">
-                        <button type="button" class="btn btn-secondary onboarding-year-btn active" data-year="1" style="padding: 0.75rem 0.25rem;">1ère</button>
-                        <button type="button" class="btn btn-secondary onboarding-year-btn" data-year="2" style="padding: 0.75rem 0.25rem;">2ème</button>
-                        <button type="button" class="btn btn-secondary onboarding-year-btn" data-year="3" style="padding: 0.75rem 0.25rem;">3ème</button>
+                    <label class="form-label field-label">Votre Année d'Études</label>
+                    <div class="chip-grid-3">
+                        <button type="button" class="btn btn-secondary onboarding-year-btn onboarding-chip active" data-year="1">1ère</button>
+                        <button type="button" class="btn btn-secondary onboarding-year-btn onboarding-chip" data-year="2">2ème</button>
+                        <button type="button" class="btn btn-secondary onboarding-year-btn onboarding-chip" data-year="3">3ème</button>
                     </div>
                 </div>
 
                 <!-- 1b. Mode de couleur (Clair/Sombre) -->
                 <div class="form-group">
-                    <label class="form-label" style="font-weight: 700; margin-bottom: 0.5rem; display: block;">Mode de couleur</label>
-                    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.5rem;">
-                        <button type="button" class="btn btn-secondary onboarding-theme-mode-btn active" id="onboarding-theme-light" style="padding: 0.75rem 0.25rem;">Clair</button>
-                        <button type="button" class="btn btn-secondary onboarding-theme-mode-btn" id="onboarding-theme-dark" style="padding: 0.75rem 0.25rem;">Sombre</button>
+                    <label class="form-label field-label">Mode de couleur</label>
+                    <div class="chip-grid-2">
+                        <button type="button" class="btn btn-secondary onboarding-theme-mode-btn onboarding-chip active" id="onboarding-theme-light">Clair</button>
+                        <button type="button" class="btn btn-secondary onboarding-theme-mode-btn onboarding-chip" id="onboarding-theme-dark">Sombre</button>
                     </div>
                 </div>
 
                 <!-- 1c. Thème de couleur (Affiché uniquement en mode Sombre) -->
                 <div class="form-group" id="onboarding-color-theme-group">
-                    <label class="form-label" style="font-weight: 700; margin-bottom: 0.5rem; display: block;">Thème de couleur</label>
+                    <label class="form-label field-label">Thème de couleur</label>
                     <select id="theme-selector" title="Changer le thème de couleur">
                         <option value="navy">Navy</option>
                         <option value="pink">Rose</option>
@@ -1074,10 +1060,10 @@
                 </div>
 
                 <!-- 2. Option de redoublement -->
-                <div style="display: flex; align-items: center; justify-content: space-between; background: rgba(255,255,255,0.02); padding: 0.75rem 1rem; border-radius: var(--radius-md); border: 1px solid var(--color-border-subtle);">
+                <div class="settings-box settings-row">
                     <div>
-                        <label class="form-label" style="font-weight: 700; margin: 0; display: block;">Redoublez-vous cette année ?</label>
-                        <span style="font-size: 0.7rem; color: var(--color-text-secondary);">Ajoute une tentative supplémentaire pour cette année</span>
+                        <label class="form-label settings-label">Redoublez-vous cette année ?</label>
+                        <span class="settings-hint">Ajoute une tentative supplémentaire pour cette année</span>
                     </div>
                     <label class="switch-container">
                         <input type="checkbox" id="onboarding-is-repeating">
@@ -1086,10 +1072,10 @@
                 </div>
 
                 <!-- 3. Affichage des autres années -->
-                <div style="display: flex; align-items: center; justify-content: space-between; background: rgba(255,255,255,0.02); padding: 0.75rem 1rem; border-radius: var(--radius-md); border: 1px solid var(--color-border-subtle);">
+                <div class="settings-box settings-row">
                     <div>
-                        <label class="form-label" style="font-weight: 700; margin: 0; display: block;">Afficher les autres années ?</label>
-                        <span style="font-size: 0.7rem; color: var(--color-text-secondary);">Affiche ou masque les onglets des autres années</span>
+                        <label class="form-label settings-label">Afficher les autres années ?</label>
+                        <span class="settings-hint">Affiche ou masque les onglets des autres années</span>
                     </div>
                     <label class="switch-container">
                         <input type="checkbox" id="onboarding-show-all-years">
@@ -1098,10 +1084,10 @@
                 </div>
 
                 <!-- 3b. Retour haptique (natif iOS, masqué sur le web) -->
-                <div id="haptics-setting-row" style="display: flex; align-items: center; justify-content: space-between; background: rgba(255,255,255,0.02); padding: 0.75rem 1rem; border-radius: var(--radius-md); border: 1px solid var(--color-border-subtle);">
+                <div id="haptics-setting-row" class="settings-box settings-row">
                     <div>
-                        <label class="form-label" style="font-weight: 700; margin: 0; display: block;">Vibrations</label>
-                        <span style="font-size: 0.7rem; color: var(--color-text-secondary);">Retour haptique lors des interactions</span>
+                        <label class="form-label settings-label">Vibrations</label>
+                        <span class="settings-hint">Retour haptique lors des interactions</span>
                     </div>
                     <label class="switch-container">
                         <input type="checkbox" id="onboarding-haptics" checked>
@@ -1110,37 +1096,37 @@
                 </div>
 
                 <!-- 3c. Messages pour les notes < 3.5 -->
-                <div id="settings-messages-section" style="background: rgba(255,255,255,0.02); padding: 0.75rem 1rem; border-radius: var(--radius-md); border: 1px solid var(--color-border-subtle); display: flex; flex-direction: column; gap: 0.6rem;">
+                <div id="settings-messages-section" class="settings-box settings-stack">
                     <div>
-                        <label class="form-label" style="font-weight: 700; margin: 0; display: block;">Rox/roasts pour notes insuffisantes (&lt; 3.5)</label>
-                        <span style="font-size: 0.7rem; color: var(--color-text-secondary);">Messages aléatoires s'affichant si la note est inférieure à 3.5.</span>
+                        <label class="form-label settings-label">Rox/roasts pour notes insuffisantes (&lt; 3.5)</label>
+                        <span class="settings-hint">Messages aléatoires s'affichant si la note est inférieure à 3.5.</span>
                     </div>
-                    <div id="settings-messages-list" style="display: flex; flex-direction: column; gap: 0.35rem; max-height: 120px; overflow-y: auto; padding-right: 4px;">
+                    <div id="settings-messages-list" class="settings-msg-list">
                         <!-- Injected dynamically -->
                     </div>
-                    <div style="display: flex; gap: 0.5rem;">
-                        <input type="text" id="settings-new-message-input" placeholder="Ajouter un message..." class="form-input" style="flex: 1; min-height: 36px; font-size: 0.8rem; padding: 0.3rem 0.6rem; border: 1px solid var(--color-border-subtle); border-radius: var(--radius-sm); background: var(--color-bg-elevated); color: var(--color-text-primary);">
-                        <button type="button" id="settings-add-message-btn" class="btn btn-secondary" style="padding: 0.4rem 0.8rem; font-size: 0.8rem; min-height: 36px; display: flex; align-items: center; justify-content: center; border-radius: var(--radius-sm); border: 1px solid var(--color-border-subtle); font-weight: bold;">+</button>
+                    <div class="settings-msg-add">
+                        <input type="text" id="settings-new-message-input" placeholder="Ajouter un message..." class="form-input settings-msg-input">
+                        <button type="button" id="settings-add-message-btn" class="btn btn-secondary settings-msg-add-btn">+</button>
                     </div>
                 </div>
                 
                 <!-- 4. Sauvegarde des données -->
-                <div style="background: rgba(255,255,255,0.02); padding: 0.75rem 1rem; border-radius: var(--radius-md); border: 1px solid var(--color-border-subtle);">
-                    <label class="form-label" style="font-weight: 700; margin: 0 0 0.25rem 0; display: block;">Sauvegarde</label>
-                    <span style="font-size: 0.7rem; color: var(--color-text-secondary); display: block; margin-bottom: 0.6rem;">Exporte tes notes dans un fichier pour ne jamais les perdre, ou restaure une sauvegarde.</span>
-                    <div style="display: flex; gap: 0.5rem; margin-bottom: 0.5rem;">
-                        <button type="button" id="backup-export-btn" class="btn btn-secondary" style="flex: 1; padding: 0.6rem 0.5rem; font-size: 0.8rem;">Exporter</button>
-                        <button type="button" id="backup-import-btn" class="btn btn-secondary" style="flex: 1; padding: 0.6rem 0.5rem; font-size: 0.8rem;">Importer</button>
-                        <button type="button" id="backup-clipboard-import-btn" class="btn btn-secondary" style="flex: 1; padding: 0.6rem 0.5rem; font-size: 0.8rem; display: none;">Depuis Safari</button>
+                <div class="settings-box">
+                    <label class="form-label settings-label" style="margin-bottom: 0.25rem;">Sauvegarde</label>
+                    <span class="settings-hint" style="display: block; margin-bottom: 0.6rem;">Exporte tes notes dans un fichier pour ne jamais les perdre, ou restaure une sauvegarde.</span>
+                    <div class="action-row">
+                        <button type="button" id="backup-export-btn" class="btn btn-secondary backup-btn">Exporter</button>
+                        <button type="button" id="backup-import-btn" class="btn btn-secondary backup-btn">Importer</button>
+                        <button type="button" id="backup-clipboard-import-btn" class="btn btn-secondary backup-btn hidden">Depuis Safari</button>
                     </div>
-                    <label style="display: flex; align-items: center; gap: 0.4rem; font-size: 0.75rem; color: var(--color-text-secondary); cursor: pointer;">
+                    <label class="check-label">
                         <input type="checkbox" id="backup-include-photos" style="width: 16px; height: 16px;">
                         Inclure les photos (fichier plus lourd)
                     </label>
-                    <input type="file" id="backup-import-input" accept="application/json,.json" style="display: none;">
+                    <input type="file" id="backup-import-input" accept="application/json,.json" class="hidden">
                 </div>
 
-                <button type="submit" class="btn btn-primary" style="width: 100%; padding: 0.85rem; font-weight: 800; font-size: 1rem; border-radius: var(--radius-md); margin-top: 0.5rem;">
+                <button type="submit" class="btn btn-primary modal-submit-btn">
                     C'est parti !
                 </button>
             </form>
@@ -1151,8 +1137,8 @@
     <div class="modal-backdrop" id="auth-modal">
         <div class="modal-container" style="max-width: 440px; width: 95%;">
             <button class="modal-close-btn" id="close-auth-modal" aria-label="Fermer la fenêtre">&times;</button>
-            <h2 class="modal-title" id="auth-modal-title" style="margin-bottom: 0.5rem; text-align: center;">Espace Étudiant</h2>
-            <p style="color: var(--color-text-secondary); font-size: 0.8rem; text-align: center; margin-bottom: 1.5rem;" id="auth-modal-subtitle">
+            <h2 class="modal-title modal-title-center" id="auth-modal-title">Espace Étudiant</h2>
+            <p class="modal-sub" id="auth-modal-subtitle">
                 Sauvegardez vos notes et synchronisez vos appareils en toute sécurité.
             </p>
 
@@ -1162,34 +1148,34 @@
             </div>
 
             <!-- Inscription Form (S'inscrire) -->
-            <form id="auth-signup-form" style="display: flex; flex-direction: column; gap: 1rem;">
+            <form id="auth-signup-form" class="auth-form">
                 <div class="form-group">
-                    <label class="form-label" for="signup-name" style="font-weight: 700; margin-bottom: 0.4rem; display: block;">Nom et Prénom</label>
+                    <label class="form-label field-label" for="signup-name">Nom et Prénom</label>
                     <input type="text" id="signup-name" class="form-input" placeholder="ex. Marc Kovacs" required>
                 </div>
 
                 <div class="form-group">
-                    <label class="form-label" for="signup-email" style="font-weight: 700; margin-bottom: 0.4rem; display: block;">Adresse e-mail</label>
+                    <label class="form-label field-label" for="signup-email">Adresse e-mail</label>
                     <input type="email" id="signup-email" class="form-input" placeholder="ex. marc.kovacs@gymnase.ch" required>
                 </div>
                 <div class="form-group">
-                    <label class="form-label" for="signup-mobile" style="font-weight: 700; margin-bottom: 0.4rem; display: block;">Numéro de mobile</label>
+                    <label class="form-label field-label" for="signup-mobile">Numéro de mobile</label>
                     <input type="tel" id="signup-mobile" class="form-input" placeholder="ex. +41 79 123 45 67" required>
                 </div>
 
-                <button type="submit" class="btn btn-primary" style="width: 100%; padding: 0.85rem; font-weight: 800; font-size: 1rem; border-radius: var(--radius-md); margin-top: 0.5rem; display: flex; align-items: center; justify-content: center; gap: 0.5rem;">
+                <button type="submit" class="btn btn-primary modal-submit-btn">
                     Créer mon compte
                 </button>
             </form>
 
             <!-- Connexion Form (Se connecter) -->
-            <form id="auth-signin-form" style="display: none; flex-direction: column; gap: 1rem;">
+            <form id="auth-signin-form" class="auth-form hidden">
                 <div class="form-group">
-                    <label class="form-label" for="signin-email" style="font-weight: 700; margin-bottom: 0.4rem; display: block;">Adresse e-mail</label>
+                    <label class="form-label field-label" for="signin-email">Adresse e-mail</label>
                     <input type="email" id="signin-email" class="form-input" placeholder="ex. marc.kovacs@gymnase.ch" required>
                 </div>
 
-                <button type="submit" class="btn btn-primary" style="width: 100%; padding: 0.85rem; font-weight: 800; font-size: 1rem; border-radius: var(--radius-md); margin-top: 0.5rem; display: flex; align-items: center; justify-content: center; gap: 0.5rem;">
+                <button type="submit" class="btn btn-primary modal-submit-btn">
                     Se connecter
                 </button>
             </form>
@@ -1200,24 +1186,24 @@
     <div class="modal-backdrop" id="profile-modal">
         <div class="modal-container" style="max-width: 440px; width: 95%;">
             <button class="modal-close-btn" id="close-profile-modal" aria-label="Fermer la fenêtre">&times;</button>
-            <h2 class="modal-title" style="margin-bottom: 0.5rem; text-align: center;">Mon Espace</h2>
-            <p style="color: var(--color-text-secondary); font-size: 0.8rem; text-align: center; margin-bottom: 1.5rem;">
+            <h2 class="modal-title modal-title-center">Mon Espace</h2>
+            <p class="modal-sub">
                 Informations du compte et synchronisation.
             </p>
 
-            <div style="background: var(--color-bg-elevated); border-radius: var(--radius-lg); padding: 1.25rem; border: 1px solid var(--color-border-subtle); display: flex; flex-direction: column; gap: 1rem; margin-bottom: 1.5rem;">
-                <div style="display: flex; flex-direction: column; gap: 0.25rem; text-align: left;">
-                    <span style="font-size: 0.7rem; color: var(--color-text-secondary); font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em;">Nom & Prénom</span>
-                    <strong id="profile-display-name" style="font-size: 1.1rem; color: var(--color-text-primary);">Étudiant</strong>
+            <div class="profile-card">
+                <div class="profile-field">
+                    <span class="profile-field-label">Nom & Prénom</span>
+                    <strong id="profile-display-name" class="profile-field-value">Étudiant</strong>
                 </div>
 
-                <div style="display: flex; flex-direction: column; gap: 0.25rem; text-align: left;">
-                    <span style="font-size: 0.7rem; color: var(--color-text-secondary); font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em;">E-mail</span>
-                    <strong id="profile-display-email" style="font-size: 1.1rem; color: var(--color-text-primary);">-</strong>
+                <div class="profile-field">
+                    <span class="profile-field-label">E-mail</span>
+                    <strong id="profile-display-email" class="profile-field-value">-</strong>
                 </div>
-                <div style="display: flex; flex-direction: column; gap: 0.25rem; text-align: left;">
-                    <span style="font-size: 0.7rem; color: var(--color-text-secondary); font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em;">Téléphone mobile</span>
-                    <strong id="profile-display-mobile" style="font-size: 1.1rem; color: var(--color-text-primary);">-</strong>
+                <div class="profile-field">
+                    <span class="profile-field-label">Téléphone mobile</span>
+                    <strong id="profile-display-mobile" class="profile-field-value">-</strong>
                 </div>
             </div>
 

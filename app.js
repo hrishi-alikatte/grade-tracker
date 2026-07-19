@@ -138,60 +138,57 @@ function renderYearSelector() {
     if (!container) return;
 
     let buttonsHTML = '';
-    const toggleBtnHTML = state.showAllYears 
-        ? `<button type="button" id="btn-toggle-show-all" class="lang-toggle-btn" style="flex: 0 0 auto; min-width: auto; padding: 6px 10px; font-size: 0.75rem; background: rgba(255,255,255,0.05); border: 1px dashed var(--color-border-subtle); color: var(--color-text-secondary); border-radius: var(--radius-sm); margin-left: 0.5rem;" title="Masquer les autres années">− Concentrer</button>`
-        : `<button type="button" id="btn-toggle-show-all" class="lang-toggle-btn" style="flex: 0 0 auto; min-width: auto; padding: 6px 10px; font-size: 0.75rem; background: rgba(255,255,255,0.05); border: 1px dashed var(--color-border-subtle); color: var(--color-text-secondary); border-radius: var(--radius-sm); margin-left: 0.5rem;" title="Afficher toutes les années">+ Tout afficher</button>`;
+    const toggleBtnHTML = state.showAllYears
+        ? `<button type="button" id="btn-toggle-show-all" class="lang-toggle-btn year-tab-focus-btn" title="Masquer les autres années">− Concentrer</button>`
+        : `<button type="button" id="btn-toggle-show-all" class="lang-toggle-btn year-tab-focus-btn" title="Afficher toutes les années">+ Tout afficher</button>`;
 
     if (state.showAllYears) {
         // Year 1
-        buttonsHTML += `<button type="button" class="lang-toggle-btn ${state.currentYear === 1 ? 'active' : ''}" data-year="1" style="flex: 1; text-align: center; font-size: 0.8rem; padding: 6px 4px;">1ère année ${state.currentYear === 1 ? '▴' : ''}</button>`;
+        buttonsHTML += `<button type="button" class="lang-toggle-btn year-tab-btn ${state.currentYear === 1 ? 'active' : ''}" data-year="1">1ère année ${state.currentYear === 1 ? '▴' : ''}</button>`;
         if (state.repeatingYears && state.repeatingYears[1]) {
-            buttonsHTML += `<button type="button" class="lang-toggle-btn ${state.currentYear === 1.5 ? 'active' : ''}" data-year="1.5" style="flex: 1; text-align: center; font-size: 0.8rem; padding: 6px 4px;">1ère (Rép.) ${state.currentYear === 1.5 ? '▴' : ''}</button>`;
+            buttonsHTML += `<button type="button" class="lang-toggle-btn year-tab-btn ${state.currentYear === 1.5 ? 'active' : ''}" data-year="1.5">1ère (Rép.) ${state.currentYear === 1.5 ? '▴' : ''}</button>`;
         }
         
         // Year 2
-        buttonsHTML += `<button type="button" class="lang-toggle-btn ${state.currentYear === 2 ? 'active' : ''}" data-year="2" style="flex: 1; text-align: center; font-size: 0.8rem; padding: 6px 4px;">2ème année ${state.currentYear === 2 ? '▴' : ''}</button>`;
+        buttonsHTML += `<button type="button" class="lang-toggle-btn year-tab-btn ${state.currentYear === 2 ? 'active' : ''}" data-year="2">2ème année ${state.currentYear === 2 ? '▴' : ''}</button>`;
         if (state.repeatingYears && state.repeatingYears[2]) {
-            buttonsHTML += `<button type="button" class="lang-toggle-btn ${state.currentYear === 2.5 ? 'active' : ''}" data-year="2.5" style="flex: 1; text-align: center; font-size: 0.8rem; padding: 6px 4px;">2ème (Rép.) ${state.currentYear === 2.5 ? '▴' : ''}</button>`;
+            buttonsHTML += `<button type="button" class="lang-toggle-btn year-tab-btn ${state.currentYear === 2.5 ? 'active' : ''}" data-year="2.5">2ème (Rép.) ${state.currentYear === 2.5 ? '▴' : ''}</button>`;
         }
         
         // Year 3
-        buttonsHTML += `<button type="button" class="lang-toggle-btn ${state.currentYear === 3 ? 'active' : ''}" data-year="3" style="flex: 1; text-align: center; font-size: 0.8rem; padding: 6px 4px;">3ème année ${state.currentYear === 3 ? '▴' : ''}</button>`;
+        buttonsHTML += `<button type="button" class="lang-toggle-btn year-tab-btn ${state.currentYear === 3 ? 'active' : ''}" data-year="3">3ème année ${state.currentYear === 3 ? '▴' : ''}</button>`;
         if (state.repeatingYears && state.repeatingYears[3]) {
-            buttonsHTML += `<button type="button" class="lang-toggle-btn ${state.currentYear === 3.5 ? 'active' : ''}" data-year="3.5" style="flex: 1; text-align: center; font-size: 0.8rem; padding: 6px 4px;">3ème (Rép.) ${state.currentYear === 3.5 ? '▴' : ''}</button>`;
+            buttonsHTML += `<button type="button" class="lang-toggle-btn year-tab-btn ${state.currentYear === 3.5 ? 'active' : ''}" data-year="3.5">3ème (Rép.) ${state.currentYear === 3.5 ? '▴' : ''}</button>`;
         }
         
         // Year 4 / Evolution
-        buttonsHTML += `<button type="button" class="lang-toggle-btn ${state.currentYear === 4 ? 'active' : ''}" data-year="4" style="flex: 1; text-align: center; font-size: 0.8rem; padding: 6px 4px;">Évolution</button>`;
+        buttonsHTML += `<button type="button" class="lang-toggle-btn year-tab-btn ${state.currentYear === 4 ? 'active' : ''}" data-year="4">Évolution</button>`;
     } else {
         const baseYear = Math.floor(state.currentYear);
         if (baseYear === 1) {
-            buttonsHTML += `<button type="button" class="lang-toggle-btn ${state.currentYear === 1 ? 'active' : ''}" data-year="1" style="flex: 1; text-align: center; font-size: 0.8rem; padding: 6px 4px;">1ère année ▾</button>`;
+            buttonsHTML += `<button type="button" class="lang-toggle-btn year-tab-btn ${state.currentYear === 1 ? 'active' : ''}" data-year="1">1ère année ▾</button>`;
             if (state.repeatingYears && state.repeatingYears[1]) {
-                buttonsHTML += `<button type="button" class="lang-toggle-btn ${state.currentYear === 1.5 ? 'active' : ''}" data-year="1.5" style="flex: 1; text-align: center; font-size: 0.8rem; padding: 6px 4px;">1ère (Rép.) ▾</button>`;
+                buttonsHTML += `<button type="button" class="lang-toggle-btn year-tab-btn ${state.currentYear === 1.5 ? 'active' : ''}" data-year="1.5">1ère (Rép.) ▾</button>`;
             }
         } else if (baseYear === 2) {
-            buttonsHTML += `<button type="button" class="lang-toggle-btn ${state.currentYear === 2 ? 'active' : ''}" data-year="2" style="flex: 1; text-align: center; font-size: 0.8rem; padding: 6px 4px;">2ème année ▾</button>`;
+            buttonsHTML += `<button type="button" class="lang-toggle-btn year-tab-btn ${state.currentYear === 2 ? 'active' : ''}" data-year="2">2ème année ▾</button>`;
             if (state.repeatingYears && state.repeatingYears[2]) {
-                buttonsHTML += `<button type="button" class="lang-toggle-btn ${state.currentYear === 2.5 ? 'active' : ''}" data-year="2.5" style="flex: 1; text-align: center; font-size: 0.8rem; padding: 6px 4px;">2ème (Rép.) ▾</button>`;
+                buttonsHTML += `<button type="button" class="lang-toggle-btn year-tab-btn ${state.currentYear === 2.5 ? 'active' : ''}" data-year="2.5">2ème (Rép.) ▾</button>`;
             }
         } else if (baseYear === 3) {
-            buttonsHTML += `<button type="button" class="lang-toggle-btn ${state.currentYear === 3 ? 'active' : ''}" data-year="3" style="flex: 1; text-align: center; font-size: 0.8rem; padding: 6px 4px;">3ème année ▾</button>`;
+            buttonsHTML += `<button type="button" class="lang-toggle-btn year-tab-btn ${state.currentYear === 3 ? 'active' : ''}" data-year="3">3ème année ▾</button>`;
             if (state.repeatingYears && state.repeatingYears[3]) {
-                buttonsHTML += `<button type="button" class="lang-toggle-btn ${state.currentYear === 3.5 ? 'active' : ''}" data-year="3.5" style="flex: 1; text-align: center; font-size: 0.8rem; padding: 6px 4px;">3ème (Rép.) ▾</button>`;
+                buttonsHTML += `<button type="button" class="lang-toggle-btn year-tab-btn ${state.currentYear === 3.5 ? 'active' : ''}" data-year="3.5">3ème (Rép.) ▾</button>`;
             }
         } else {
-            buttonsHTML += `<button type="button" class="lang-toggle-btn active" data-year="4" style="flex: 1; text-align: center; font-size: 0.8rem; padding: 6px 4px;">Évolution</button>`;
+            buttonsHTML += `<button type="button" class="lang-toggle-btn year-tab-btn active" data-year="4">Évolution</button>`;
         }
     }
 
     // When collapsed to a single year, keep the pill compact and centred
     // instead of stretching into a heavy full-width bar.
-    const containerStyle = state.showAllYears
-        ? 'margin: 0; padding: 4px; width: 100%; display: flex; max-width: 650px; justify-content: space-between; gap: 4px; align-items: center;'
-        : 'margin: 0 auto; padding: 4px; width: fit-content; display: inline-flex; justify-content: center; gap: 6px; align-items: center;';
     container.innerHTML = `
-        <div class="lang-toggle-container" style="${containerStyle}">
+        <div class="lang-toggle-container year-tabs-row${state.showAllYears ? '' : ' year-tabs-row--compact'}">
             ${buttonsHTML}
             ${toggleBtnHTML}
         </div>
@@ -305,6 +302,16 @@ const g1List = document.getElementById('g1-list');
 const g2List = document.getElementById('g2-list');
 
 const studentNameEl = document.getElementById('student-name');
+const studentNamePrefixEl = document.getElementById('student-name-prefix');
+
+// Élision française : « d'Étudiant » mais « de Marc ».
+function studentNamePrefix(name) {
+    return /^[aeiouyhàâäæéèêëîïôöœùûü]/i.test(name || '') ? "d'" : 'de ';
+}
+
+function syncStudentNamePrefix() {
+    if (studentNamePrefixEl) studentNamePrefixEl.textContent = studentNamePrefix(state.studentName);
+}
 
 // --- 8. Event Binding: Student Name Inline Edit ---
 studentNameEl.addEventListener('blur', () => {
@@ -312,6 +319,7 @@ studentNameEl.addEventListener('blur', () => {
     if (!nameText) nameText = 'Étudiant';
     state.studentName = nameText;
     studentNameEl.textContent = nameText;
+    syncStudentNamePrefix();
     saveState();
 });
 
@@ -362,6 +370,7 @@ function updateDashboard() {
     if (studentNameEl.textContent !== state.studentName) {
         studentNameEl.textContent = state.studentName;
     }
+    syncStudentNamePrefix();
 
     if (results.activeSubjectsCount === 0) {
         if (promoDashboard) promoDashboard.className = 'promo-dashboard-container status-neutral';
@@ -477,19 +486,12 @@ function updateGroupsBilan() {
     }
 
     g1PointsText.textContent = `Min 16 / tes points: ${results.g1Sum.toFixed(1)} · Max 24`;
-    if (results.g1Sum < 16.0) {
-        g1PointsText.style.color = 'var(--color-avg-failing-text)';
-    } else {
-        g1PointsText.style.color = 'var(--color-avg-passing-text)';
-    }
+    g1PointsText.classList.toggle('is-failing', results.g1Sum < 16.0);
+    g1PointsText.classList.toggle('is-passing', results.g1Sum >= 16.0);
 
     const createBilanItem = (name, val) => {
         const li = document.createElement('li');
-        li.style.display = 'flex';
-        li.style.justifyContent = 'space-between';
-        li.style.padding = '0.2rem 0';
-        li.style.borderBottom = '1px solid rgba(255,255,255,0.03)';
-        
+
         const valText = val !== null ? val.toFixed(1) : '—';
         let color = 'inherit';
         if (val !== null) {
@@ -534,11 +536,8 @@ function updateGroupsBilan() {
     const g2Min = g2Count * 4;
     const g2Max = g2Count * 6;
     g2PointsText.textContent = `Min ${g2Min} / tes points: ${g2Sum.toFixed(1)} · Max ${g2Max}`;
-    if (g2Sum < g2Min) {
-        g2PointsText.style.color = 'var(--color-avg-failing-text)';
-    } else {
-        g2PointsText.style.color = 'var(--color-avg-passing-text)';
-    }
+    g2PointsText.classList.toggle('is-failing', g2Sum < g2Min);
+    g2PointsText.classList.toggle('is-passing', g2Sum >= g2Min);
 }
 
 
@@ -657,7 +656,7 @@ function renderSubjectEvolutionChart(subject, drawer) {
 
     if (points.length === 0) {
         drawer.innerHTML = `
-            <div style="text-align: center; font-size: 0.8rem; color: var(--color-text-muted); padding: 1rem 0;">
+            <div class="promo-empty-note">
                 Aucune moyenne disponible pour tracer l'évolution sur 3 ans.
             </div>
         `;
@@ -733,7 +732,7 @@ function updateTabVisibility() {
     }
 
     if (isYear4) {
-        if (evoContainer) evoContainer.style.display = 'flex';
+        if (evoContainer) evoContainer.classList.remove('hidden');
         if (promoDashboard) promoDashboard.style.display = 'none';
         if (semTabs) semTabs.style.display = 'none';
         if (subjectsSec) subjectsSec.style.display = 'none';
@@ -742,9 +741,10 @@ function updateTabVisibility() {
         
         renderDedicatedEvolutionSlide();
     } else {
-        if (evoContainer) evoContainer.style.display = 'none';
+        if (evoContainer) evoContainer.classList.add('hidden');
         if (promoDashboard) promoDashboard.style.display = 'block';
-        if (semTabs) semTabs.style.display = 'flex';
+        // '' (pas 'flex') : la feuille de style choisit flex ou grid (mobile).
+        if (semTabs) semTabs.style.display = '';
         if (subjectsSec) subjectsSec.style.display = 'block';
         if (bilanSec) bilanSec.style.display = 'block';
         if (addSubBtn) addSubBtn.style.display = 'inline-flex';
@@ -880,7 +880,7 @@ function renderDedicatedEvolutionSlide() {
                 </div>
                 <span class="evo-chart-caption">Comparez la trajectoire de chaque branche</span>
             </div>
-            <div id="multi-subject-graph-wrapper" class="evo-graph-wrapper" style="min-height: 250px;">
+            <div id="multi-subject-graph-wrapper" class="evo-graph-wrapper evo-graph-wrapper--tall">
                 <!-- Dynamically rendered -->
             </div>
         </div>
@@ -978,7 +978,7 @@ function renderMultiSubjectGraph() {
     if (allSubjects.length === 0) {
         wrapper.innerHTML = `
             <div class="graph-empty-state">
-                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--color-primary); opacity: 0.4;">
+                <svg class="empty-icon" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <line x1="18" y1="20" x2="18" y2="10"></line>
                     <line x1="12" y1="20" x2="12" y2="4"></line>
                     <line x1="6" y1="20" x2="6" y2="14"></line>
@@ -1039,11 +1039,11 @@ function renderMultiSubjectGraph() {
     const filtersHTML = `
         <div style="font-size: 0.8rem; font-weight: 500; color: var(--color-text-secondary); margin-bottom: 0.75rem; text-align: center; display: flex; justify-content: center; align-items: center; gap: 0.5rem; flex-wrap: wrap;">
             <span>Sélectionnez les branches à afficher :</span>
-            <button type="button" class="btn-chart-control" id="btn-chart-all" style="background: none; border: none; color: var(--color-primary); font-size: 0.75rem; cursor: pointer; text-decoration: underline; font-weight: 600; min-height: 44px; min-width: 44px; display: inline-flex; align-items: center; justify-content: center; padding: 0 8px;">Tout afficher</button>
+            <button type="button" class="btn-chart-control" id="btn-chart-all">Tout afficher</button>
             <span style="color: var(--color-border-subtle); font-size: 0.75rem;">|</span>
-            <button type="button" class="btn-chart-control" id="btn-chart-none" style="background: none; border: none; color: var(--color-primary); font-size: 0.75rem; cursor: pointer; text-decoration: underline; font-weight: 600; min-height: 44px; min-width: 44px; display: inline-flex; align-items: center; justify-content: center; padding: 0 8px;">Effacer</button>
+            <button type="button" class="btn-chart-control" id="btn-chart-none">Effacer</button>
         </div>
-        <div class="chart-filters" style="display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1.5rem; justify-content: center; width: 100%;">
+        <div class="chart-filters">
             ${allSubjects.map(sub => {
                 const active = activeSubjectFilters.has(sub.key);
                 return `
@@ -1113,7 +1113,7 @@ function renderMultiSubjectGraph() {
             const pathData = points.map((p, i) => `${i === 0 ? 'M' : 'L'} ${p.x} ${p.y}`).join(' ');
             pathHTML = `
                 <path d="${pathData}" fill="none" stroke="${sub.color}" stroke-width="${isMax ? '3.5' : '2.5'}" stroke-linecap="round" stroke-linejoin="round" />
-                <path class="graph-hover-helper" d="${pathData}" fill="none" stroke="transparent" stroke-width="20" stroke-linecap="round" stroke-linejoin="round" style="cursor: pointer;" />
+                <path class="graph-hover-helper" d="${pathData}" fill="none" stroke="transparent" stroke-width="20" stroke-linecap="round" stroke-linejoin="round" />
             `;
         }
 
@@ -1287,7 +1287,7 @@ function renderEvolutionGraph() {
     if (points.length === 0) {
         wrapper.innerHTML = `
             <div class="graph-empty-state">
-                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--color-primary); opacity: 0.4;">
+                <svg class="empty-icon" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <line x1="18" y1="20" x2="18" y2="10"></line>
                     <line x1="12" y1="20" x2="12" y2="4"></line>
                     <line x1="6" y1="20" x2="6" y2="14"></line>
@@ -1411,9 +1411,9 @@ function getSubjectCardInnerHTML(subject, sem) {
     if (avgRaw !== null) {
         const isTargetMet = avgRounded >= subject.target;
         if (isTargetMet) {
-            targetStatusHTML = '<span class="subject-status" style="display:inline-flex; align-items:center; gap:0.25rem;"><svg class="status-icon success" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>Objectif atteint</span>';
+            targetStatusHTML = '<span class="subject-status"><svg class="status-icon success" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>Objectif atteint</span>';
         } else {
-            targetStatusHTML = '<span class="subject-status not-reached" style="display:inline-flex; align-items:center; gap:0.25rem;"><svg class="status-icon danger" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>Objectif non atteint</span>';
+            targetStatusHTML = '<span class="subject-status not-reached"><svg class="status-icon danger" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>Objectif non atteint</span>';
         }
     } else {
         targetStatusHTML = '<span class="subject-status neutral">Aucune note pour l\'instant.</span>';
@@ -1430,7 +1430,7 @@ function getSubjectCardInnerHTML(subject, sem) {
             const statusClass = getStatusClass(g.value);
             const commentIndicator = '';
             const photoIndicator = g.hasPhoto ? '<svg class="grade-indicator-icon" style="margin-left:2px;" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>' : '';
-            const indicators = (commentIndicator || photoIndicator) ? `<span style="display:inline-flex; align-items:center; vertical-align:middle; margin-left:0.15rem; gap:1px; opacity:0.85;">${commentIndicator}${photoIndicator}</span>` : '';
+            const indicators = (commentIndicator || photoIndicator) ? `<span class="grade-indicators">${commentIndicator}${photoIndicator}</span>` : '';
             return `
                 <div class="grade-pill ${statusClass}" data-grade-id="${g.id}">
                     <span>${g.value.toFixed(1)}</span>${indicators}
@@ -1455,7 +1455,7 @@ function getSubjectCardInnerHTML(subject, sem) {
         const isDe = subject.name === 'Allemand';
         const isIt = subject.name === 'Italien';
         langToggleHTML = `
-            <div class="lang-toggle-container" style="margin-left: 0.5rem; vertical-align: middle; padding: 1px;">
+            <div class="lang-toggle-container subject-mode-toggle">
                 <button type="button" class="lang-toggle-btn ${isDe ? 'active' : ''}" data-lang="Allemand">DE</button>
                 <button type="button" class="lang-toggle-btn ${isIt ? 'active' : ''}" data-lang="Italien">IT</button>
             </div>
@@ -1468,7 +1468,7 @@ function getSubjectCardInnerHTML(subject, sem) {
         const isArts = subject.name === 'Arts Visuels';
         const isMus = subject.name === 'Musique';
         artToggleHTML = `
-            <div class="lang-toggle-container" style="margin-left: 0.5rem; vertical-align: middle; padding: 1px;">
+            <div class="lang-toggle-container subject-mode-toggle">
                 <button type="button" class="lang-toggle-btn ${isArts ? 'active' : ''}" data-lang="Arts Visuels">Arts</button>
                 <button type="button" class="lang-toggle-btn ${isMus ? 'active' : ''}" data-lang="Musique">Musique</button>
             </div>
@@ -1489,7 +1489,7 @@ function getSubjectCardInnerHTML(subject, sem) {
             detailText = formatYear2ArtAvg();
         }
         lanesHTML = `
-            <div class="grade-lanes-container" style="grid-template-columns: 1fr;">
+            <div class="grade-lanes-container grade-lanes-container--single">
                 <div class="grade-lane">
                     <div class="lane-title">
                         <span>Moyenne reprise de la 2ème année</span>
@@ -1504,11 +1504,11 @@ function getSubjectCardInnerHTML(subject, sem) {
         const evoBtnHTML = showEvoBtn ? `<button type="button" class="btn-sub-evo" title="Afficher l'évolution sur 3 ans">Évolution</button>` : '';
 
         footerHTML = `
-            <div class="subject-footer" style="display: flex; justify-content: space-between; align-items: center; gap: 0.5rem; width: 100%;">
+            <div class="subject-footer">
                 ${targetStatusHTML}
                 ${evoBtnHTML}
             </div>
-            <div style="font-size: 0.75rem; color: var(--color-text-secondary); font-style: italic; margin-top: 0.5rem;">
+            <div class="subject-note">
                 Note de 2ème année verrouillée pour le Bilan.
             </div>
         `;
@@ -1535,13 +1535,13 @@ function getSubjectCardInnerHTML(subject, sem) {
                 <div class="annual-comparison-grid" style="display: flex; flex-direction: column; gap: 0.75rem; padding: 0.25rem 0;">
                     <!-- Semester averages row -->
                     <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.5rem; border-bottom: 1px dashed var(--color-border-subtle); padding-bottom: 0.5rem;">
-                        <div style="display: flex; flex-direction: column; align-items: center;">
-                            <span style="font-size: 0.7rem; color: var(--color-text-secondary); font-weight: 500;">Semestre 1</span>
-                            <span class="comparison-col-val ${getCompareValClass(avgSem1)}" style="font-size: 0.9rem; font-weight: 700;">${formatVal(avgSem1)}</span>
+                        <div class="comparison-sem-col">
+                            <span class="comparison-sem-label">Semestre 1</span>
+                            <span class="comparison-col-val comparison-val-sm ${getCompareValClass(avgSem1)}">${formatVal(avgSem1)}</span>
                         </div>
-                        <div style="display: flex; flex-direction: column; align-items: center;">
-                            <span style="font-size: 0.7rem; color: var(--color-text-secondary); font-weight: 500;">Semestre 2</span>
-                            <span class="comparison-col-val ${getCompareValClass(avgSem2)}" style="font-size: 0.9rem; font-weight: 700;">${formatVal(avgSem2)}</span>
+                        <div class="comparison-sem-col">
+                            <span class="comparison-sem-label">Semestre 2</span>
+                            <span class="comparison-col-val comparison-val-sm ${getCompareValClass(avgSem2)}">${formatVal(avgSem2)}</span>
                         </div>
                     </div>
                     
@@ -1549,9 +1549,9 @@ function getSubjectCardInnerHTML(subject, sem) {
                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; align-items: stretch;">
                         <!-- Left Column: Averages -->
                         <div style="display: flex; flex-direction: column; justify-content: space-between; gap: 0.4rem; background: rgba(96, 165, 250, 0.04); border: 1px solid rgba(96, 165, 250, 0.12); padding: 0.5rem 0.6rem; border-radius: var(--radius-md);">
-                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <div class="comparison-line">
                                 <span style="font-size: 0.7rem; color: var(--color-text-secondary); font-weight: 600;">Sans exam :</span>
-                                <span class="comparison-col-val ${getCompareValClass(avgAnn)}" style="font-size: 0.9rem; font-weight: 700;">${formatVal(avgAnn)}</span>
+                                <span class="comparison-col-val comparison-val-sm ${getCompareValClass(avgAnn)}">${formatVal(avgAnn)}</span>
                             </div>
                             <div style="border-top: 1px dashed rgba(96, 165, 250, 0.15); margin: 0.15rem 0; padding-top: 0.25rem; display: flex; justify-content: space-between; align-items: center;">
                                 <span style="font-size: 0.7rem; color: var(--color-primary); font-weight: 700;">Avec exam :</span>
@@ -1562,13 +1562,13 @@ function getSubjectCardInnerHTML(subject, sem) {
                         <!-- Right Column: Exam inputs -->
                         <div style="display: flex; flex-direction: column; justify-content: center; gap: 0.35rem; border: 1px solid var(--color-border-subtle); padding: 0.5rem 0.6rem; border-radius: var(--radius-md); background: rgba(255, 255, 255, 0.01);">
                             ${examConfig.written ? `
-                            <div style="display: flex; justify-content: space-between; align-items: center; gap: 0.25rem;">
-                                <span style="font-size: 0.7rem; color: var(--color-text-primary); font-weight: 600;">Écrit :</span>
+                            <div class="comparison-line">
+                                <span class="comparison-mini-label">Écrit :</span>
                                 <input type="number" step="0.5" min="1" max="6" inputmode="decimal" enterkeyhint="done" class="exam-input-field" data-subject-id="${subject.id}" data-exam-type="written" value="${subject.exams && subject.exams.written !== null ? subject.exams.written : ''}" placeholder="—">
                             </div>
                             ` : ''}
-                            <div style="display: flex; justify-content: space-between; align-items: center; gap: 0.25rem;">
-                                <span style="font-size: 0.7rem; color: var(--color-text-primary); font-weight: 600;">Oral :</span>
+                            <div class="comparison-line">
+                                <span class="comparison-mini-label">Oral :</span>
                                 <input type="number" step="0.5" min="1" max="6" inputmode="decimal" enterkeyhint="done" class="exam-input-field" data-subject-id="${subject.id}" data-exam-type="oral" value="${subject.exams && subject.exams.oral !== null ? subject.exams.oral : ''}" placeholder="—">
                             </div>
                         </div>
@@ -1598,11 +1598,11 @@ function getSubjectCardInnerHTML(subject, sem) {
         const evoBtnHTML = showEvoBtn ? `<button type="button" class="btn-sub-evo" title="Afficher l'évolution sur 3 ans">Évolution</button>` : '';
 
         footerHTML = `
-            <div class="subject-footer" style="display: flex; justify-content: space-between; align-items: center; gap: 0.5rem; width: 100%;">
+            <div class="subject-footer">
                 ${targetStatusHTML}
                 ${evoBtnHTML}
             </div>
-            <div style="font-size: 0.75rem; color: var(--color-text-secondary); font-style: italic; margin-top: 0.5rem;">
+            <div class="subject-note">
                 ${examConfig ? 'Examens de maturité modifiables directement ci-dessus.' : 'Notes éditables en mode Semestre uniquement.'}
             </div>
         `;
@@ -1610,7 +1610,7 @@ function getSubjectCardInnerHTML(subject, sem) {
         // Normal semester view: show lanes
         if (mode === 'standard') {
             lanesHTML = `
-                <div class="grade-lanes-container" style="grid-template-columns: 1fr;">
+                <div class="grade-lanes-container grade-lanes-container--single">
                     <div class="grade-lane">
                         <div class="lane-title">
                             <span>Notes</span>
@@ -1648,7 +1648,7 @@ function getSubjectCardInnerHTML(subject, sem) {
         }
 
         const addGradeBtnHTML = isCurrentYearLocked() ? '' : `
-            <button class="btn btn-secondary add-grade-btn" style="padding: 0.5rem 1rem; font-size: 0.8rem; border-radius: var(--radius-full);">
+            <button class="btn btn-secondary add-grade-btn">
                 + Ajouter une note
             </button>
         `;
@@ -1699,13 +1699,13 @@ function getSubjectCardInnerHTML(subject, sem) {
                         <option value="4">4 tests</option>
                     </select>
                     ${mode === 'dual' ? `
-                    <span style="font-size: 0.75rem; color: var(--color-text-muted);">en</span>
+                    <span class="sim-muted">en</span>
                     <select class="sim-type">
                         <option value="TS">TS</option>
                         <option value="TA">TA</option>
                     </select>
                     ` : ''}
-                    <span style="font-size: 0.75rem; color: var(--color-text-muted);">req. :</span>
+                    <span class="sim-muted">req. :</span>
                     <span class="sim-result-badge">...</span>
                 </div>
             </div>
@@ -1747,15 +1747,9 @@ function updateSubjectDetailsModalContent(subject) {
     modalContent.innerHTML = '';
     
     const card = document.createElement('div');
-    card.className = 'subject-card';
+    card.className = 'subject-card subject-card--flat';
     card.setAttribute('data-id', subject.id);
-    card.style.background = 'none';
-    card.style.border = 'none';
-    card.style.padding = '0';
-    card.style.boxShadow = 'none';
-    card.style.backdropFilter = 'none';
-    card.style.webkitBackdropFilter = 'none';
-    
+
     const sem = state.currentSemester;
     card.innerHTML = getSubjectCardInnerHTML(subject, sem);
     modalContent.appendChild(card);
@@ -1784,19 +1778,6 @@ function renderSubjects() {
     if (isCurrentYearLocked()) {
         const lockBanner = document.createElement('div');
         lockBanner.className = 'lock-banner';
-        lockBanner.style.padding = '0.75rem 1rem';
-        lockBanner.style.marginBottom = '1.25rem';
-        lockBanner.style.background = 'rgba(239, 68, 68, 0.08)';
-        lockBanner.style.border = '1px solid rgba(239, 68, 68, 0.2)';
-        lockBanner.style.borderRadius = 'var(--radius-md)';
-        lockBanner.style.color = '#ef4444';
-        lockBanner.style.fontSize = '0.8rem';
-        lockBanner.style.fontWeight = '600';
-        lockBanner.style.display = 'flex';
-        lockBanner.style.alignItems = 'center';
-        lockBanner.style.gap = '0.5rem';
-        lockBanner.style.width = '100%';
-        lockBanner.style.gridColumn = '1 / -1'; // Span across all columns in grid layouts
         lockBanner.innerHTML = `
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
             <span>Cette tentative est verrouillée car le redoublement est actif. Pour modifier ces notes, décochez l'option de redoublement dans l'onglet Annuel.</span>
@@ -1855,8 +1836,7 @@ function renderSubjects() {
             const repeatItem = document.createElement('div');
             repeatItem.className = 'gem-item';
             if (isRepeatDisabled) {
-                repeatItem.style.opacity = '0.5';
-                repeatItem.style.cursor = 'not-allowed';
+                repeatItem.classList.add('is-disabled');
             }
 
             repeatItem.innerHTML = `
@@ -1927,21 +1907,15 @@ function renderSubjects() {
 
             const repeatCard = document.createElement('div');
             repeatCard.className = animateCards ? 'subject-card slide-up repeating-card' : 'subject-card repeating-card';
-            repeatCard.style.padding = '1.5rem';
-            repeatCard.style.display = 'flex';
-            repeatCard.style.flexDirection = 'column';
-            repeatCard.style.gap = '0.75rem';
-            repeatCard.style.border = '1px dashed var(--color-border-subtle)';
-            repeatCard.style.justifyContent = 'center';
-            repeatCard.style.background = 'rgba(0,0,0,0.01)';
+            repeatCard.classList.add('repeat-placeholder-card');
             if (isRepeatDisabled) {
-                repeatCard.style.opacity = '0.65';
+                repeatCard.classList.add('is-inactive');
             }
             
             let repeatControlHTML = '';
             if (isRepeatDisabled) {
                 repeatControlHTML = `
-                    <div style="display: flex; align-items: center; gap: 0.5rem; margin-top: 0.25rem;">
+                    <div class="repeat-check-row">
                         <input type="checkbox" id="chk-repeat-year" style="cursor: not-allowed; width: 16px; height: 16px;" disabled>
                         <label style="font-size: 0.85rem; font-weight: 600; color: var(--color-text-muted); cursor: not-allowed; display: flex; flex-direction: column; gap: 0.15rem;">
                             <span>Redoubler l'année (verrouillé)</span>
@@ -1951,7 +1925,7 @@ function renderSubjects() {
                 `;
             } else {
                 repeatControlHTML = `
-                    <div style="display: flex; align-items: center; gap: 0.5rem; margin-top: 0.25rem;">
+                    <div class="repeat-check-row">
                         <input type="checkbox" id="chk-repeat-year" style="cursor: pointer; width: 16px; height: 16px;" ${repeatingActive ? 'checked' : ''}>
                         <label for="chk-repeat-year" style="font-size: 0.85rem; font-weight: 600; cursor: pointer; color: var(--color-text-primary);">Redoubler l'année</label>
                     </div>
@@ -2241,7 +2215,7 @@ async function startScanning(videoElement, containerElement, isEditMode) {
         });
         
         videoElement.srcObject = stream;
-        containerElement.style.display = 'block';
+        containerElement.classList.remove('hidden');
         
         if (isEditMode) {
             editGradeCameraStream = stream;
@@ -2261,11 +2235,11 @@ function stopScanning(isEditMode) {
         if (isEditMode) {
             editGradeCameraStream = null;
             if (editCameraStream) editCameraStream.srcObject = null;
-            if (editCameraScannerView) editCameraScannerView.style.display = 'none';
+            if (editCameraScannerView) editCameraScannerView.classList.add('hidden');
         } else {
             addGradeCameraStream = null;
             if (cameraStream) cameraStream.srcObject = null;
-            if (cameraScannerView) cameraScannerView.style.display = 'none';
+            if (cameraScannerView) cameraScannerView.classList.add('hidden');
         }
     }
 }
@@ -2305,16 +2279,16 @@ function closeModal(modal) {
 
 function toggleEditMode(enable) {
     if (enable) {
-        gradeDetailsViewPanel.style.display = 'none';
-        gradeDetailsViewActions.style.display = 'none';
-        gradeDetailsEditPanel.style.display = 'flex';
-        gradeDetailsEditActions.style.display = 'flex';
+        gradeDetailsViewPanel.classList.add('hidden');
+        gradeDetailsViewActions.classList.add('hidden');
+        gradeDetailsEditPanel.classList.remove('hidden');
+        gradeDetailsEditActions.classList.remove('hidden');
         detailsModalTitle.textContent = "Modifier la note";
     } else {
-        gradeDetailsViewPanel.style.display = 'flex';
-        gradeDetailsViewActions.style.display = 'flex';
-        gradeDetailsEditPanel.style.display = 'none';
-        gradeDetailsEditActions.style.display = 'none';
+        gradeDetailsViewPanel.classList.remove('hidden');
+        gradeDetailsViewActions.classList.remove('hidden');
+        gradeDetailsEditPanel.classList.add('hidden');
+        gradeDetailsEditActions.classList.add('hidden');
         detailsModalTitle.textContent = "Détails de la note";
     }
 }
@@ -2763,24 +2737,24 @@ function handleSubjectInteractionClick(e) {
                 if (detailExamDateContainer && detailGradeExamDate) {
                     if (gradeObj.date) {
                         detailGradeExamDate.textContent = new Date(gradeObj.date).toLocaleDateString('fr-CH', { day: 'numeric', month: 'long', year: 'numeric' });
-                        detailExamDateContainer.style.display = 'flex';
+                        detailExamDateContainer.classList.remove('hidden');
                     } else {
-                        detailExamDateContainer.style.display = 'none';
+                        detailExamDateContainer.classList.add('hidden');
                     }
                 }
 
                 // Load comments
-                detailCommentContainer.style.display = 'none';
+                detailCommentContainer.classList.add('hidden');
                 detailGradeComment.textContent = '—';
                 if (gradeObj.comment) {
                     detailGradeComment.textContent = gradeObj.comment;
-                    detailCommentContainer.style.display = 'flex';
+                    detailCommentContainer.classList.remove('hidden');
                 }
 
                 // Load photos
-                detailPhotoContainer.style.display = 'none';
+                detailPhotoContainer.classList.add('hidden');
                 detailGradePhoto.src = '';
-                editGradePhotoPreviewContainer.style.display = 'none';
+                editGradePhotoPreviewContainer.classList.add('hidden');
                 editGradePhotoPreview.src = '';
                 editUploadedPhotoBase64 = null;
                 editPhotoDeleted = false;
@@ -2791,9 +2765,9 @@ function handleSubjectInteractionClick(e) {
                     getPhoto(gradeId).then(photoData => {
                         if (photoData) {
                             detailGradePhoto.src = photoData;
-                            detailPhotoContainer.style.display = 'flex';
+                            detailPhotoContainer.classList.remove('hidden');
                             editGradePhotoPreview.src = photoData;
-                            editGradePhotoPreviewContainer.style.display = 'block';
+                            editGradePhotoPreviewContainer.classList.remove('hidden');
                             editUploadedPhotoBase64 = photoData;
                         }
                     });
@@ -2997,11 +2971,11 @@ if (btnCaptureFrame) {
         if (capturedData) {
             currentUploadedPhotoBase64 = capturedData;
             document.getElementById('grade-photo-preview').src = capturedData;
-            document.getElementById('grade-photo-preview-container').style.display = 'block';
-            
+            document.getElementById('grade-photo-preview-container').classList.remove('hidden');
+
             // Trigger OCR immediately
             const ocrStatus = document.getElementById('ocr-loading-status');
-            ocrStatus.style.display = 'flex';
+            ocrStatus.classList.remove('hidden');
             currentOcrText = "";
             isOcrRunning = true;
             
@@ -3017,7 +2991,7 @@ if (btnCaptureFrame) {
                 }).catch(err => {
                     console.error("Add Grade Camera Capture OCR error:", err);
                 }).finally(() => {
-                    ocrStatus.style.display = 'none';
+                    ocrStatus.classList.add('hidden');
                     isOcrRunning = false;
                 });
         }
@@ -3044,12 +3018,12 @@ if (editBtnCaptureFrame) {
         if (capturedData) {
             editUploadedPhotoBase64 = capturedData;
             editGradePhotoPreview.src = capturedData;
-            editGradePhotoPreviewContainer.style.display = 'block';
+            editGradePhotoPreviewContainer.classList.remove('hidden');
             editPhotoDeleted = false;
-            
+
             // Trigger OCR immediately
             const ocrStatus = editOcrLoadingStatus;
-            ocrStatus.style.display = 'flex';
+            ocrStatus.classList.remove('hidden');
             editOcrText = "";
             isEditOcrRunning = true;
             
@@ -3065,7 +3039,7 @@ if (editBtnCaptureFrame) {
                 }).catch(err => {
                     console.error("Edit Grade Camera Capture OCR error:", err);
                 }).finally(() => {
-                    ocrStatus.style.display = 'none';
+                    ocrStatus.classList.add('hidden');
                     isEditOcrRunning = false;
                 });
         }
@@ -3075,14 +3049,14 @@ if (editBtnCaptureFrame) {
 // --- Grade Photo Remove Bindings ---
 document.getElementById('remove-grade-photo-btn').addEventListener('click', () => {
     document.getElementById('grade-photo-preview').src = "";
-    document.getElementById('grade-photo-preview-container').style.display = 'none';
+    document.getElementById('grade-photo-preview-container').classList.add('hidden');
     currentUploadedPhotoBase64 = null;
     currentOcrText = "";
 });
 
 document.getElementById('edit-remove-grade-photo-btn').addEventListener('click', () => {
     editGradePhotoPreview.src = "";
-    editGradePhotoPreviewContainer.style.display = 'none';
+    editGradePhotoPreviewContainer.classList.add('hidden');
     editUploadedPhotoBase64 = null;
     editOcrText = "";
     editPhotoDeleted = true;
@@ -3179,7 +3153,7 @@ document.getElementById('add-grade-form').addEventListener('submit', (e) => {
 
                     // Reset form and variables
                     document.getElementById('add-grade-form').reset();
-                    document.getElementById('grade-photo-preview-container').style.display = 'none';
+                    document.getElementById('grade-photo-preview-container').classList.add('hidden');
                     currentUploadedPhotoBase64 = null;
                     currentOcrText = "";
 
@@ -3359,6 +3333,7 @@ function updateProfileUI() {
     if (studentNameEl && studentNameEl.textContent !== state.studentName) {
         studentNameEl.textContent = state.studentName;
     }
+    syncStudentNamePrefix();
 
     const profileName = document.getElementById('profile-display-name');
     const profileEmail = document.getElementById('profile-display-email');
@@ -3416,10 +3391,10 @@ function wireLegal() {
 function initAuth() {
     const accountBtn = document.getElementById('btn-account');
     if (!isSupabaseConfigured) {
-        if (accountBtn) accountBtn.style.display = 'none';
+        if (accountBtn) accountBtn.classList.add('hidden');
         return;
     }
-    if (accountBtn) accountBtn.style.display = 'inline-flex';
+    if (accountBtn) accountBtn.classList.remove('hidden');
 
     initSyncListeners();
 
@@ -3445,11 +3420,11 @@ function initAuth() {
 
     function showAuthMessage(text, kind) {
         authMessage.textContent = text;
-        authMessage.style.display = 'block';
-        authMessage.style.color = kind === 'error' ? '#c0392b' : '#2b6747';
+        authMessage.classList.remove('hidden', 'error', 'success');
+        authMessage.classList.add(kind === 'error' ? 'error' : 'success');
     }
     function clearAuthMessage() {
-        authMessage.style.display = 'none';
+        authMessage.classList.add('hidden');
         authMessage.textContent = '';
     }
 
@@ -3457,8 +3432,8 @@ function initAuth() {
         const login = mode === 'login';
         tabLogin.classList.toggle('active', login);
         tabSignup.classList.toggle('active', !login);
-        loginForm.style.display = login ? 'block' : 'none';
-        signupForm.style.display = login ? 'none' : 'block';
+        loginForm.classList.toggle('hidden', !login);
+        signupForm.classList.toggle('hidden', login);
         authTitle.textContent = login ? 'Connexion' : 'Inscription';
         clearAuthMessage();
     }
@@ -3552,22 +3527,22 @@ function initAuth() {
             telephone: document.getElementById('profile-telephone').value.trim() || null,
             date_naissance: document.getElementById('profile-naissance').value || null,
         };
-        msg.style.display = 'block';
+        msg.classList.remove('hidden', 'error', 'success');
         try {
             const { error } = await updateProfile(fields);
             if (error) {
                 hapticNotification('error');
                 msg.textContent = "Échec de l'enregistrement.";
-                msg.style.color = '#c0392b';
+                msg.classList.add('error');
             } else {
                 hapticNotification('success');
                 msg.textContent = 'Profil enregistré.';
-                msg.style.color = '#2b6747';
+                msg.classList.add('success');
             }
         } catch (err) {
             hapticNotification('error');
             msg.textContent = translateAuthError(err.message);
-            msg.style.color = '#c0392b';
+            msg.classList.add('error');
         }
     });
 
@@ -3607,23 +3582,13 @@ function renderSettingsMessages() {
     
     state.badGradeMessages.forEach((msg, idx) => {
         const item = document.createElement('div');
-        item.style.display = 'flex';
-        item.style.gap = '0.4rem';
-        item.style.alignItems = 'center';
-        
+        item.className = 'settings-msg-item';
+
         const input = document.createElement('input');
         input.type = 'text';
         input.value = msg;
-        input.className = 'form-input';
-        input.style.flex = '1';
-        input.style.minHeight = '32px';
-        input.style.fontSize = '0.75rem';
-        input.style.padding = '0.2rem 0.5rem';
-        input.style.border = '1px solid var(--color-border-subtle)';
-        input.style.borderRadius = 'var(--radius-sm)';
-        input.style.background = 'var(--color-bg-surface)';
-        input.style.color = 'var(--color-text-primary)';
-        
+        input.className = 'form-input settings-msg-field';
+
         input.addEventListener('input', (e) => {
             state.badGradeMessages[idx] = e.target.value;
         });
@@ -3631,19 +3596,8 @@ function renderSettingsMessages() {
         const deleteBtn = document.createElement('button');
         deleteBtn.type = 'button';
         deleteBtn.innerHTML = '&times;';
-        deleteBtn.className = 'btn btn-secondary';
-        deleteBtn.style.padding = '0';
-        deleteBtn.style.width = '32px';
-        deleteBtn.style.height = '32px';
-        deleteBtn.style.minHeight = '32px';
-        deleteBtn.style.display = 'flex';
-        deleteBtn.style.alignItems = 'center';
-        deleteBtn.style.justifyContent = 'center';
-        deleteBtn.style.fontSize = '1.1rem';
-        deleteBtn.style.borderRadius = 'var(--radius-sm)';
-        deleteBtn.style.border = '1px solid var(--color-border-subtle)';
-        deleteBtn.style.fontWeight = 'bold';
-        
+        deleteBtn.className = 'btn btn-secondary settings-msg-del';
+
         deleteBtn.addEventListener('click', () => {
             state.badGradeMessages.splice(idx, 1);
             renderSettingsMessages();
@@ -3674,7 +3628,7 @@ function init() {
     const clipboardImportBtn = document.getElementById('backup-clipboard-import-btn');
     if (clipboardImportBtn) {
         if (Capacitor.isNativePlatform()) {
-            clipboardImportBtn.style.display = 'block';
+            clipboardImportBtn.classList.remove('hidden');
             clipboardImportBtn.addEventListener('click', handleImportFromWeb);
         }
     }
@@ -3682,7 +3636,7 @@ function init() {
     // The vibrations setting only does something in the native app
     const hapticsRow = document.getElementById('haptics-setting-row');
     if (hapticsRow && !Capacitor.isNativePlatform()) {
-        hapticsRow.style.display = 'none';
+        hapticsRow.classList.add('hidden');
     }
 
     animateCards = true;
@@ -3774,7 +3728,7 @@ function init() {
                 }
                 const colorThemeGroup = document.getElementById('onboarding-color-theme-group');
                 if (colorThemeGroup) {
-                    colorThemeGroup.style.display = isLight ? 'none' : 'block';
+                    colorThemeGroup.classList.toggle('hidden', isLight);
                 }
                 
                 renderSettingsMessages();
@@ -3810,14 +3764,14 @@ function init() {
             hapticSelection();
             onboardingThemeLightBtn.classList.add('active');
             onboardingThemeDarkBtn.classList.remove('active');
-            if (colorThemeGroup) colorThemeGroup.style.display = 'none';
+            if (colorThemeGroup) colorThemeGroup.classList.add('hidden');
         });
 
         onboardingThemeDarkBtn.addEventListener('click', () => {
             hapticSelection();
             onboardingThemeDarkBtn.classList.add('active');
             onboardingThemeLightBtn.classList.remove('active');
-            if (colorThemeGroup) colorThemeGroup.style.display = 'block';
+            if (colorThemeGroup) colorThemeGroup.classList.remove('hidden');
         });
     }
 
@@ -3948,7 +3902,7 @@ function init() {
             }
             const colorThemeGroup = document.getElementById('onboarding-color-theme-group');
             if (colorThemeGroup) {
-                colorThemeGroup.style.display = isLight ? 'none' : 'block';
+                colorThemeGroup.classList.toggle('hidden', isLight);
             }
             
             // Customize modal labels for Settings mode
@@ -4059,10 +4013,10 @@ setTimeout(() => {
                 const compressedDataUrl = await compressAndResizeImage(event.target.result, 800, 800, 0.75);
                 currentUploadedPhotoBase64 = compressedDataUrl;
                 document.getElementById('grade-photo-preview').src = compressedDataUrl;
-                document.getElementById('grade-photo-preview-container').style.display = 'block';
-                
+                document.getElementById('grade-photo-preview-container').classList.remove('hidden');
+
                 const ocrStatus = document.getElementById('ocr-loading-status');
-                if (ocrStatus) ocrStatus.style.display = 'flex';
+                if (ocrStatus) ocrStatus.classList.remove('hidden');
                 currentOcrText = "";
                 isOcrRunning = true;
                 
@@ -4074,7 +4028,7 @@ setTimeout(() => {
                     }).catch(err => {
                         console.error("Add Grade File OCR error:", err);
                     }).finally(() => {
-                        if (ocrStatus) ocrStatus.style.display = 'none';
+                        if (ocrStatus) ocrStatus.classList.add('hidden');
                         isOcrRunning = false;
                     });
             };
@@ -4094,11 +4048,11 @@ setTimeout(() => {
                 const compressedDataUrl = await compressAndResizeImage(event.target.result, 800, 800, 0.75);
                 editUploadedPhotoBase64 = compressedDataUrl;
                 editGradePhotoPreview.src = compressedDataUrl;
-                editGradePhotoPreviewContainer.style.display = 'block';
+                editGradePhotoPreviewContainer.classList.remove('hidden');
                 editPhotoDeleted = false;
-                
+
                 const ocrStatus = editOcrLoadingStatus;
-                if (ocrStatus) ocrStatus.style.display = 'flex';
+                if (ocrStatus) ocrStatus.classList.remove('hidden');
                 editOcrText = "";
                 isEditOcrRunning = true;
                 
@@ -4110,7 +4064,7 @@ setTimeout(() => {
                     }).catch(err => {
                         console.error("Edit Grade File OCR error:", err);
                     }).finally(() => {
-                        if (ocrStatus) ocrStatus.style.display = 'none';
+                        if (ocrStatus) ocrStatus.classList.add('hidden');
                         isOcrRunning = false;
                     });
             };

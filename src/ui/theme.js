@@ -14,6 +14,7 @@ function applyTheme() {
     }
 
     syncThemeColorMeta();
+    syncNativeStatusBar(isLight);
 
     const themeBtn = document.getElementById('theme-toggle-btn');
     if (themeBtn) {
@@ -50,6 +51,17 @@ function syncThemeColorMeta() {
     if (!meta) return;
     const bg = getComputedStyle(document.body).getPropertyValue('--color-bg-base').trim();
     if (bg) meta.setAttribute('content', bg);
+}
+
+// The metas above don't reach the native iOS status bar. Drive it through the
+// Capacitor bridge when the StatusBar plugin is present (Style.Dark = light
+// text over dark backgrounds); a plain no-op on the web and until the
+// @capacitor/status-bar plugin ships in the native shell.
+function syncNativeStatusBar(isLight) {
+    const cap = window.Capacitor;
+    if (!cap || !cap.isNativePlatform || !cap.isNativePlatform()) return;
+    if (!cap.isPluginAvailable('StatusBar')) return;
+    cap.Plugins.StatusBar.setStyle({ style: isLight ? 'LIGHT' : 'DARK' }).catch(() => {});
 }
 
 export { applyTheme };
