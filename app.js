@@ -2136,7 +2136,7 @@ function initGemstoneRotation() {
             if (e.touches.length === 0) return;
             const touch = e.touches[0];
             onPointerStart(touch.clientX, touch.clientY);
-            
+
             const onTouchMove = (moveEv) => {
                 if (moveEv.touches.length === 0) return;
                 const t = moveEv.touches[0];
@@ -2152,7 +2152,7 @@ function initGemstoneRotation() {
             };
             sphere.addEventListener('touchmove', onTouchMove, { passive: false });
             sphere.addEventListener('touchend', onTouchEnd);
-        });
+        }, { passive: true });
     });
 }
 
@@ -3334,14 +3334,6 @@ function updateProfileUI() {
         studentNameEl.textContent = state.studentName;
     }
     syncStudentNamePrefix();
-
-    const profileName = document.getElementById('profile-display-name');
-    const profileEmail = document.getElementById('profile-display-email');
-    const profileMobile = document.getElementById('profile-display-mobile');
-
-    if (profileName) profileName.textContent = state.studentName || 'Étudiant';
-    if (profileEmail) profileEmail.textContent = state.studentEmail || '-';
-    if (profileMobile) profileMobile.textContent = state.studentMobile || '-';
 }
 
 // Traduit les messages d'erreur Supabase Auth (anglais) en français.

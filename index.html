@@ -69,13 +69,13 @@
         </div>
 
         <div class="nav-icons">
-            <button id="btn-account" class="nav-icon-btn hidden" title="Compte">
+            <button id="btn-account" class="nav-icon-btn hidden" title="Compte" aria-label="Compte">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
             </button>
-            <button id="btn-settings-modal" class="nav-icon-btn" title="Paramètres d'affichage">
+            <button id="btn-settings-modal" class="nav-icon-btn" title="Paramètres d'affichage" aria-label="Paramètres d'affichage">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
             </button>
-            <button id="theme-toggle-btn" class="nav-icon-btn" title="Changer de thème">
+            <button id="theme-toggle-btn" class="nav-icon-btn" title="Changer de thème" aria-label="Changer de thème">
                 <!-- Inner icon will be injected dynamically -->
             </button>
         </div>
@@ -432,7 +432,7 @@
     <!-- MODAL: Ajouter une branche -->
     <!-- MODAL: Compte (Connexion / Inscription) -->
     <div class="modal-backdrop" id="auth-modal">
-        <div class="modal-container" style="max-width: 420px; width: 92%;">
+        <div class="modal-container" style="max-width: 420px; width: 92%;" role="dialog" aria-modal="true">
             <button class="modal-close-btn" id="close-auth-modal">&times;</button>
             <h2 class="modal-title" id="auth-modal-title">Connexion</h2>
             <p style="font-size: 0.85rem; color: var(--color-text-secondary); margin: -0.25rem 0 1rem 0;">
@@ -494,7 +494,7 @@
 
     <!-- MODAL: Profil -->
     <div class="modal-backdrop" id="profile-modal">
-        <div class="modal-container" style="max-width: 440px; width: 92%;">
+        <div class="modal-container" style="max-width: 440px; width: 92%;" role="dialog" aria-modal="true">
             <button class="modal-close-btn" id="close-profile-modal">&times;</button>
             <h2 class="modal-title">Mon profil</h2>
             <form id="profile-form">
@@ -544,7 +544,7 @@
 
     <!-- MODAL: Documents légaux (Confidentialité / Conditions) -->
     <div class="modal-backdrop" id="legal-modal">
-        <div class="modal-container" style="max-width: 640px; width: 94%; max-height: 85dvh; display: flex; flex-direction: column;">
+        <div class="modal-container" style="max-width: 640px; width: 94%; max-height: 85dvh; display: flex; flex-direction: column;" role="dialog" aria-modal="true">
             <button class="modal-close-btn" id="close-legal-modal">&times;</button>
             <h2 class="modal-title" id="legal-modal-title">Document</h2>
             <div id="legal-modal-body" class="legal-body modal-scroll-body"></div>
@@ -552,7 +552,7 @@
     </div>
 
     <div class="modal-backdrop" id="add-subject-modal">
-        <div class="modal-container">
+        <div class="modal-container" role="dialog" aria-modal="true">
             <button class="modal-close-btn" id="close-subject-modal" aria-label="Fermer">&times;</button>
             <h2 class="modal-title">Ajouter une branche</h2>
             <form id="add-subject-form">
@@ -581,7 +581,7 @@
 
     <!-- MODAL: Ajouter une note -->
     <div class="modal-backdrop" id="add-grade-modal">
-        <div class="modal-container">
+        <div class="modal-container" role="dialog" aria-modal="true">
             <button class="modal-close-btn" id="close-grade-modal" aria-label="Fermer">&times;</button>
             <h2 class="modal-title">Ajouter une note pour <span id="modal-subject-name" style="color: var(--color-accent-warm);">Branche</span></h2>
             <form id="add-grade-form">
@@ -678,7 +678,7 @@
 
     <!-- MODAL: Détails de la note (Grade Details Popover) -->
     <div class="modal-backdrop" id="grade-details-modal">
-        <div class="modal-container" style="max-width: 400px; width: 90%;">
+        <div class="modal-container" style="max-width: 400px; width: 90%;" role="dialog" aria-modal="true">
             <button class="modal-close-btn" id="close-details-modal" aria-label="Fermer">&times;</button>
             <h2 class="modal-title" style="margin-bottom: 1rem;" id="details-modal-title">Détails de la note</h2>
             
@@ -1005,7 +1005,7 @@
 
     <!-- MODAL: Détails d'une branche (Année 1) -->
     <div class="modal-backdrop" id="subject-details-modal">
-        <div class="modal-container" style="max-width: 500px; width: 95%;">
+        <div class="modal-container" style="max-width: 500px; width: 95%;" role="dialog" aria-modal="true">
             <button class="modal-close-btn" id="close-subject-details-modal">&times;</button>
             <h2 class="modal-title" style="margin-bottom: 1rem;">Détails de la branche</h2>
             <div id="subject-details-modal-content">
@@ -1016,7 +1016,7 @@
 
     <!-- MODAL: Onboarding / Configuration initiale -->
     <div class="modal-backdrop" id="onboarding-setup-modal">
-        <div class="modal-container" style="max-width: 440px; width: 95%;">
+        <div class="modal-container" style="max-width: 440px; width: 95%;" role="dialog" aria-modal="true">
             <button class="modal-close-btn" id="close-onboarding-setup-modal">&times;</button>
             <h2 class="modal-title modal-title-center">Personnalisez votre espace</h2>
             <p class="modal-sub">
@@ -1107,7 +1107,7 @@
                     </div>
                     <div class="settings-msg-add">
                         <input type="text" id="settings-new-message-input" placeholder="Ajouter un message..." class="form-input settings-msg-input">
-                        <button type="button" id="settings-add-message-btn" class="btn btn-secondary settings-msg-add-btn">+</button>
+                        <button type="button" id="settings-add-message-btn" class="btn btn-secondary settings-msg-add-btn" aria-label="Ajouter un message">+</button>
                     </div>
                 </div>
                 
@@ -1134,94 +1134,6 @@
         </div>
     </div>
 
-    <!-- MODAL: Connexion / Inscription -->
-    <div class="modal-backdrop" id="auth-modal">
-        <div class="modal-container" style="max-width: 440px; width: 95%;">
-            <button class="modal-close-btn" id="close-auth-modal" aria-label="Fermer la fenêtre">&times;</button>
-            <h2 class="modal-title modal-title-center" id="auth-modal-title">Espace Étudiant</h2>
-            <p class="modal-sub" id="auth-modal-subtitle">
-                Sauvegardez vos notes et synchronisez vos appareils en toute sécurité.
-            </p>
-
-            <div class="auth-toggle-container">
-                <button type="button" class="auth-toggle-btn active" id="auth-toggle-signup">S'inscrire</button>
-                <button type="button" class="auth-toggle-btn" id="auth-toggle-signin">Se connecter</button>
-            </div>
-
-            <!-- Inscription Form (S'inscrire) -->
-            <form id="auth-signup-form" class="auth-form">
-                <div class="form-group">
-                    <label class="form-label field-label" for="signup-name">Nom et Prénom</label>
-                    <input type="text" id="signup-name" class="form-input" placeholder="ex. Marc Kovacs" required>
-                </div>
-
-                <div class="form-group">
-                    <label class="form-label field-label" for="signup-email">Adresse e-mail</label>
-                    <input type="email" id="signup-email" class="form-input" placeholder="ex. marc.kovacs@gymnase.ch" required>
-                </div>
-                <div class="form-group">
-                    <label class="form-label field-label" for="signup-mobile">Numéro de mobile</label>
-                    <input type="tel" id="signup-mobile" class="form-input" placeholder="ex. +41 79 123 45 67" required>
-                </div>
-
-                <button type="submit" class="btn btn-primary modal-submit-btn">
-                    Créer mon compte
-                </button>
-            </form>
-
-            <!-- Connexion Form (Se connecter) -->
-            <form id="auth-signin-form" class="auth-form hidden">
-                <div class="form-group">
-                    <label class="form-label field-label" for="signin-email">Adresse e-mail</label>
-                    <input type="email" id="signin-email" class="form-input" placeholder="ex. marc.kovacs@gymnase.ch" required>
-                </div>
-
-                <button type="submit" class="btn btn-primary modal-submit-btn">
-                    Se connecter
-                </button>
-            </form>
-        </div>
-    </div>
-
-    <!-- MODAL: Profil Étudiant / Mon Compte -->
-    <div class="modal-backdrop" id="profile-modal">
-        <div class="modal-container" style="max-width: 440px; width: 95%;">
-            <button class="modal-close-btn" id="close-profile-modal" aria-label="Fermer la fenêtre">&times;</button>
-            <h2 class="modal-title modal-title-center">Mon Espace</h2>
-            <p class="modal-sub">
-                Informations du compte et synchronisation.
-            </p>
-
-            <div class="profile-card">
-                <div class="profile-field">
-                    <span class="profile-field-label">Nom & Prénom</span>
-                    <strong id="profile-display-name" class="profile-field-value">Étudiant</strong>
-                </div>
-
-                <div class="profile-field">
-                    <span class="profile-field-label">E-mail</span>
-                    <strong id="profile-display-email" class="profile-field-value">-</strong>
-                </div>
-                <div class="profile-field">
-                    <span class="profile-field-label">Téléphone mobile</span>
-                    <strong id="profile-display-mobile" class="profile-field-value">-</strong>
-                </div>
-            </div>
-
-            <div style="display: flex; align-items: center; gap: 0.75rem; background: rgba(16, 185, 129, 0.08); border: 1px solid rgba(16, 185, 129, 0.2); padding: 0.75rem 1rem; border-radius: var(--radius-md); margin-bottom: 1.5rem;">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0;"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-                <div style="font-size: 0.8rem; color: var(--color-text-primary); text-align: left;">
-                    Synchronisé avec le cloud <strong>(Supabase)</strong>
-                </div>
-            </div>
-
-            <div style="display: flex; flex-direction: column; gap: 0.75rem;">
-                <button type="button" id="profile-logout-btn" class="btn btn-secondary" style="width: 100%; padding: 0.85rem; font-weight: 800; font-size: 0.95rem; border-radius: var(--radius-md); border-color: rgba(239, 68, 68, 0.3); color: #f87171;">
-                    Se déconnecter
-                </button>
-            </div>
-        </div>
-    </div>
 
     <div id="graph-maximize-backdrop" class="graph-maximize-backdrop"></div>
     <script type="module" src="/src/bootstrap.js"></script>

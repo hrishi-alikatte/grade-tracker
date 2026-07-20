@@ -41,6 +41,8 @@ function showSidebarToast(message, type = 'error') {
         container = document.createElement('div');
         container.id = 'toast-sidebar-container';
         container.className = 'toast-sidebar-container';
+        container.setAttribute('role', 'status');
+        container.setAttribute('aria-live', 'polite');
         document.body.appendChild(container);
     }
     
@@ -54,7 +56,7 @@ function showSidebarToast(message, type = 'error') {
         <div class="toast-content">
             <span class="toast-message">${message}</span>
         </div>
-        <button class="toast-close-btn">&times;</button>
+        <button class="toast-close-btn" aria-label="Fermer la notification">&times;</button>
     `;
     
     container.appendChild(toast);

@@ -2311,9 +2311,9 @@ select.btn {
     flex: 0 0 auto;
 }
 .nav-icon-btn {
-    width: 42px;
-    height: 42px;
-    min-height: 42px;
+    width: 44px;
+    height: 44px;
+    min-height: 44px;
     padding: 0;
     border-radius: 50%;
     display: flex;
@@ -4222,6 +4222,9 @@ body.theme-light .exam-input-field:focus {
 .form-input:focus-visible,
 select:focus-visible,
 [contenteditable]:focus-visible,
+.nav-icon-btn:focus-visible,
+.modal-close-btn:focus-visible,
+.toast-close-btn:focus-visible,
 .gem-item:focus-visible {
     outline: none;
     box-shadow: var(--ring-focus) !important;
