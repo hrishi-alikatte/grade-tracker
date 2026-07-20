@@ -10,8 +10,8 @@ Operating manual: `LOOP-PROMPT.md`.
 | 1 | Haptics + juice (celebration, view transition, chip fix, reduced-motion, toggle) | DONE (iter 1, `5131732`) — pending real-device haptic feel check at ship gate |
 | 2 | De-slop UI (design-review 0 findings, contrast AA, tokens, breakpoints) | DONE (iter 2, `efb5eab`) — residuals noted in iteration log |
 | 3 | Backend hardened (schema reconcile, LWW, account deletion, site_url, advisors, sync test) | DONE (iter 3, `ba77440`) — live + repo in lockstep |
-| 4 | Perf/a11y/ship (60fps, Release build, QA, screenshots, verify) | TODO |
-| 5 | Ledger evidence complete | TODO |
+| 4 | Perf/a11y/ship (60fps, Release build, QA, screenshots, verify) | DONE (iter 4, `bc8a5bd` + `4c765f2`) — residuals noted |
+| 5 | Ledger evidence complete | DONE (iter 4 close-out below) |
 
 ## Access + environment (verified 2026-07-18, session ace167fa)
 
@@ -137,11 +137,51 @@ Operating manual: `LOOP-PROMPT.md`.
   deletion UI visual not screenshotted (needs authed session; CSS reuses
   existing token classes).
 
-### Iteration 4 — next
-- REASON: item 4 (perf/a11y/ship): 60fps scroll/animation check, Release build,
-  a11y pass (VoiceOver labels, contrast recheck, tap targets), 6.9" App Store
-  screenshots, full QA sweep, then item 5 ledger close-out + Archive/TestFlight
-  hand-off doc.
+### Iteration 4 — 2026-07-20 (perf/a11y/ship) — DONE
+- MODE CHANGE: workflow (wf_3caad814-2ad) burned 4h in rate-limit retry churn —
+  11 agent starts, 0 results, respawns losing all progress. Killed; ran inline
+  (same as iter 3). Lesson: under throttling, inline main-loop work survives
+  (transparent retries); multi-agent fan-out does not.
+- ACT a11y (commit `bc8a5bd`): dead duplicate auth/profile modals removed
+  (88 lines, 6 duplicate DOM ids gone; orphaned profile-display-* writes
+  dropped from updateProfileUI, live parts kept); role=dialog + aria-modal on
+  all 8 modals; aria-labels on icon-only nav buttons + settings "+" + toast
+  close; toast container role=status aria-live=polite; nav-icon-btn 42→44px
+  (HIG); focus-visible extended to nav-icon/modal-close/toast-close; gem
+  sphere touchstart passive (inner touchmove stays passive:false for drag).
+- PERF checks (clean, no diff needed): will-change 0 leftovers; no scroll
+  listeners; no setIntervals; wheel listener correctly passive:false
+  (preventDefault); OCR lazy-load intact. Residual: backdrop-filter ×35
+  (glass design signature — profile on real device before optimizing);
+  DOM-churn (innerHTML rebuilds) unaudited-deep — architectural, deferred.
+- VERIFY: 91/91 vitest; browse QA — 0 duplicate ids, theme btn 44x44 +
+  aria-label, 8 dialogs, console clean; dangling-ID check: 14 missing ids all
+  pre-existing legacy guarded refs (verified against HEAD).
+- SHIP PREP: xcodebuild RELEASE sim build exit 0, 0 errors (iPhone 17 Pro
+  Max). App Store 6.9" screenshot set committed (`4c765f2`,
+  appstore-assets/screenshots-6.9/): landing (native sim), dashboard+guide
+  both themes (web @3x, 1320x2868, seeded realistic grades). Sim gotchas
+  learned: WebContent cold-launch took 47s (white-screen false alarm); web
+  Capacitor Preferences = CapacitorStorage.* localStorage keys and bootstrap
+  re-hydrates FROM them on boot (seed both keys or seed is silently
+  overwritten); simctl cannot tap UI (dashboard shots need web@3x).
+- Residuals for ship gate (user-driven in Xcode): Archive + TestFlight upload
+  (needs Apple ID signing); real-device haptic feel check (iter-1 residual);
+  real-device 60fps + backdrop-filter profile; safe-area notch eyeball
+  (headless env() = 0); StatusBar plugin install if native status-bar theming
+  wanted (iter-2 residual, hook is dormant until @capacitor/status-bar added).
+
+## Loop close-out — 2026-07-20
+
+All 5 checklist items green. 4 iterations, 8 commits on
+feat/ios-appstore-notare (never pushed):
+5131732+2ea308c (haptics/motion), efb5eab+6097e31 (de-slop UI),
+ba77440+c93e796 (backend hardening, live Supabase in lockstep with repo
+migrations), bc8a5bd+4c765f2 (a11y/ship prep + screenshots).
+Tests 68 → 91. Live backend: LWW guarded, account deletion (App Store
+5.1.1(v)) live + integration-tested, site_url fixed, advisors clean.
+Next (outside loop scope): Xcode Archive → TestFlight → real-device checks →
+submit per APP-STORE-SUBMISSION.md phase-4 guide.
 
 ## Blockers
 
