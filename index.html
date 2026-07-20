@@ -694,178 +694,132 @@
     </div>
 
     <!-- Dedicated Visual Guide Page View -->
+    <!-- Dedicated Visual Guide Page View -->
     <div id="view-guide" class="page-view guide-page-container" style="display: none;">
         <div class="guide-header">
-            <h1 class="guide-page-title">Guide de Promotion et d'Utilisation</h1>
+            <h1 class="guide-page-title">Guide d'Utilisation de l'Application</h1>
         </div>
 
         <div class="guide-content-grid">
-            <!-- 1. Rules Card -->
-            <div class="guide-card main-rules-card" style="grid-column: span 2; background-color: color-mix(in srgb, var(--color-bg-surface) 75%, transparent);">
-                <h2 class="guide-card-title" style="font-size: 1.4rem; justify-content: center;">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 0.35rem;"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-                    Les 4 Règles d'Or du Gymnase Vaudois
+            <!-- 1. Prise en main rapide -->
+            <div class="guide-card quickstart-card" style="grid-column: span 2; background-color: color-mix(in srgb, var(--color-bg-surface) 75%, transparent);">
+                <h2 class="guide-card-title" style="font-size: 1.3rem;">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 0.35rem;"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                    Prise en Main Rapide
                 </h2>
-                <p class="guide-intro" style="text-align: center; font-size: 0.95rem; margin-bottom: 1rem;">Votre promotion est garantie uniquement si <strong>les 4 critères suivants sont validés simultanément</strong> :</p>
-                
-                <div class="rules-visual-list" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.25rem;">
-                    <div class="rule-visual-item passed" style="border-top: 4px solid var(--color-primary); background-color: rgba(0,0,0,0.25); display: flex; align-items: stretch; height: 100%;">
-                        <div class="rule-status-check" style="margin-top: 0.25rem;">✓</div>
-                        <div class="rule-details" style="display: flex; flex-direction: column; justify-content: space-between; flex-grow: 1; height: 100%;">
-                            <div>
-                                <h3 style="margin-top: 0;">1. Points des Groupes 1 et 2</h3>
-                                <p style="font-size: 0.8rem; color: var(--color-text-secondary); margin-bottom: 0.5rem;">Au moins 16.0 points dans le Groupe 1 et total suffisant dans le Groupe 2.</p>
-                            </div>
-                            <span style="display:inline-block; font-size: 0.7rem; background: rgba(96,165,250,0.15); color: var(--color-primary); padding: 2px 6px; border-radius: 4px; font-weight: bold; align-self: flex-start; margin-top: auto;">Éliminatoire si insuffisant</span>
-                        </div>
+                <p class="guide-intro" style="font-size: 0.95rem; margin-bottom: 1.25rem;">
+                    Suivez ces étapes simples pour configurer votre tableau de bord et suivre vos moyennes académiques :
+                </p>
+                <div class="quickstart-steps" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+                    <div style="background: rgba(0,0,0,0.15); padding: 1rem; border-radius: var(--radius-sm); border-left: 3px solid var(--color-primary);">
+                        <strong style="display: block; margin-bottom: 0.25rem; font-size: 0.9rem; font-weight: 700;">1. Choisissez votre année</strong>
+                        <span style="font-size: 0.8rem; color: var(--color-text-secondary);">Sélectionnez votre niveau en haut (1ère, 2ème ou 3ème année) pour charger automatiquement le programme officiel vaudois correspondant.</span>
                     </div>
-                    <div class="rule-visual-item passed" style="border-top: 4px solid #f59e0b; background-color: rgba(0,0,0,0.25); display: flex; align-items: stretch; height: 100%;">
-                        <div class="rule-status-check" style="margin-top: 0.25rem;">✓</div>
-                        <div class="rule-details" style="display: flex; flex-direction: column; justify-content: space-between; flex-grow: 1; height: 100%;">
-                            <div>
-                                <h3 style="margin-top: 0;">2. Max 4 Insuffisances</h3>
-                                <p style="font-size: 0.8rem; color: var(--color-text-secondary); margin-bottom: 0.5rem;">Maximum 4 branches avec une moyenne annuelle inférieure à 4.0.</p>
-                            </div>
-                            <span style="display:inline-block; font-size: 0.7rem; background: rgba(245,158,11,0.15); color: #f59e0b; padding: 2px 6px; border-radius: 4px; font-weight: bold; align-self: flex-start; margin-top: auto;">Éliminatoire si &gt; 4</span>
-                        </div>
+                    <div style="background: rgba(0,0,0,0.15); padding: 1rem; border-radius: var(--radius-sm); border-left: 3px solid var(--color-primary);">
+                        <strong style="display: block; margin-bottom: 0.25rem; font-size: 0.9rem; font-weight: 700;">2. Personnalisez votre profil</strong>
+                        <span style="font-size: 0.8rem; color: var(--color-text-secondary);">Cliquez directement sur votre nom en haut à gauche pour le modifier et rendre l'espace unique.</span>
                     </div>
-                    <div class="rule-visual-item passed" style="border-top: 4px solid #10b981; background-color: rgba(0,0,0,0.25); display: flex; align-items: stretch; height: 100%;">
-                        <div class="rule-status-check" style="margin-top: 0.25rem;">✓</div>
-                        <div class="rule-details" style="display: flex; flex-direction: column; justify-content: space-between; flex-grow: 1; height: 100%;">
-                            <div>
-                                <h3 style="margin-top: 0;">3. Bilan des Points (3M)</h3>
-                                <p style="font-size: 0.8rem; color: var(--color-text-secondary); margin-bottom: 0.5rem;">Règle de la double compensation (les notes en dessous de 4.0 comptent double). Concerne la filière 3M.</p>
-                            </div>
-                            <span style="display:inline-block; font-size: 0.7rem; background: rgba(16,185,129,0.15); color: #10b981; padding: 2px 6px; border-radius: 4px; font-weight: bold; align-self: flex-start; margin-top: auto;">Éliminatoire si &lt; 0 (3M)</span>
-                        </div>
-                    </div>
-                    <div class="rule-visual-item passed" style="border-top: 4px solid #8b5cf6; background-color: rgba(0,0,0,0.25); display: flex; align-items: stretch; height: 100%;">
-                        <div class="rule-status-check" style="margin-top: 0.25rem;">✓</div>
-                        <div class="rule-details" style="display: flex; flex-direction: column; justify-content: space-between; flex-grow: 1; height: 100%;">
-                            <div>
-                                <h3 style="margin-top: 0;">4. Moyenne Générale (3M)</h3>
-                                <p style="font-size: 0.8rem; color: var(--color-text-secondary); margin-bottom: 0.5rem;">La moyenne générale arithmétique de toutes les branches doit être d'au moins 4.0. Concerne la filière 3M.</p>
-                            </div>
-                            <span style="display:inline-block; font-size: 0.7rem; background: rgba(139,92,246,0.15); color: #a78bfa; padding: 2px 6px; border-radius: 4px; font-weight: bold; align-self: flex-start; margin-top: auto;">Éliminatoire si &lt; 4.0 (3M)</span>
-                        </div>
+                    <div style="background: rgba(0,0,0,0.15); padding: 1rem; border-radius: var(--radius-sm); border-left: 3px solid var(--color-primary);">
+                        <strong style="display: block; margin-bottom: 0.25rem; font-size: 0.9rem; font-weight: 700;">3. Naviguez entre périodes</strong>
+                        <span style="font-size: 0.8rem; color: var(--color-text-secondary);">Basculez entre le 1er Semestre, 2ème Semestre et le Bilan Annuel pour analyser vos progrès à chaque étape.</span>
                     </div>
                 </div>
             </div>
 
-            <!-- 2. Examples Card (Visual calculation profiles) -->
-            <div class="guide-card examples-card" style="grid-column: span 2;">
+            <!-- 2. Gestion des notes -->
+            <div class="guide-card grades-management-card">
                 <h2 class="guide-card-title">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 0.35rem;"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
-                    Comment fonctionne le Bilan des Points ?
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 0.35rem;"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                    Ajouter et Gérer vos Notes
                 </h2>
-                
-                <!-- Rule Formula Explainer Box -->
-                <div style="background-color: var(--color-bg-surface); border: 1px solid var(--color-border-subtle); border-left: 4px solid var(--color-primary); padding: 1.25rem 1.25rem 1.25rem 1.5rem; border-radius: var(--radius-md); font-size: 0.825rem; margin-bottom: 1.25rem; line-height: 1.6; color: var(--color-text-primary);">
-                    <strong style="color: var(--color-text-primary); display: flex; align-items: center; gap: 0.5rem; font-size: 0.9rem; margin-bottom: 0.6rem; font-weight: 800;">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--color-primary)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle;"><path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A5 5 0 0 0 8 8c0 1 .3 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/></svg>
-                        Règle de double compensation (filières 3M uniquement) :
-                    </strong>
-                    <ul style="margin-left: 1.25rem; display: flex; flex-direction: column; gap: 0.4rem; list-style-type: disc;">
-                        <li>Note de <strong style="color: #059669; font-weight: 700;">5.0</strong> : +1.0 point au-dessus de 4.0 = <span style="color: #059669; font-weight: 800;">+1.0 point de bilan</span>.</li>
-                        <li>Note de <strong style="color: #dc2626; font-weight: 700;">3.5</strong> : -0.5 point en dessous de 4.0 = Écart doublé (double compensation) = <span style="color: #dc2626; font-weight: 800;">-1.0 point de bilan</span>.</li>
-                        <li>Note de <strong style="color: #dc2626; font-weight: 700;">3.0</strong> : -1.0 point en dessous de 4.0 = Écart doublé (double compensation) = <span style="color: #dc2626; font-weight: 800;">-2.0 points de bilan</span>.</li>
-                    </ul>
-                </div>
-
-                <div class="example-profiles-container" style="max-width: 800px; margin: 0.5rem auto 0 auto;">
-                    <!-- Profile 1: Promoted -->
-                    <div class="example-profile-box promoted" style="background-color: rgba(16,185,129,0.03); border: 1px solid rgba(16,185,129,0.2);">
-                        <div class="profile-header-status">
-                            <h4 style="font-size: 0.9rem;">Élève A : Promu</h4>
-                            <span class="status-badge promoted" style="font-size: 0.75rem; padding: 0.25rem 0.6rem;">PROMU</span>
-                        </div>
-                        <div class="mock-table">
-                            <div class="mock-row" style="padding: 0.25rem 0; border-bottom: 1px solid rgba(255,255,255,0.03);">
-                                <span>Français</span><span class="val">4.5</span><span class="diff positive">+0.5</span>
-                            </div>
-                            <div class="mock-row" style="padding: 0.25rem 0; border-bottom: 1px solid rgba(255,255,255,0.03);">
-                                <span>Mathématiques</span><span class="val">3.5</span><span class="diff negative" style="font-weight:bold;">-1.0 (doublé)</span>
-                            </div>
-                            <div class="mock-row" style="padding: 0.25rem 0; border-bottom: 1px solid rgba(255,255,255,0.03);">
-                                <span>Anglais</span><span class="val">5.0</span><span class="diff positive">+1.0</span>
-                            </div>
-                            <div class="mock-row" style="padding: 0.25rem 0;">
-                                <span>Physique</span><span class="val">4.0</span><span class="diff neutral">0.0</span>
-                            </div>
-                        </div>
-                        <div class="profile-summary-stats" style="background-color: rgba(0,0,0,0.2); padding: 0.75rem; border-radius: var(--radius-sm); border-top: none; margin-top: 0.5rem;">
-                            <div style="display:flex; justify-content:space-between;"><span>Moyenne générale:</span><strong>4.25 (&gt;= 4.0)</strong></div>
-                            <div style="display:flex; justify-content:space-between;"><span>Bilan des points:</span><strong class="positive">+0.5 (&gt;= 0)</strong></div>
-                            <div style="display:flex; justify-content:space-between;"><span>Insuffisances:</span><strong>1 (&lt;= 4)</strong></div>
-                        </div>
-                    </div>
-
-                    <!-- Profile 2: Not Promoted -->
-                    <div class="example-profile-box failed" style="background-color: rgba(239,68,68,0.03); border: 1px solid rgba(239,68,68,0.2);">
-                        <div class="profile-header-status">
-                            <h4 style="font-size: 0.9rem;">Élève B : Non Promu</h4>
-                            <span class="status-badge failed" style="font-size: 0.75rem; padding: 0.25rem 0.6rem;">NON PROMU</span>
-                        </div>
-                        <div class="mock-table">
-                            <div class="mock-row" style="padding: 0.25rem 0; border-bottom: 1px solid rgba(255,255,255,0.03);">
-                                <span>Français</span><span class="val">3.5</span><span class="diff negative" style="font-weight:bold;">-1.0 (doublé)</span>
-                            </div>
-                            <div class="mock-row" style="padding: 0.25rem 0; border-bottom: 1px solid rgba(255,255,255,0.03);">
-                                <span>Mathématiques</span><span class="val">3.0</span><span class="diff negative" style="font-weight:bold;">-2.0 (doublé)</span>
-                            </div>
-                            <div class="mock-row" style="padding: 0.25rem 0; border-bottom: 1px solid rgba(255,255,255,0.03);">
-                                <span>Anglais</span><span class="val">5.0</span><span class="diff positive">+1.0</span>
-                            </div>
-                            <div class="mock-row" style="padding: 0.25rem 0;">
-                                <span>Physique</span><span class="val">4.0</span><span class="diff neutral">0.0</span>
-                            </div>
-                        </div>
-                        <div class="profile-summary-stats" style="background-color: rgba(0,0,0,0.2); padding: 0.75rem; border-radius: var(--radius-sm); border-top: none; margin-top: 0.5rem;">
-                            <div style="display:flex; justify-content:space-between;"><span>Moyenne générale:</span><strong>3.88 (&lt; 4.0)</strong></div>
-                            <div style="display:flex; justify-content:space-between;"><span>Bilan des points:</span><strong class="failed">-2.0 (&lt; 0)</strong></div>
-                            <div style="display:flex; justify-content:space-between;"><span>Insuffisances:</span><strong>2 (&lt;= 4)</strong></div>
-                        </div>
-                    </div>
-                </div>
+                <p class="guide-intro">Saisissez vos évaluations en quelques clics :</p>
+                <ul style="font-size: 0.825rem; line-height: 1.6; color: var(--color-text-secondary); margin-left: 1rem; list-style-type: disc; display: flex; flex-direction: column; gap: 0.5rem;">
+                    <li><strong>Ajouter une note :</strong> Cliquez sur une branche ou sa gemme colorée pour ouvrir les détails, choisissez le type (TS ou TA) et cliquez sur une note de 1.0 à 6.0.</li>
+                    <li><strong>Coefficients et descriptions :</strong> Modifiez le coefficient (ex. 0.5x, 2x) et ajoutez un titre ou une date (ex. "Test algèbre", "12 oct") pour mieux vous organiser.</li>
+                    <li><strong>Suppression :</strong> Dans la liste des notes d'une branche, cliquez sur la croix rouge à côté d'une note pour la retirer instantanément.</li>
+                </ul>
             </div>
 
-            <!-- 3. Simulator features -->
+            <!-- 3. Simulateur cible -->
             <div class="guide-card simulation-guide-card">
                 <h2 class="guide-card-title">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 0.35rem;"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
-                    Simulateur de Note Cible
+                    Calculateur de Note Cible
                 </h2>
-                <p class="guide-intro">Besoin de savoir quelle note obtenir pour sauver votre moyenne ?</p>
-                <div class="simulator-explanation-body">
-                    <p>Sur chaque carte de branche, cliquez sur le badge <strong>Cible: 4.0</strong> ou la note de moyenne de branche pour calculer dynamiquement la note exacte requise lors de votre prochain test afin de sécuriser votre objectif.</p>
-                    <div class="mock-target-pills">
-                        <div class="mock-target-pill">Prochain test requis : <span class="badge-required jetbrains-mono-bold">4.8</span></div>
+                <p class="guide-intro">Déterminez la note nécessaire pour atteindre votre objectif :</p>
+                <ul style="font-size: 0.825rem; line-height: 1.6; color: var(--color-text-secondary); margin-left: 1rem; list-style-type: disc; display: flex; flex-direction: column; gap: 0.5rem;">
+                    <li><strong>Simulateur intelligent :</strong> Cliquez sur le badge <strong>Cible: 4.0</strong> (ou sur la moyenne) sur n'importe quelle carte de branche.</li>
+                    <li><strong>Calcul instantané :</strong> L'application calcule et affiche automatiquement la note précise que vous devez obtenir lors de votre prochain test pour sécuriser la moyenne voulue.</li>
+                </ul>
+                <div class="mock-target-pills" style="margin-top: 0.75rem;">
+                    <div class="mock-target-pill">Note requise au prochain test : <span class="badge-required jetbrains-mono-bold">4.8</span></div>
+                </div>
+            </div>
+
+            <!-- 4. Photos -->
+            <div class="guide-card scanning-guide-card">
+                <h2 class="guide-card-title">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 0.35rem;"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+                    Photos et Justificatifs
+                </h2>
+                <p class="guide-intro">Gardez une trace visuelle de vos épreuves écrites :</p>
+                <div class="scanning-steps-visual" style="margin-bottom: 0;">
+                    <div class="scan-step">
+                        <span class="step-num">1</span>
+                        <h5>Prendre photo</h5>
+                        <p>Cliquez sur l'icône appareil photo lors de la création d'une note pour photographier votre copie.</p>
+                    </div>
+                    <div class="scan-step">
+                        <span class="step-num">2</span>
+                        <h5>Associer</h5>
+                        <p>Validez la capture pour lier de manière sécurisée l'image directement à la note enregistrée.</p>
+                    </div>
+                    <div class="scan-step">
+                        <span class="step-num">3</span>
+                        <h5>Consulter</h5>
+                        <p>Affichez la copie de votre épreuve à tout moment depuis la liste des notes de la branche.</p>
                     </div>
                 </div>
             </div>
 
-            <!-- 4. Scanning features -->
-            <div class="guide-card scanning-guide-card">
+            <!-- 5. Personnalisation & PWA -->
+            <div class="guide-card customization-pwa-card">
                 <h2 class="guide-card-title">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 0.35rem;"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
-                    Photo de l'épreuve
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 0.35rem;"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+                    Design et Mode Hors Ligne
                 </h2>
-                <p class="guide-intro">Ajoutez une photo comme justificatif pour vos évaluations :</p>
-                <div class="scanning-steps-visual">
-                    <div class="scan-step">
-                        <span class="step-num">1</span>
-                        <h5>Prendre une photo</h5>
-                        <p>Cliquez sur "Prendre photo" lors de la saisie d'une note pour ouvrir l'appareil photo.</p>
+                <p class="guide-intro">Adaptez l'application à vos préférences :</p>
+                <ul style="font-size: 0.825rem; line-height: 1.6; color: var(--color-text-secondary); margin-left: 1rem; list-style-type: disc; display: flex; flex-direction: column; gap: 0.5rem;">
+                    <li><strong>Thèmes de couleurs :</strong> Ouvrez les options en haut à droite pour choisir parmi nos thèmes exclusifs (Saphir, Emeraude, Cozy, Rose, etc.) et basculer en mode Clair/Sombre.</li>
+                    <li><strong>Utilisation 100% hors ligne (PWA) :</strong> Notare est conçue pour fonctionner sans connexion internet. Installez-la sur votre écran d'accueil depuis le navigateur (Safari > Partager > Sur l'écran d'accueil, ou Chrome > Installer). Vos données restent stockées localement en toute confidentialité.</li>
+                </ul>
+            </div>
+
+            <!-- 6. Règles de promotion (Condensed & Summarized) -->
+            <div class="guide-card promotion-summary-card" style="grid-column: span 2; background-color: color-mix(in srgb, var(--color-bg-surface) 50%, transparent); border: 1px solid var(--color-border-subtle);">
+                <h2 class="guide-card-title" style="font-size: 1.2rem;">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 0.35rem;"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                    Règles de Promotion du Gymnase Vaudois (3M)
+                </h2>
+                <p class="guide-intro" style="font-size: 0.85rem; color: var(--color-text-secondary); margin-bottom: 1rem;">
+                    L'application calcule automatiquement votre statut en temps réel selon les directives officielles. Voici les critères clés à retenir :
+                </p>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; font-size: 0.8rem;">
+                    <div style="background: rgba(0,0,0,0.1); padding: 0.75rem; border-radius: var(--radius-sm);">
+                        <strong style="color: var(--color-primary); display: block; margin-bottom: 0.25rem; font-weight: 700;">Moyenne Générale ≥ 4.0</strong>
+                        La moyenne arithmétique globale de l'ensemble de vos disciplines doit être suffisante.
                     </div>
-                    <div class="scan-step">
-                        <span class="step-num">2</span>
-                        <h5>Justificatif</h5>
-                        <p>Cadrez votre test et validez la capture pour l'enregistrer avec votre note.</p>
+                    <div style="background: rgba(0,0,0,0.1); padding: 0.75rem; border-radius: var(--radius-sm);">
+                        <strong style="color: #f59e0b; display: block; margin-bottom: 0.25rem; font-weight: 700;">Max 4 Insuffisances</strong>
+                        Vous ne devez pas cumuler plus de 4 branches en dessous de 4.0.
                     </div>
-                    <div class="scan-step">
-                        <span class="step-num">3</span>
-                        <h5>Consultation</h5>
-                        <p>Visualisez la photo de votre test à tout moment directement depuis les détails de la branche.</p>
+                    <div style="background: rgba(0,0,0,0.1); padding: 0.75rem; border-radius: var(--radius-sm);">
+                        <strong style="color: #10b981; display: block; margin-bottom: 0.25rem; font-weight: 700;">Double Compensation (Bilan)</strong>
+                        Chaque point de déficit (sous 4.0) doit être compensé par deux points d'excédent (au-dessus de 4.0). Vos points de bilan finaux doivent être d'au moins <strong>56.0 pts</strong>.
+                    </div>
+                    <div style="background: rgba(0,0,0,0.1); padding: 0.75rem; border-radius: var(--radius-sm);">
+                        <strong style="color: #8b5cf6; display: block; margin-bottom: 0.25rem; font-weight: 700;">Moyenne d'Examens ≥ 3.5</strong>
+                        (3ème année) La moyenne des épreuves de maturité (écrites + orales) ne doit pas être inférieure à 3.5.
                     </div>
                 </div>
             </div>
