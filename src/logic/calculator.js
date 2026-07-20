@@ -438,7 +438,7 @@ export function checkVaudPromotion(subjects, semester, ctx) {
     
     // Points de bilan = total sum of rounded grades - sum of deficits
     const pointsBilan = roundedAveragesSum - pointsManquants;
-    const pointsBilanMin = activeSubjectsCount * 4.0;
+    const pointsBilanMin = (ctx.baseYear === 3) ? 56.0 : (activeSubjectsCount * 4.0);
 
     let isPromoted = false;
     if (ctx.baseYear === 1 || ctx.baseYear === 2) {
@@ -448,9 +448,8 @@ export function checkVaudPromotion(subjects, semester, ctx) {
     } else {
         isPromoted = activeSubjectsCount > 0 &&
                      overallAverage >= 4.0 &&
-                     roundedAveragesSum >= activeSubjectsCount * 4.0 &&
+                     pointsBilan >= pointsBilanMin &&
                      insuffisances <= 4 &&
-                     pointsEnPlus >= requiredCompensation &&
                      pointsManquants <= 3.0 &&
                      examAveragePassed;
     }
@@ -466,7 +465,7 @@ export function checkVaudPromotion(subjects, semester, ctx) {
         g1Sum,
         coreSumPassed,
         g2Sum: roundedAveragesSum,
-        g2Min: activeSubjectsCount * 4.0,
+        g2Min: pointsBilanMin,
         examAverage: examAverage !== null ? Math.round(examAverage * 100) / 100 : null,
         examAveragePassed,
         pointsBilan: Math.round(pointsBilan * 100) / 100,

@@ -347,10 +347,12 @@ describe('checkVaudPromotion — Year 3', () => {
 
     it('double compensation boundary: surplus ≥ 2 × missing passes', () => {
         // core at 4.5 → surplus 0.5 × 5 = 2.5 ; one general at 3.0 → missing 1.0
-        // required compensation = 2.0 ≤ 2.5 → promoted
+        // padded with 8 subjects at 4.0 to make it 14 subjects total
         const subjects = [
             graded('french', 4.5), graded('math', 4.5), graded('os', 4.5), graded('l2', 4.5), graded('l3', 4.5),
-            graded('general', 3.0, 'Histoire')
+            graded('general', 3.0, 'Histoire'),
+            graded('general', 4.0, 'A'), graded('general', 4.0, 'B'), graded('general', 4.0, 'C'), graded('general', 4.0, 'D'),
+            graded('general', 4.0, 'E'), graded('general', 4.0, 'F'), graded('general', 4.0, 'G'), graded('general', 4.0, 'H')
         ];
         const res = checkVaudPromotion(subjects, 'sem1', y3);
         expect(res.pointsEnPlus).toBeCloseTo(2.5, 5);
@@ -360,9 +362,12 @@ describe('checkVaudPromotion — Year 3', () => {
 
     it('double compensation failure: surplus below 2 × missing', () => {
         // missing 1.5 → required 3.0, surplus only 2.5 → fails ONLY on compensation
+        // padded with 8 subjects at 4.0 to make it 14 subjects total
         const subjects = [
             graded('french', 4.5), graded('math', 4.5), graded('os', 4.5), graded('l2', 4.5), graded('l3', 4.5),
-            graded('general', 2.5, 'Histoire')
+            graded('general', 2.5, 'Histoire'),
+            graded('general', 4.0, 'A'), graded('general', 4.0, 'B'), graded('general', 4.0, 'C'), graded('general', 4.0, 'D'),
+            graded('general', 4.0, 'E'), graded('general', 4.0, 'F'), graded('general', 4.0, 'G'), graded('general', 4.0, 'H')
         ];
         const res = checkVaudPromotion(subjects, 'sem1', y3);
         expect(res.pointsManquants).toBeCloseTo(1.5, 5);
@@ -375,12 +380,18 @@ describe('checkVaudPromotion — Year 3', () => {
 
     it('missing-points boundary: exactly 3.0 passes, 3.5 fails even with huge surplus', () => {
         const core = [graded('french', 5.5), graded('math', 5.5), graded('os', 5.5), graded('l2', 5.5), graded('l3', 5.5)]; // surplus 7.5
-        const exactly3 = [...core, graded('general', 2.5, 'A'), graded('general', 2.5, 'B')]; // missing 3.0
+        // padded with 7 subjects at 4.0 to make it 14 subjects total
+        const pads = [
+            graded('general', 4.0, 'P1'), graded('general', 4.0, 'P2'), graded('general', 4.0, 'P3'),
+            graded('general', 4.0, 'P4'), graded('general', 4.0, 'P5'), graded('general', 4.0, 'P6'),
+            graded('general', 4.0, 'P7')
+        ];
+        const exactly3 = [...core, ...pads, graded('general', 2.5, 'A'), graded('general', 2.5, 'B')]; // missing 3.0
         const res3 = checkVaudPromotion(exactly3, 'sem1', y3);
         expect(res3.pointsManquants).toBeCloseTo(3.0, 5);
         expect(res3.isPromoted).toBe(true);
 
-        const over3 = [...core, graded('general', 2.5, 'A'), graded('general', 2.0, 'B')]; // missing 3.5
+        const over3 = [...core, ...pads, graded('general', 2.5, 'A'), graded('general', 2.0, 'B')]; // missing 3.5
         const resOver = checkVaudPromotion(over3, 'sem1', y3);
         expect(resOver.pointsManquants).toBeCloseTo(3.5, 5);
         expect(resOver.isPromoted).toBe(false);
@@ -388,7 +399,13 @@ describe('checkVaudPromotion — Year 3', () => {
 
     it('Year 3 also requires overall average ≥ 4.0', () => {
         // avg exactly 4.0 passes (all at 4.0 → no surplus needed, no missing)
-        const flat = [graded('french', 4.0), graded('math', 4.0), graded('os', 4.0), graded('l2', 4.0), graded('general', 4.0, 'A')];
+        // padded with 9 subjects at 4.0 to make it 14 subjects total
+        const flat = [
+            graded('french', 4.0), graded('math', 4.0), graded('os', 4.0), graded('l2', 4.0), graded('general', 4.0, 'A'),
+            graded('general', 4.0, 'B'), graded('general', 4.0, 'C'), graded('general', 4.0, 'D'), graded('general', 4.0, 'E'),
+            graded('general', 4.0, 'F'), graded('general', 4.0, 'G'), graded('general', 4.0, 'H'), graded('general', 4.0, 'I'),
+            graded('general', 4.0, 'J')
+        ];
         expect(checkVaudPromotion(flat, 'sem1', y3).isPromoted).toBe(true);
     });
 
@@ -405,10 +422,13 @@ describe('checkVaudPromotion — Year 3', () => {
         // All subjects are passing at 4.0.
         // We have French (written+oral config) and Math (written+oral config).
         // If exams are 4.0 and 4.0 (average 4.0 >= 3.5) → promoted
+        // padded with 9 subjects at 4.0 to make it 14 subjects total
+        const pads = Array.from({ length: 9 }, (_, i) => graded('general', 4.0, `P_${i}`));
         const passingExams = [
             subject({ id: 'y3_fr', role: 'french', sem1: [ts(4.0)], exams: { written: 4.0, oral: 4.0 } }),
             subject({ id: 'y3_ma', role: 'math', sem1: [ts(4.0)], exams: { written: 4.0, oral: 4.0 } }),
-            graded('os', 4.0), graded('l2', 4.0), graded('l3', 4.0)
+            graded('os', 4.0), graded('l2', 4.0), graded('l3', 4.0),
+            ...pads
         ];
         const resPass = checkVaudPromotion(passingExams, 'sem1', y3);
         expect(resPass.examAverage).toBeCloseTo(4.0, 5);
@@ -419,7 +439,8 @@ describe('checkVaudPromotion — Year 3', () => {
         const failingExams = [
             subject({ id: 'y3_fr', role: 'french', sem1: [ts(4.0)], exams: { written: 3.0, oral: 3.0 } }),
             subject({ id: 'y3_ma', role: 'math', sem1: [ts(4.0)], exams: { written: 3.0, oral: 3.0 } }),
-            graded('os', 4.0), graded('l2', 4.0), graded('l3', 4.0)
+            graded('os', 4.0), graded('l2', 4.0), graded('l3', 4.0),
+            ...pads
         ];
         const resFail = checkVaudPromotion(failingExams, 'sem1', y3);
         expect(resFail.examAverage).toBeCloseTo(3.0, 5);
@@ -428,38 +449,41 @@ describe('checkVaudPromotion — Year 3', () => {
     });
 
     it('points de bilan absolute calculation (double compensation)', () => {
-        // Say we have 6 subjects. Baseline is 6 * 4.0 = 24.0 points.
-        // If we have 1 branch at 3.5 (deficit = 0.5) and 5 branches at 4.5 (surplus = 2.5).
-        // Total sum = 3.5 + 5 * 4.5 = 26.0.
-        // Points de bilan = 26.0 - 0.5 = 25.5.
-        // Since 25.5 >= 24.0, promoted = true.
+        // Say we have 14 subjects. Baseline is 56.0 points.
+        // If we have 1 branch at 3.5 (deficit = 0.5) and 5 branches at 4.5 (surplus = 2.5) and 8 at 4.0.
+        // Total sum = 3.5 + 5 * 4.5 + 8 * 4.0 = 58.0.
+        // Points de bilan = 58.0 - 0.5 = 57.5.
+        // Since 57.5 >= 56.0, promoted = true.
+        const pads = Array.from({ length: 8 }, (_, i) => graded('general', 4.0, `P_${i}`));
         const subjectsPass = [
             graded('french', 3.5),
             graded('math', 4.5), graded('os', 4.5), graded('l2', 4.5), graded('l3', 4.5),
-            graded('general', 4.5)
+            graded('general', 4.5),
+            ...pads
         ];
         const resPass = checkVaudPromotion(subjectsPass, 'sem1', y3);
-        expect(resPass.activeSubjectsCount).toBe(6);
-        expect(resPass.g2Sum).toBe(26.0);
+        expect(resPass.activeSubjectsCount).toBe(14);
+        expect(resPass.g2Sum).toBe(58.0);
         expect(resPass.pointsManquants).toBe(0.5);
-        expect(resPass.pointsBilan).toBe(25.5);
-        expect(resPass.pointsBilanMin).toBe(24.0);
+        expect(resPass.pointsBilan).toBe(57.5);
+        expect(resPass.pointsBilanMin).toBe(56.0);
         expect(resPass.isPromoted).toBe(true);
 
-        // If total sum is 24.0 and 1 branch at 3.5.
-        // 1 at 3.5, 4 at 4.0, 1 at 4.5. Total sum = 24.0.
-        // Points de bilan = 24.0 - 0.5 = 23.5.
-        // Since 23.5 < 24.0, promoted = false.
+        // If total sum is 56.0 and 1 branch at 3.5.
+        // 1 at 3.5, 1 at 4.5, 12 at 4.0. Total sum = 56.0.
+        // Points de bilan = 56.0 - 0.5 = 55.5.
+        // Since 55.5 < 56.0, promoted = false.
+        const padsFail = Array.from({ length: 12 }, (_, i) => graded('general', 4.0, `PF_${i}`));
         const subjectsFail = [
             graded('french', 3.5),
-            graded('math', 4.5), graded('os', 4.0), graded('l2', 4.0), graded('l3', 4.0),
-            graded('general', 4.0)
+            graded('math', 4.5),
+            ...padsFail
         ];
         const resFail = checkVaudPromotion(subjectsFail, 'sem1', y3);
-        expect(resFail.g2Sum).toBe(24.0);
+        expect(resFail.g2Sum).toBe(56.0);
         expect(resFail.pointsManquants).toBe(0.5);
-        expect(resFail.pointsBilan).toBe(23.5);
-        expect(resFail.pointsBilanMin).toBe(24.0);
+        expect(resFail.pointsBilan).toBe(55.5);
+        expect(resFail.pointsBilanMin).toBe(56.0);
         expect(resFail.isPromoted).toBe(false);
     });
 });
