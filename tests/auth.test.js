@@ -43,7 +43,7 @@ describe('Student Authentication State', () => {
 
     it('initializes default state with empty profile and logged out status', () => {
         expect(state.isLoggedIn).toBe(false);
-        expect(state.studentName).toBe('Étudiant');
+        expect(state.studentName).toBe('');
         expect(state.studentEmail).toBe('');
         expect(state.studentMobile).toBe('');
     });
@@ -75,7 +75,7 @@ describe('Student Authentication State', () => {
         resetStateToDefault();
 
         expect(state.isLoggedIn).toBe(false);
-        expect(state.studentName).toBe('Étudiant');
+        expect(state.studentName).toBe('');
         expect(state.studentEmail).toBe('');
         expect(state.studentMobile).toBe('');
     });

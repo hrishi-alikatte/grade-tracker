@@ -46,7 +46,7 @@ function allSubjectLists(state) {
 
 /** Idempotent normalization, runs on every load. */
 export function normalizeState(state) {
-    if (!state.studentName) state.studentName = 'Étudiant';
+    if (state.studentName == null) state.studentName = '';
     if (!state.studentEmail) state.studentEmail = '';
     if (!state.studentMobile) state.studentMobile = '';
     if (state.isLoggedIn === undefined) state.isLoggedIn = false;

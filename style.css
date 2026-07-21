@@ -80,6 +80,12 @@ select,
     --color-avg-neutral-bg: rgba(148, 163, 184, 0.15);
     --color-avg-neutral-text: #a8b6c7;
 
+    /* Card surface tokens — one border/elevation system for every card, so
+       borders are intentional (default / hover) instead of accidental. */
+    --card-border: rgba(255, 255, 255, 0.06);
+    --card-border-hover: rgba(255, 255, 255, 0.14);
+    --card-shadow: 0 10px 30px -16px rgba(0, 0, 0, 0.55);
+
     /* Fonts & Radii — Plus Jakarta Sans is the family actually loaded; using it
        here (instead of the never-loaded Montserrat) keeps both themes consistent. */
     --font-family-sans: 'Plus Jakarta Sans', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
@@ -126,7 +132,11 @@ body.theme-light {
     --color-text-primary: #1c1917;     /* Solid stone-900 (charcoal black) */
     --color-text-secondary: #57534e;   /* stone-700 description text */
     --color-text-muted: #706e69;       /* warm stone muted subtext (≥4.5:1 on every surface) */
-    
+
+    --card-border: rgba(0, 0, 0, 0.07);
+    --card-border-hover: rgba(0, 0, 0, 0.14);
+    --card-shadow: 0 6px 22px -12px rgba(0, 0, 0, 0.10);
+
     /* Buttons in solid editorial black/charcoal */
     --color-primary: #1c1917;          /* Solid stone-900 primary actions */
     --color-primary-hover: #44403c;    /* stone-800 hover */
@@ -156,6 +166,15 @@ body.theme-light {
     --radius-xl: 20px;
     --radius-full: 9999px;
     --section-gap: 2rem;
+
+    /* iOS safe-area insets (viewport-fit=cover). Reusable so any scroll root
+       or fixed bar can consume them without re-typing env(). */
+    --safe-top: env(safe-area-inset-top);
+    --safe-bottom: env(safe-area-inset-bottom);
+
+    /* Height of the fixed bottom tab bar on phones (content + bottom inset).
+       Single source of truth for the bar and the scroll-area reservation. */
+    --bottom-nav-h: calc(56px + env(safe-area-inset-bottom));
 
     /* Very soft elevation for the editorial light theme. */
     --shadow-card: 0 6px 24px -14px rgba(2, 6, 23, 0.14);
@@ -586,7 +605,8 @@ select.btn {
     background-color: color-mix(in srgb, var(--color-bg-surface) 60%, transparent);
     backdrop-filter: blur(16px) saturate(130%);
     -webkit-backdrop-filter: blur(16px) saturate(130%);
-    border: 1px solid rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--card-border);
+    box-shadow: var(--card-shadow);
     border-radius: var(--radius-lg);
     padding: 1.5rem;
     display: flex;
@@ -597,7 +617,7 @@ select.btn {
 }
 
 .subject-card:hover {
-    border-color: rgba(255, 255, 255, 0.08);
+    border-color: var(--card-border-hover);
 }
 
 .subject-header {
@@ -700,10 +720,10 @@ select.btn {
     line-height: 1.1;
 }
 
-.subject-average-badge.passing .subject-average-val { color: #10b981; }
-.subject-average-badge.warning .subject-average-val { color: #f59e0b; }
-.subject-average-badge.failing .subject-average-val { color: #ef4444; }
-.subject-average-badge.empty .subject-average-val { color: #94a3b8; }
+.subject-average-badge.passing .subject-average-val { color: var(--color-avg-passing-text); }
+.subject-average-badge.warning .subject-average-val { color: var(--color-avg-warning-text); }
+.subject-average-badge.failing .subject-average-val { color: var(--color-avg-failing-text); }
+.subject-average-badge.empty .subject-average-val { color: var(--color-avg-neutral-text); }
 
 .subject-average-lbl {
     font-size: 0.62rem;
@@ -711,10 +731,10 @@ select.btn {
     letter-spacing: 0.05em;
 }
 
-.subject-average-badge.passing .subject-average-lbl { color: rgba(16, 185, 129, 0.7); }
-.subject-average-badge.warning .subject-average-lbl { color: rgba(245, 158, 11, 0.7); }
-.subject-average-badge.failing .subject-average-lbl { color: rgba(239, 68, 68, 0.7); }
-.subject-average-badge.empty .subject-average-lbl { color: rgba(148, 163, 184, 0.7); }
+.subject-average-badge.passing .subject-average-lbl { color: color-mix(in srgb, var(--color-avg-passing-text) 78%, transparent); }
+.subject-average-badge.warning .subject-average-lbl { color: color-mix(in srgb, var(--color-avg-warning-text) 78%, transparent); }
+.subject-average-badge.failing .subject-average-lbl { color: color-mix(in srgb, var(--color-avg-failing-text) 78%, transparent); }
+.subject-average-badge.empty .subject-average-lbl { color: color-mix(in srgb, var(--color-avg-neutral-text) 78%, transparent); }
 
 .btn-delete-subject {
     position: absolute;
@@ -1306,33 +1326,39 @@ select.btn {
     border-color: var(--color-primary);
 }
 
-/* Filter pills for comparative chart */
+/* Filter pills for comparative chart — OUTLINE by default, FILLED when active.
+   Colour is driven by the per-chip --pill-color set inline in the render, so
+   selected vs unselected is unmistakable and every chip is the same height. */
 .filter-pill {
-    background: rgba(255,255,255,0.02);
-    border: 1px solid var(--color-border-subtle);
+    --pill-color: var(--color-text-muted);
+    background: var(--color-bg-surface);
+    border: 1.5px solid var(--color-border-subtle);
     color: var(--color-text-secondary);
-    padding: 6px 12px;
+    height: 40px;
+    padding: 0 14px;
     border-radius: var(--radius-full);
-    font-size: 0.75rem;
+    font-size: 0.78rem;
     font-weight: 600;
     cursor: pointer;
     display: inline-flex;
     align-items: center;
-    gap: 6px;
+    gap: 7px;
+    line-height: 1;
+    white-space: nowrap;
     transition: all var(--transition-fast);
-    min-height: 44px;
 }
 
 .filter-pill:hover {
-    background: var(--color-bg-elevated);
-    color: white;
+    border-color: color-mix(in srgb, var(--pill-color) 55%, var(--color-border-subtle));
+    color: var(--color-text-primary);
+    background: color-mix(in srgb, var(--pill-color) 8%, var(--color-bg-surface));
 }
 
 .filter-pill.active {
-    color: white;
-    background: rgba(255, 255, 255, 0.05);
-    border-width: 1px;
-    box-shadow: 0 0 8px rgba(255, 255, 255, 0.03);
+    background: var(--pill-color);
+    border-color: var(--pill-color);
+    color: #fff;
+    box-shadow: 0 2px 8px color-mix(in srgb, var(--pill-color) 35%, transparent);
 }
 
 .filter-pill .pill-dot {
@@ -1340,6 +1366,13 @@ select.btn {
     height: 8px;
     border-radius: 50%;
     display: inline-block;
+    flex-shrink: 0;
+    background: var(--pill-color);
+}
+
+.filter-pill.active .pill-dot {
+    background: #fff;
+    box-shadow: 0 0 0 2px color-mix(in srgb, var(--pill-color) 40%, transparent);
 }
 
 /* Interactive SVG Comparison Chart */
@@ -1380,25 +1413,28 @@ select.btn {
     opacity: 1;
 }
 
-.btn-chart-control {
-    min-height: 44px;
-    min-width: 44px;
+/* Native pill buttons (not underlined links) for the chart filter actions. */
+.chart-filter-btn {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    padding: 0 8px;
-    background: none;
-    border: none;
-    color: var(--color-primary);
+    height: 32px;
+    padding: 0 14px;
+    border-radius: var(--radius-full);
+    border: 1px solid var(--color-border-subtle);
+    background: var(--color-bg-surface);
+    color: var(--color-text-secondary);
     font-size: 0.75rem;
-    cursor: pointer;
-    text-decoration: underline;
     font-weight: 600;
+    cursor: pointer;
+    text-decoration: none;
+    transition: all var(--transition-fast);
 }
 
-.btn-chart-control:hover {
-    text-decoration: none !important;
-    opacity: 0.8;
+.chart-filter-btn:hover {
+    background: var(--color-bg-elevated);
+    color: var(--color-text-primary);
+    border-color: var(--color-primary);
 }
 
 /* --- Themes definitions --- */
@@ -2405,57 +2441,88 @@ select.btn {
 /* Additional Responsive & Scrolling Optimizations */
 @media (max-width: 640px) {
     /* Top Navigation Bar Responsiveness */
+    /* Top bar stays at the top holding brand + global actions. Only the two
+       primary tabs move to a fixed bottom tab bar (see .nav-tabs below).
+       NOTE: backdrop-filter is removed here on purpose — a filtered ancestor
+       becomes the containing block for its position:fixed child, which would
+       anchor the "bottom" tab bar to this top bar instead of the viewport. */
     .top-nav-bar {
-        position: fixed;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        top: auto;
-        background: var(--color-bg-elevated);
-        border-top: 1px solid var(--color-border-subtle);
-        border-bottom: none;
-        padding: 0.75rem 1rem;
-        padding-bottom: calc(0.75rem + env(safe-area-inset-bottom));
-        z-index: 100;
-        box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.35);
-        flex-direction: column;
-        gap: 0.75rem;
-        border-radius: 0;
-        margin-bottom: 0;
+        flex-direction: row;
+        flex-wrap: nowrap;
+        justify-content: space-between;
         align-items: center;
-        text-align: center;
+        gap: 0.5rem;
+        padding: calc(0.55rem + env(safe-area-inset-top)) calc(1rem + env(safe-area-inset-right)) 0.55rem calc(1rem + env(safe-area-inset-left));
+        margin-bottom: 1rem;
+        border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+        background: var(--color-bg-surface);
+        backdrop-filter: none;
+        -webkit-backdrop-filter: none;
     }
 
-    body.theme-light .top-nav-bar {
-        background: var(--color-bg-surface) !important;
-        border-top: 1px solid rgba(0,0,0,0.08) !important;
-        box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.05) !important;
+    body.theme-light .nav-tabs {
+        background: color-mix(in srgb, var(--color-bg-surface) 94%, transparent);
+        border-top: 1px solid rgba(0, 0, 0, 0.08);
+        box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.06);
     }
     
     .top-nav-brand {
-        justify-content: center;
-        width: 100%;
+        flex: 0 1 auto;
+        min-width: 0;
+        justify-content: flex-start;
     }
-    
-    .nav-tabs-wrapper {
-        width: 100%;
-        display: flex;
-        justify-content: space-around;
-        flex-wrap: wrap;
+    .nav-icons {
+        flex: 0 0 auto;
+        gap: 0.4rem;
+    }
+    .nav-icon-btn {
+        width: 40px;
+        height: 40px;
+        min-height: 40px;
     }
 
+    /* The two primary tabs become a fixed bottom tab bar (icon over label). */
     .nav-tabs {
-        width: 100%;
+        position: fixed;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        z-index: 100;
         display: flex;
         justify-content: space-around;
-        flex-wrap: wrap;
+        align-items: stretch;
+        gap: 0;
+        margin: 0;
+        padding: 0 0 env(safe-area-inset-bottom) 0;
+        min-height: var(--bottom-nav-h);
+        background: color-mix(in srgb, var(--color-bg-elevated) 92%, transparent);
+        backdrop-filter: blur(20px) saturate(140%);
+        -webkit-backdrop-filter: blur(20px) saturate(140%);
+        border: none;
+        border-top: 1px solid var(--color-border-subtle);
+        border-radius: 0;
+        box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.28);
     }
-    
+
     .nav-tab-btn {
         flex: 1;
+        flex-direction: column;
+        gap: 3px;
         justify-content: center;
-        padding: 0.5rem 0.25rem;
-        font-size: 0.8rem;
+        padding: 7px 4px;
+        font-size: 0.66rem;
+        min-width: 0;
+        min-height: var(--bottom-nav-h);
+    }
+    .nav-tab-btn .nav-tab-icon {
+        width: 21px;
+        height: 21px;
+    }
+
+    /* Reserve scroll space so the fixed tab bar never clips content. */
+    body {
+        padding-bottom: calc(var(--bottom-nav-h) + 0.75rem) !important;
+        scroll-padding-bottom: var(--bottom-nav-h);
     }
 
     /* Dashboard & Grids Layout */
@@ -3103,8 +3170,8 @@ body.theme-light .subject-card {
 }
 
 body.theme-light .subject-card:hover {
-    border-color: var(--color-text-primary) !important;
-    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.035) !important;
+    border-color: var(--card-border-hover) !important;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.05) !important;
 }
 
 body.theme-light .subject-average-badge.empty {
@@ -3471,7 +3538,7 @@ body.theme-light .subject-card.is-maximized {
 
 /* Light Mode active/hover filter pill text visibility fixes */
 body.theme-light .filter-pill.active {
-    color: var(--color-text-primary) !important;
+    color: #fff !important;
     font-weight: 700 !important;
 }
 
@@ -3492,6 +3559,8 @@ body.theme-light .filter-pill:hover {
 @media (max-width: 768px) {
     body {
         padding: 0.75rem;
+        /* The sticky top bar owns the TOP inset (see .top-nav-bar); body keeps
+           right/bottom/left. Bottom padding grows at ≤640px to clear the tab bar. */
         padding: 0.75rem calc(0.75rem + env(safe-area-inset-right)) calc(0.75rem + env(safe-area-inset-bottom)) calc(0.75rem + env(safe-area-inset-left));
     }
     .app-container {
@@ -3770,29 +3839,8 @@ body.theme-light .exam-input-field:focus {
         justify-content: center;
     }
 
-    /* Two clean rows: brand + icon cluster on row 1, full-width tabs on row 2.
-       No orphaned controls. The bar is bottom-fixed at this width (see the
-       640px block), so the safe-area inset belongs on the BOTTOM edge. */
-    .top-nav-bar {
-        row-gap: 0.7rem;
-        padding: 0.7rem calc(1rem + env(safe-area-inset-right)) calc(0.7rem + env(safe-area-inset-bottom)) calc(1rem + env(safe-area-inset-left));
-    }
-    .top-nav-brand {
-        flex: 1 1 auto;
-        order: 1;
-    }
-    .nav-icons {
-        order: 2;
-    }
-    .nav-tabs {
-        order: 3;
-        flex: 1 1 100%;
-        margin-left: 0;
-    }
-    .nav-tabs .nav-tab-btn {
-        flex: 1;
-        justify-content: center;
-    }
+    /* Bottom tab bar + sticky top action bar are fully defined in the 640px
+       block; no per-element nav overrides needed at this width. */
 
     /* Stacked, full-width form buttons are far easier to tap than a tight row. */
     .form-actions {
@@ -3810,11 +3858,9 @@ body.theme-light .exam-input-field:focus {
     }
 
     .filter-pill {
-        padding: 8px 12px;
-        font-size: 0.75rem;
-        min-height: 44px;
-        display: inline-flex;
-        align-items: center;
+        height: 40px;
+        padding: 0 14px;
+        font-size: 0.78rem;
     }
 }
 
@@ -4197,7 +4243,7 @@ body.theme-light .exam-input-field:focus {
 .evo-graph-wrapper {
     position: relative;
     width: 100%;
-    min-height: 200px;
+    min-height: 240px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -4685,22 +4731,25 @@ body.theme-light .mock-window-address {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    flex-wrap: wrap;
     border-bottom: 1px solid var(--color-border-subtle);
     padding-bottom: var(--space-2);
-    gap: var(--space-3);
+    gap: var(--space-2) var(--space-3);
 }
 
 .bilan-card-title {
     font-size: 1.15rem;
     font-weight: 800;
-    color: white;
+    color: var(--color-text-primary);
     margin: 0;
+    white-space: nowrap;
 }
 
 .bilan-points {
     font-size: 0.85rem;
     font-weight: 700;
     color: var(--color-primary);
+    white-space: nowrap;
 }
 
 .bilan-points.is-failing {
@@ -5408,8 +5457,26 @@ strong.text-fail {
     flex-wrap: wrap;
     gap: var(--space-2);
     margin-bottom: var(--space-5);
-    justify-content: center;
+    justify-content: flex-start;
     width: 100%;
+}
+
+.chart-filters-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-2);
+    margin-bottom: 0.85rem;
+}
+.chart-filters-label {
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: var(--color-text-secondary);
+}
+.chart-filters-actions {
+    display: inline-flex;
+    gap: var(--space-2);
 }
 
 .graph-hover-helper {
@@ -5438,4 +5505,13 @@ strong.text-fail {
     gap: var(--space-5);
     width: 100%;
     margin-top: 1.25rem;
+}
+
+/* Editable student-name placeholder — shown until a name is entered, so
+   first-run users see an instruction ("votre prénom") not a fake default name. */
+#student-name:empty::before {
+    content: attr(data-placeholder);
+    color: var(--color-text-muted);
+    font-style: italic;
+    font-weight: 400;
 }

@@ -21,7 +21,7 @@ export const BACKUP_KEY = 'gymnase_vaud_state_backup';
 
 
 export let state = {
-    studentName: 'Étudiant',
+    studentName: '',
     studentEmail: '',
     studentMobile: '',
     isLoggedIn: false,
@@ -94,7 +94,7 @@ function loadState() {
 function resetStateToDefault() {
     state = {
         schemaVersion: CURRENT_SCHEMA_VERSION,
-        studentName: 'Étudiant',
+        studentName: '',
         studentEmail: '',
         studentMobile: '',
         isLoggedIn: false,

@@ -316,7 +316,7 @@ function syncStudentNamePrefix() {
 // --- 8. Event Binding: Student Name Inline Edit ---
 studentNameEl.addEventListener('blur', () => {
     let nameText = studentNameEl.textContent.trim();
-    if (!nameText) nameText = 'Étudiant';
+    if (!nameText) nameText = '';
     state.studentName = nameText;
     studentNameEl.textContent = nameText;
     syncStudentNamePrefix();
@@ -485,7 +485,7 @@ function updateGroupsBilan() {
         l2l3AvgRounded = l3Data.roundedAverage;
     }
 
-    g1PointsText.textContent = `Min 16 / tes points: ${results.g1Sum.toFixed(1)} · Max 24`;
+    g1PointsText.textContent = `Min 16 / vos points: ${results.g1Sum.toFixed(1)} · Max 24`;
     g1PointsText.classList.toggle('is-failing', results.g1Sum < 16.0);
     g1PointsText.classList.toggle('is-passing', results.g1Sum >= 16.0);
 
@@ -535,7 +535,7 @@ function updateGroupsBilan() {
 
     const g2Min = g2Count * 4;
     const g2Max = g2Count * 6;
-    g2PointsText.textContent = `Min ${g2Min} / tes points: ${g2Sum.toFixed(1)} · Max ${g2Max}`;
+    g2PointsText.textContent = `Min ${g2Min} / vos points: ${g2Sum.toFixed(1)} · Max ${g2Max}`;
     g2PointsText.classList.toggle('is-failing', g2Sum < g2Min);
     g2PointsText.classList.toggle('is-passing', g2Sum >= g2Min);
 }
@@ -919,13 +919,6 @@ function renderDedicatedEvolutionSlide() {
     }
 }
 
-function hexToRgb(hex) {
-    const shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
-    const fullHex = hex.replace(shorthandRegex, (m, r, g, b) => r + r + g + g + b + b);
-    const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(fullHex);
-    return result ? `${parseInt(result[1], 16)}, ${parseInt(result[2], 16)}, ${parseInt(result[3], 16)}` : '255, 255, 255';
-}
-
 function getAllUniqueSubjects() {
     const unique = [];
     const seen = new Set();
@@ -1037,18 +1030,19 @@ function renderMultiSubjectGraph() {
     }
 
     const filtersHTML = `
-        <div style="font-size: 0.8rem; font-weight: 500; color: var(--color-text-secondary); margin-bottom: 0.75rem; text-align: center; display: flex; justify-content: center; align-items: center; gap: 0.5rem; flex-wrap: wrap;">
-            <span>Sélectionnez les branches à afficher :</span>
-            <button type="button" class="btn-chart-control" id="btn-chart-all">Tout afficher</button>
-            <span style="color: var(--color-border-subtle); font-size: 0.75rem;">|</span>
-            <button type="button" class="btn-chart-control" id="btn-chart-none">Effacer</button>
+        <div class="chart-filters-head">
+            <span class="chart-filters-label">Sélectionnez les branches à afficher :</span>
+            <div class="chart-filters-actions">
+                <button type="button" class="chart-filter-btn" id="btn-chart-all">Tout afficher</button>
+                <button type="button" class="chart-filter-btn" id="btn-chart-none">Effacer</button>
+            </div>
         </div>
         <div class="chart-filters">
             ${allSubjects.map(sub => {
                 const active = activeSubjectFilters.has(sub.key);
                 return `
-                    <button type="button" class="filter-pill ${active ? 'active' : ''}" data-key="${sub.key}" style="${active ? `border-color: ${sub.color}; background-color: rgba(${hexToRgb(sub.color)}, 0.1);` : ''}">
-                        <span class="pill-dot" style="background-color: ${active ? sub.color : 'var(--color-text-muted)'};"></span>
+                    <button type="button" class="filter-pill ${active ? 'active' : ''}" data-key="${sub.key}" style="--pill-color: ${sub.color};">
+                        <span class="pill-dot"></span>
                         <span>${escapeHTML(sub.label)}</span>
                     </button>
                 `;
@@ -1226,65 +1220,24 @@ function renderEvolutionGraph() {
     const wrapper = document.getElementById('evolution-graph-wrapper');
     if (!wrapper) return;
 
-    const timeline = [];
-    
-    // Y1 attempt 1
-    const resultsY1 = checkVaudPromotion(state.subjectsYear1, 'annual');
-    const avgY1 = resultsY1.activeSubjectsCount > 0 ? resultsY1.overallAverage : null;
-    if (avgY1 !== null) {
-        timeline.push({ val: avgY1, label: state.repeatingYears && state.repeatingYears[1] ? "1ère (1.1)" : "1ère année" });
-    }
-    // Y1 repeated
-    if (state.repeatingYears && state.repeatingYears[1]) {
-        const resultsY1Rep = checkVaudPromotion(state.subjectsYear1_rep, 'annual');
-        const avgY1Rep = resultsY1Rep.activeSubjectsCount > 0 ? resultsY1Rep.overallAverage : null;
-        if (avgY1Rep !== null) {
-            timeline.push({ val: avgY1Rep, label: "1ère (Rép.)" });
-        }
-    }
+    // Build ONE slot per academic year (+ any repeat). Base years Y1/Y2/Y3 are
+    // ALWAYS present (val may be null) so an empty middle year shows a gap
+    // instead of silently vanishing and stretching the line across the axis.
+    const rep = (n) => !!(state.repeatingYears && state.repeatingYears[n]);
+    const annualAvg = (subjects) => {
+        const r = checkVaudPromotion(subjects, 'annual');
+        return r.activeSubjectsCount > 0 ? r.overallAverage : null;
+    };
 
-    // Y2 attempt 1
-    const resultsY2 = checkVaudPromotion(state.subjectsYear2, 'annual');
-    const avgY2 = resultsY2.activeSubjectsCount > 0 ? resultsY2.overallAverage : null;
-    if (avgY2 !== null) {
-        timeline.push({ val: avgY2, label: state.repeatingYears && state.repeatingYears[2] ? "2ème (2.1)" : "2ème année" });
-    }
-    // Y2 repeated
-    if (state.repeatingYears && state.repeatingYears[2]) {
-        const resultsY2Rep = checkVaudPromotion(state.subjectsYear2_rep, 'annual');
-        const avgY2Rep = resultsY2Rep.activeSubjectsCount > 0 ? resultsY2Rep.overallAverage : null;
-        if (avgY2Rep !== null) {
-            timeline.push({ val: avgY2Rep, label: "2ème (Rép.)" });
-        }
-    }
+    const slots = [];
+    slots.push({ val: annualAvg(state.subjectsYear1), label: rep(1) ? "1ère (1.1)" : "1ère année" });
+    if (rep(1)) slots.push({ val: annualAvg(state.subjectsYear1_rep), label: "1ère (Rép.)" });
+    slots.push({ val: annualAvg(state.subjectsYear2), label: rep(2) ? "2ème (2.1)" : "2ème année" });
+    if (rep(2)) slots.push({ val: annualAvg(state.subjectsYear2_rep), label: "2ème (Rép.)" });
+    slots.push({ val: annualAvg(state.subjectsYear3), label: rep(3) ? "3ème (3.1)" : "3ème année" });
+    if (rep(3)) slots.push({ val: annualAvg(state.subjectsYear3_rep), label: "3ème (Rép.)" });
 
-    // Y3 attempt 1
-    const resultsY3 = checkVaudPromotion(state.subjectsYear3, 'annual');
-    const avgY3 = resultsY3.activeSubjectsCount > 0 ? resultsY3.overallAverage : null;
-    if (avgY3 !== null) {
-        timeline.push({ val: avgY3, label: state.repeatingYears && state.repeatingYears[3] ? "3ème (3.1)" : "3ème année" });
-    }
-    // Y3 repeated
-    if (state.repeatingYears && state.repeatingYears[3]) {
-        const resultsY3Rep = checkVaudPromotion(state.subjectsYear3_rep, 'annual');
-        const avgY3Rep = resultsY3Rep.activeSubjectsCount > 0 ? resultsY3Rep.overallAverage : null;
-        if (avgY3Rep !== null) {
-            timeline.push({ val: avgY3Rep, label: "3ème (Rép.)" });
-        }
-    }
-
-    const points = [];
-    const count = timeline.length;
-    const startX = 80;
-    const endX = 520;
-    timeline.forEach((item, index) => {
-        const x = count > 1 
-            ? startX + (index / (count - 1)) * (endX - startX) 
-            : 300;
-        points.push({ x: x, val: item.val, label: item.label });
-    });
-
-    if (points.length === 0) {
+    if (!slots.some(s => s.val !== null)) {
         wrapper.innerHTML = `
             <div class="graph-empty-state">
                 <svg class="empty-icon" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -1299,33 +1252,55 @@ function renderEvolutionGraph() {
         return;
     }
 
+    // Enlarged canvas (640x260) for legibility. X is the slot's real position,
+    // so an empty year keeps its place on the axis.
+    const startX = 80, endX = 560;
+    const count = slots.length;
     const mapY = (val) => {
         const clamped = Math.max(1.0, Math.min(6.0, val));
-        return 160 - ((clamped - 1.0) / 5.0) * 130;
+        return 210 - ((clamped - 1.0) / 5.0) * 170;
     };
-
-    points.forEach(pt => {
-        pt.y = mapY(pt.val);
+    slots.forEach((s, index) => {
+        s.x = count > 1 ? startX + (index / (count - 1)) * (endX - startX) : (startX + endX) / 2;
+        s.y = s.val !== null ? mapY(s.val) : null;
     });
 
     const promotionLimitY = mapY(4.0);
+    const baseline = 226;
 
-    let pathD = '';
-    let areaD = '';
-    if (points.length > 1) {
-        pathD = `M ${points[0].x} ${points[0].y}`;
-        for (let i = 1; i < points.length; i++) {
-            pathD += ` L ${points[i].x} ${points[i].y}`;
+    // Group consecutive non-null slots into runs: solid line + area per run,
+    // dashed connector across any gap so a missing year reads as a break.
+    const runs = [];
+    let currentRun = null;
+    slots.forEach(s => {
+        if (s.val !== null) {
+            if (!currentRun) { currentRun = []; runs.push(currentRun); }
+            currentRun.push(s);
+        } else {
+            currentRun = null;
         }
-        areaD = `M ${points[0].x} ${points[0].y}`;
-        for (let i = 1; i < points.length; i++) {
-            areaD += ` L ${points[i].x} ${points[i].y}`;
+    });
+
+    let solidPaths = '';
+    let areaPaths = '';
+    runs.forEach(run => {
+        let d = `M ${run[0].x} ${run[0].y}`;
+        for (let i = 1; i < run.length; i++) d += ` L ${run[i].x} ${run[i].y}`;
+        solidPaths += `<path class="graph-path" d="${d}" stroke="url(#line-grad)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none"/>`;
+        if (run.length > 1) {
+            areaPaths += `<path class="graph-area" d="${d} L ${run[run.length - 1].x} ${baseline} L ${run[0].x} ${baseline} Z" fill="url(#area-grad)"/>`;
         }
-        areaD += ` L ${points[points.length - 1].x} 175 L ${points[0].x} 175 Z`;
+    });
+
+    let gapPaths = '';
+    for (let i = 0; i < runs.length - 1; i++) {
+        const a = runs[i][runs[i].length - 1];
+        const b = runs[i + 1][0];
+        gapPaths += `<path d="M ${a.x} ${a.y} L ${b.x} ${b.y}" stroke="var(--color-text-muted)" stroke-width="2" stroke-dasharray="3,4" stroke-linecap="round" fill="none" opacity="0.55"/>`;
     }
 
-    let svgContent = `
-        <svg class="evolution-graph-svg" viewBox="0 0 600 200">
+    const svgContent = `
+        <svg class="evolution-graph-svg" viewBox="0 0 640 260">
             <defs>
                 <linearGradient id="area-grad" x1="0" y1="0" x2="0" y2="1">
                     <stop offset="0%" stop-color="var(--color-primary)" stop-opacity="0.35"/>
@@ -1341,37 +1316,37 @@ function renderEvolutionGraph() {
                 </filter>
             </defs>
 
-            <!-- Grid horizontal lines -->
-            <line x1="50" y1="${mapY(6.0)}" x2="550" y2="${mapY(6.0)}" stroke="rgba(255,255,255,0.03)" stroke-width="1"/>
-            <line x1="50" y1="${mapY(5.0)}" x2="550" y2="${mapY(5.0)}" stroke="rgba(255,255,255,0.03)" stroke-width="1"/>
-            <line x1="50" y1="${mapY(3.0)}" x2="550" y2="${mapY(3.0)}" stroke="rgba(255,255,255,0.03)" stroke-width="1"/>
-            <line x1="50" y1="${mapY(2.0)}" x2="550" y2="${mapY(2.0)}" stroke="rgba(255,255,255,0.03)" stroke-width="1"/>
+            <line x1="50" y1="${mapY(6.0)}" x2="590" y2="${mapY(6.0)}" stroke="rgba(128,128,128,0.14)" stroke-width="1"/>
+            <line x1="50" y1="${mapY(5.0)}" x2="590" y2="${mapY(5.0)}" stroke="rgba(128,128,128,0.14)" stroke-width="1"/>
+            <line x1="50" y1="${mapY(3.0)}" x2="590" y2="${mapY(3.0)}" stroke="rgba(128,128,128,0.14)" stroke-width="1"/>
+            <line x1="50" y1="${mapY(2.0)}" x2="590" y2="${mapY(2.0)}" stroke="rgba(128,128,128,0.14)" stroke-width="1"/>
 
-            <!-- Promotion Limit Line (4.0) -->
-            <line x1="50" y1="${promotionLimitY}" x2="550" y2="${promotionLimitY}" stroke="rgba(245,158,11,0.25)" stroke-dasharray="6,4" stroke-width="1.5"/>
-            <text x="555" y="${promotionLimitY + 3}" fill="rgba(245,158,11,0.7)" font-family="var(--font-family-sans)" font-size="10" font-weight="700">4.0 (limite)</text>
+            <line class="promo-limit-line" x1="50" y1="${promotionLimitY}" x2="590" y2="${promotionLimitY}" stroke="rgba(245,158,11,0.35)" stroke-dasharray="6,4" stroke-width="1.5"/>
+            <text class="promo-limit-text" x="596" y="${promotionLimitY + 4}" fill="rgba(245,158,11,0.9)" font-family="var(--font-family-sans)" font-size="12" font-weight="700">4.0</text>
 
-            <!-- Area under line -->
-            ${areaD ? `<path class="graph-area" d="${areaD}" fill="url(#area-grad)"/>` : ''}
+            ${areaPaths}
+            ${gapPaths}
+            ${solidPaths}
 
-            <!-- Connecting Line -->
-            ${pathD ? `<path class="graph-path" d="${pathD}" stroke="url(#line-grad)" stroke-width="3" stroke-linecap="round" fill="none"/>` : ''}
-
-            <!-- Node Points -->
-            ${points.map((pt, idx) => {
+            ${slots.map((pt, idx) => {
+                if (pt.val === null) {
+                    return `
+                        <g class="graph-node graph-node--empty">
+                            <circle cx="${pt.x}" cy="${promotionLimitY}" r="6" fill="none" stroke="var(--color-text-muted)" stroke-width="1.5" stroke-dasharray="2,2"/>
+                            <text x="${pt.x}" y="${promotionLimitY - 16}" fill="var(--color-text-muted)" font-family="var(--font-family-sans)" font-size="11" font-weight="600" text-anchor="middle">—</text>
+                            <text class="node-label" x="${pt.x}" y="248" fill="var(--color-text-muted)" font-family="var(--font-family-sans)" font-size="12" font-weight="600" text-anchor="middle">${pt.label}</text>
+                        </g>
+                    `;
+                }
                 const color = pt.val >= 4.0 ? '#10b981' : '#ef4444';
                 return `
                     <g class="graph-node" style="animation-delay: ${idx * 0.15}s;">
                         <circle cx="${pt.x}" cy="${pt.y}" r="7" fill="${color}" filter="url(#glow)"/>
                         <circle cx="${pt.x}" cy="${pt.y}" r="3" fill="white"/>
-                        
-                        <!-- Value label above node -->
-                        <text class="node-text" x="${pt.x}" y="${pt.y - 12}" fill="var(--color-text-primary)" stroke="var(--color-bg-surface)" stroke-width="3" paint-order="stroke fill" font-family="var(--font-family-sans)" font-size="11" font-weight="800" text-anchor="middle">
+                        <text class="node-text" x="${pt.x}" y="${pt.y - 15}" fill="var(--color-text-primary)" stroke="var(--color-bg-surface)" stroke-width="3" paint-order="stroke fill" font-family="var(--font-family-sans)" font-size="13" font-weight="800" text-anchor="middle">
                             ${pt.val.toFixed(2)}
                         </text>
-                        
-                        <!-- Year label below node -->
-                        <text class="node-label" x="${pt.x}" y="195" fill="var(--color-text-secondary)" font-family="var(--font-family-sans)" font-size="10" font-weight="600" text-anchor="middle">
+                        <text class="node-label" x="${pt.x}" y="248" fill="var(--color-text-secondary)" font-family="var(--font-family-sans)" font-size="12" font-weight="600" text-anchor="middle">
                             ${pt.label}
                         </text>
                     </g>
@@ -3325,7 +3300,7 @@ function updateProfileUI() {
         if (state.isLoggedIn) {
             btnProfile.title = `Mon Compte (${state.studentName})`;
         } else {
-            btnProfile.title = "Espace Étudiant (Non connecté)";
+            btnProfile.title = "Espace personnel (Non connecté)";
         }
     }
     
