@@ -53,6 +53,9 @@ export function normalizeState(state) {
     if (!state.currentYear) state.currentYear = 1;
     if (!state.currentSemester) state.currentSemester = 'sem1';
     if (!state.theme) state.theme = 'navy';
+    // Retired palettes fold into the nearest surviving theme so stored state still resolves.
+    const THEME_ALIAS = { mint: 'green', teal: 'green', cozy: 'green', skyblue: 'navy', pink: 'crimson' };
+    if (state.theme && THEME_ALIAS[state.theme]) state.theme = THEME_ALIAS[state.theme];
     if (state.hasSeenOnboarding === undefined) state.hasSeenOnboarding = false;
     if (!state.promoViewMode) state.promoViewMode = 'visual';
     if (state.isLightTheme === undefined) state.isLightTheme = true;
@@ -66,10 +69,10 @@ export function normalizeState(state) {
     }
     if (!state.badGradeMessages) {
         state.badGradeMessages = [
-            "t'a revisé ou ...",
-            "bruh",
-            "rappelle toi de ton objective!",
-            "bye."
+            "Un petit creux, ça arrive. La prochaine sera meilleure.",
+            "Rappelez-vous de votre objectif.",
+            "On se ressaisit au prochain examen.",
+            "Gardez le cap sur votre moyenne."
         ];
     }
 

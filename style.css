@@ -1440,17 +1440,6 @@ select.btn {
 /* --- Themes definitions --- */
 
 /* Pink (Rose / Berry) Theme */
-[data-theme="pink"] {
-    --color-bg-base: #1e111a;          /* Soft dark berry */
-    --color-bg-surface: #3b2233;       /* Lighter berry card bg */
-    --color-bg-elevated: #4e2f45;      /* Elevated berry */
-    --color-border-subtle: #45243b;
-    --color-primary: #ec4899;          /* Pink */
-    --color-primary-hover: #db2777;
-    --color-border-focus: #f472b6;
-    --color-text-muted: #b69aa8;
-}
-
 /* Green (Forest) Theme */
 [data-theme="green"] {
     --color-bg-base: #0c1a13;          /* Dark forest */
@@ -1476,19 +1465,6 @@ select.btn {
     --color-text-muted: #a299b5;
 }
 
-/* Cozy Sage / Clay Theme */
-[data-theme="cozy"] {
-    --color-bg-base: #1c1d1a;          /* Charcoal warm grey */
-    --color-bg-surface: #2d302b;       /* Sage dark card bg */
-    --color-bg-elevated: #3f423d;      /* Elevated sage */
-    --color-border-subtle: #343831;
-    --color-primary: #a7bfa4;          /* Soft sage */
-    --color-primary-hover: #8fa68c;
-    --color-border-focus: #c2d6bf;
-    --color-text-secondary: #cad1c7;
-    --color-text-muted: #a8b4a5;
-}
-
 /* Honey (warm gold / amber) Theme */
 [data-theme="honey"] {
     --color-bg-base: #1c150b;          /* Dark warm gold / amber */
@@ -1501,18 +1477,6 @@ select.btn {
     --color-text-muted: #a79b86;
 }
 
-/* Sky Blue Theme */
-[data-theme="skyblue"] {
-    --color-bg-base: #0c151c;          /* Deep dark blue-grey */
-    --color-bg-surface: #172633;       /* Slate-blue card bg */
-    --color-bg-elevated: #213547;      /* Elevated blue card */
-    --color-border-subtle: #1c2e3d;
-    --color-primary: #38bdf8;          /* Sky blue */
-    --color-primary-hover: #0ea5e9;
-    --color-border-focus: #7dd3fc;
-    --color-text-muted: #899fa9;
-}
-
 /* Crimson Theme */
 [data-theme="crimson"] {
     --color-bg-base: #1c0b0f;          /* Deep dark ruby / crimson */
@@ -1523,32 +1487,6 @@ select.btn {
     --color-primary-hover: #e11d48;
     --color-border-focus: #fb7185;
     --color-text-muted: #a9898e;
-}
-
-/* Mint Theme */
-[data-theme="mint"] {
-    --color-bg-base: #0b1c15;          /* Dark minty forest */
-    --color-bg-surface: #143326;       /* Mint card bg */
-    --color-bg-elevated: #1d4735;      /* Elevated mint card */
-    --color-border-subtle: #193d2e;
-    --color-primary: #34d399;          /* Mint green */
-    --color-primary-hover: #10b981;
-    --color-border-focus: #6ee7b7;
-    --color-text-secondary: #c2d6ce;
-    --color-text-muted: #a2bfae;
-}
-
-/* Teal Theme */
-[data-theme="teal"] {
-    --color-bg-base: #091a1e;          /* Dark teal ocean */
-    --color-bg-surface: #113138;       /* Teal card bg */
-    --color-bg-elevated: #18434d;      /* Elevated teal card */
-    --color-border-subtle: #143840;
-    --color-primary: #14b8a6;          /* Teal cyan */
-    --color-primary-hover: #0d9488;
-    --color-border-focus: #2dd4bf;
-    --color-text-secondary: #c0d6d9;
-    --color-text-muted: #9ebfc4;
 }
 
 /* Colour-theme selector (lives in the settings modal) — full-width native
@@ -1738,8 +1676,6 @@ select.btn {
     align-items: center;
     justify-content: center;
     margin-bottom: 2rem;
-    box-shadow: 0 10px 30px rgba(96, 165, 250, 0.4);
-    animation: logoPulse 2s infinite ease-in-out;
 }
 
 .landing-title {
@@ -1769,7 +1705,7 @@ select.btn {
     font-weight: 600;
     letter-spacing: 0.05em;
     text-transform: uppercase;
-    animation: bounce 2s infinite;
+    /* idle bounce removed (de-slop) */
     transition: color var(--transition-fast);
 }
 
@@ -1801,23 +1737,19 @@ select.btn {
 }
 
 .landing-feature-card {
-    background: color-mix(in srgb, var(--color-bg-surface) 80%, transparent);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    padding: 2.25rem 2rem;
-    border-radius: var(--radius-lg);
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    /* Flat secondary tier: no blur, no shadow, hairline border, tighter radius. */
+    background: color-mix(in srgb, var(--color-bg-surface) 55%, transparent);
+    border: 1px solid var(--color-border-subtle);
+    padding: var(--space-5);
+    border-radius: var(--radius-md);
+    transition: border-color var(--transition-fast);
     display: flex;
     flex-direction: column;
     gap: 1.25rem;
 }
 
 .landing-feature-card:hover {
-    transform: translateY(-8px);
-    border-color: rgba(96, 165, 250, 0.3);
-    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.3);
-    background: color-mix(in srgb, var(--color-bg-surface) 90%, transparent);
+    border-color: var(--card-border-hover);
 }
 
 /* Touch press feedback (no :hover on phones) — snappy scale-down. */
@@ -1988,21 +1920,18 @@ select.btn {
     /* Allow the card to shrink inside its grid track (grid items default to
        min-width:auto = min-content, which was causing horizontal overflow). */
     min-width: 0;
-    background-color: color-mix(in srgb, var(--color-bg-surface) 60%, transparent);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: var(--radius-lg);
-    padding: 2rem;
+    background-color: color-mix(in srgb, var(--color-bg-surface) 55%, transparent);
+    border: 1px solid var(--color-border-subtle);
+    border-radius: var(--radius-md);
+    padding: var(--space-5);
     display: flex;
     flex-direction: column;
     gap: 1rem;
-    transition: transform var(--transition-normal), border-color var(--transition-normal);
+    transition: border-color var(--transition-normal);
 }
 
 .guide-card:hover {
-    border-color: rgba(255, 255, 255, 0.15);
-    transform: translateY(-2px);
+    border-color: var(--card-border-hover);
 }
 
 .guide-card-title {
@@ -2402,6 +2331,13 @@ select.btn {
 .landing-page-container, .app-container, .guide-page-container {
     margin-top: 0 !important;
     padding-top: 0.5rem !important;
+}
+
+/* The marketing landing scrolls its own long content and the sticky nav does
+   not cover it the way it covers the app/guide views, so the landing owns its
+   TOP safe-area inset directly. env(safe-area-inset-top)=0 on desktop → no-op there. */
+.landing-page-container {
+    padding-top: calc(0.5rem + var(--safe-top)) !important;
 }
 
 /* Year Selection Tabs Container matching Semester Selector */
@@ -2881,11 +2817,11 @@ select.btn {
 
 /* ...then re-introduce tasteful, intentional elevation on key surfaces so
    cards read as lifted and "finished" (class specificity beats the * reset). */
+/* Elevation is EARNED: only the primary data surfaces + modals lift. Secondary
+   cards (guide, feature, settings) stay flat so hierarchy reads. */
 .promo-dashboard-container,
 .subject-card,
-.modal-container,
-.guide-card,
-.bilan-grid .subject-card {
+.modal-container {
     box-shadow: var(--shadow-card) !important;
 }
 .gem-sphere-shadow {
@@ -3055,16 +2991,13 @@ body.theme-light .toast-sidebar-container {
     font-family: var(--font-family-sans) !important;
 }
 
-body.theme-light h1, 
-body.theme-light h2, 
-body.theme-light h3, 
-body.theme-light .landing-title, 
-body.theme-light .guide-page-title, 
-body.theme-light .guide-card-title, 
-body.theme-light .subject-name, 
-body.theme-light .promo-text-summary h2, 
-body.theme-light .creator-word-box h3, 
-body.theme-light .bilan-section h2 {
+/* Serif is reserved for DISPLAY headings only (identical set in light + dark);
+   card/section/panel titles (h2/h3, .subject-name, .guide-card-title …) render
+   in sans, killing the "editorial serif everywhere" tell. */
+body.theme-light h1,
+body.theme-light .landing-title,
+body.theme-light .guide-page-title,
+body.theme-light .promo-text-summary h2 {
     font-family: var(--font-family-serif) !important;
     font-weight: 800 !important;
 }
@@ -3501,6 +3434,18 @@ body.theme-light select.sim-type {
 body.theme-light .subject-card.is-maximized {
     box-shadow: 0 20px 80px rgba(0, 0, 0, 0.12) !important;
     border-color: rgba(0, 0, 0, 0.1) !important;
+}
+
+/* Maximized chart: top-align the graph wrapper so tall content scrolls instead
+   of overflowing UPWARD into the header (was stacking the title over the chip
+   label); keep the header at full height. */
+.subject-card.is-maximized .evo-graph-wrapper {
+    justify-content: flex-start;
+    flex: 1 1 auto;
+    min-height: 0;
+}
+.subject-card.is-maximized .evo-chart-head {
+    flex-shrink: 0;
 }
 
 @keyframes zoomIn {
@@ -4221,7 +4166,9 @@ body.theme-light .exam-input-field:focus {
 }
 .evo-chart-head-main { display: flex; align-items: center; gap: 0.6rem; }
 .evo-chart-title {
-    font-family: var(--font-family-serif);
+    /* Sans, not serif — this is a UI panel title, not a display heading.
+       (Also stops the wrap/collision in the maximized chart.) */
+    font-family: var(--font-family-sans);
     font-size: 1.25rem;
     font-weight: 800;
     color: var(--color-text-primary);
@@ -4557,7 +4504,7 @@ body.theme-light .mock-window-address {
 }
 
 .landing-section-head {
-    text-align: center;
+    text-align: left;
     margin-bottom: 3rem;
 }
 
@@ -4576,7 +4523,7 @@ body.theme-light .mock-window-address {
 .landing-section-sub {
     color: var(--color-text-secondary);
     max-width: 600px;
-    margin: 0 auto;
+    margin: 0;
     font-size: 0.95rem;
 }
 
@@ -4585,10 +4532,8 @@ body.theme-light .mock-window-address {
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 48px;
-    height: 48px;
-    background: rgba(96, 165, 250, 0.1);
-    border-radius: var(--radius-md);
+    width: 28px;
+    height: 28px;
 }
 
 .feature-title {
@@ -4637,7 +4582,7 @@ body.theme-light .mock-window-address {
 }
 
 .landing-hero-lede {
-    font-family: 'Playfair Display', Georgia, serif;
+    font-family: var(--font-family-sans);
     font-size: clamp(0.85rem, 2vw, 1rem);
     color: var(--color-text-secondary);
     line-height: 1.5;
@@ -4984,7 +4929,9 @@ body.theme-light .mock-window-address {
 
 /* Settings modal */
 .settings-box {
-    background: rgba(255, 255, 255, 0.02);
+    /* Theme token, not a hardcoded white wash — reads as a distinct inset panel
+       in BOTH themes (dark #0f172a on the slate modal, light #fcfbf9 on white). */
+    background: var(--color-bg-base);
     padding: var(--space-3) var(--space-4);
     border-radius: var(--radius-md);
     border: 1px solid var(--color-border-subtle);

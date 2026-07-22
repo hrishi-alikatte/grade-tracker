@@ -984,34 +984,23 @@ function renderMultiSubjectGraph() {
     }
 
     const isLightTheme = document.body.classList.contains('theme-light');
+    // Curated 6-color categorical palette (desaturated / editorial, not neon).
+    // Same hue order in both themes so a subject keeps a stable identity; only
+    // luminance shifts (darker on the light background for AA contrast).
     const subjectColors = isLightTheme ? [
-        '#b91c1c', // Crimson Red
-        '#1d4ed8', // Royal Blue
-        '#047857', // Forest Green
-        '#b45309', // Dark Amber
-        '#7e22ce', // Purple
-        '#0f766e', // Dark Teal
-        '#be185d', // Pink
-        '#c2410c', // Dark Orange
-        '#4338ca', // Indigo
-        '#9f1239', // Rose
-        '#1e3a8a', // Navy
-        '#451a03', // Brown
-        '#065f46'  // Emerald
+        '#3b6ea5', // blue
+        '#9a6a2e', // ochre
+        '#5f7f4f', // sage
+        '#8f5563', // rose
+        '#6a5c8e', // violet
+        '#3f7778'  // teal
     ] : [
-        '#ef4444', // Red
-        '#3b82f6', // Blue
-        '#10b981', // Emerald Green
-        '#f59e0b', // Amber
-        '#a78bfa', // Violet
-        '#06b6d4', // Cyan
-        '#ec4899', // Pink
-        '#f97316', // Orange
-        '#14b8a6', // Teal
-        '#84cc16', // Lime
-        '#8b5cf6', // Purple
-        '#6366f1', // Indigo
-        '#d946ef'  // Fuchsia
+        '#5b8cc4', // blue
+        '#c08a4a', // ochre
+        '#7fa06e', // sage
+        '#b0707f', // rose
+        '#8a7cae', // violet
+        '#5a9a9b'  // teal
     ];
 
     allSubjects.forEach((sub, idx) => {
@@ -3110,10 +3099,10 @@ document.getElementById('add-grade-form').addEventListener('submit', (e) => {
                         playFahSound();
                         if (value < 3.5) {
                             const badGradeMessages = state.badGradeMessages || [
-                                "t'a revisé ou ...",
-                                "bruh",
-                                "rappelle toi de ton objective!",
-                                "bye."
+                                "Un petit creux, ça arrive. La prochaine sera meilleure.",
+                                "Rappelez-vous de votre objectif.",
+                                "On se ressaisit au prochain examen.",
+                                "Gardez le cap sur votre moyenne."
                             ];
                             if (badGradeMessages.length > 0) {
                                 const randomMsg = badGradeMessages[Math.floor(Math.random() * badGradeMessages.length)];
@@ -3571,10 +3560,10 @@ function renderSettingsMessages() {
     // Ensure state.badGradeMessages exists
     if (!state.badGradeMessages) {
         state.badGradeMessages = [
-            "t'a revisé ou ...",
-            "bruh",
-            "rappelle toi de ton objective!",
-            "bye."
+            "Un petit creux, ça arrive. La prochaine sera meilleure.",
+            "Rappelez-vous de votre objectif.",
+            "On se ressaisit au prochain examen.",
+            "Gardez le cap sur votre moyenne."
         ];
     }
     
