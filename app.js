@@ -3596,10 +3596,18 @@ function renderSettingsMessages() {
     });
 }
 
+function hideSplash() {
+    try {
+        const cap = window.Capacitor;
+        if (cap && cap.isNativePlatform && cap.isNativePlatform() && cap.Plugins && cap.Plugins.SplashScreen) {
+            cap.Plugins.SplashScreen.hide({ fadeOutDuration: 150 });
+        }
+    } catch (e) { /* web / plugin absent — nothing to hide */ }
+}
+
 function init() {
     loadState();
     updateProfileUI();
-    initBackgroundBoxes();
     initBackupUI();
     wireLegal();
     initAuth();
@@ -3629,7 +3637,18 @@ function init() {
     animateCards = true;
     // View Router on startup: always start on the landing page
     switchView('view-landing');
-    
+
+    // Landing painted → hide the native splash and defer the decorative 720-cell
+    // background grid to idle, so cold-start paints instantly instead of building
+    // DOM before first paint. setTimeout is a safety net: the splash can NEVER
+    // stick even if requestAnimationFrame/idle never fires.
+    requestAnimationFrame(() => {
+        hideSplash();
+        const idle = window.requestIdleCallback || ((cb) => setTimeout(cb, 1));
+        idle(() => initBackgroundBoxes());
+    });
+    setTimeout(hideSplash, 2500);
+
     const themeSelector = document.getElementById('theme-selector');
     if (themeSelector) {
         themeSelector.value = state.theme || 'navy';

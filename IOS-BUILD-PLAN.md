@@ -17,7 +17,10 @@ Principle: **no calculation logic changes** — CSS, copy, DOM structure, and on
 
 - [x] **QA** — gstack browse, iPhone-15 393×852, both themes. Verified live: safe-area top clearance, bottom tab bar (no clipping — semester tabs now fully visible), sticky top action bar, chip filled/outline + native action buttons, **evolution chart shows all 3 year slots** (2ème année empty→dashed "—" marker + gap connector, was collapsing to 2 points), no stuck-black card borders, name placeholder (empty→"votre prénom", set→"Pranathi"), Notare casing, Mode Visuel (Gemmes). No JS errors.
   - **QA-found bug FIXED:** `.top-nav-bar` `backdrop-filter` made it the containing block for its `position:fixed` child → the "bottom" tab bar anchored to the top bar. Fix: drop backdrop-filter on the mobile top bar (opaque bg). Re-verified: tab bar now at viewport bottom (y=794).
-- [ ] **Review + Ship** — gstack `/review` → `/ship` (PR only); `npx cap sync ios` before device rebuild
+- [x] **Review** — gstack `/review` + focused adversarial pass on logic diff: **no real defects**. Removed one dead `hexToRgb`. Build+tests green.
+- [x] **Ship** — `npx cap sync ios` (web assets → iOS project); committed `2983c38`; pushed `feat/ios-appstore-notare`; opened **PR #1 → main** (no merge). https://github.com/hrishi-alikatte/grade-tracker/pull/1
+
+**PIPELINE COMPLETE: review → plan → build → review → qa → ship. 8 clusters + 1 QA bug fixed, 91/91 tests, verified live both themes, PR open awaiting sign-off.**
 
 ## Sequencing (dependency-aware)
 

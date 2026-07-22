@@ -5,3 +5,5 @@ dist/
 *.log
 .gstack/
 .env*
+ios/build/
+ios/build-sim/

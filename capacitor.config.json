@@ -1,5 +1,12 @@
 {
   "appId": "ch.notare.app",
   "appName": "Notare",
-  "webDir": "dist"
+  "webDir": "dist",
+  "plugins": {
+    "SplashScreen": {
+      "launchAutoHide": false,
+      "launchFadeOutDuration": 150,
+      "backgroundColor": "#fcfbf9"
+    }
+  }
 }

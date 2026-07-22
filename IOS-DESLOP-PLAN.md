@@ -8,8 +8,12 @@ Source: `IOS-DESLOP-AUDIT.md` + 8-agent grounding (workflow `wa7lmgh0c`). No cal
 - [x] **D · Copy** — "Rox/roasts"→"Messages de motivation"; slang roast defaults→professional vous (×3). Green. Slop sweep clean.
 - [x] **C · Components** — shadow blanket scoped to primary+modal only; guide/feature cards flattened (no blur/shadow, hairline, radius-md); restrained border hover (no -8px lift); bare 28px feature icons; section heads left-aligned. Green.
 - [x] **E · Color/themes** — 10→5 curated French (Marine/Forêt/Prune/Ambre/Grenat, values unchanged); migration alias for retired values; 5 dead `[data-theme]` blocks deleted; subject palette 13→6 curated desaturated. Green.
-- [ ] **F · Website/landing** — value-prop hero, kill browser-chrome mockups + idle animations, brand casing, dev quote
-- [ ] **QA** — browse iPhone-15 both themes (landing scroll, maximized chart, settings, serif, cards, themes) → install to device → ship
+- [x] **F · Website/landing** — value-prop hero ("Suivez vos notes. Sachez si vous passez." + Vaud subhead); killed browser-chrome mockups (dots+address bar); removed idle animations (logoPulse, scroll bounce, CTA glow); benefit-led section headers; credible dev note. Green.
+- [x] **QA** — gstack browse iPhone-15 both themes: hero value-prop ✓, settings cards themed (light #fcfbf9 / dark #0f172a, regression fixed) ✓, maximized chart no overlap (title 129 < label 184) ✓ + sans title + 6-hue desaturated chips ✓, theme "Marine" ✓, "Messages de motivation" + vous copy ✓, no JS errors ✓. Landing safe-area proven (element test 0.5rem+59px=67px; env=0 headless, device confirms).
+- [x] **Ship (code)** — commit `9b39372`, pushed, **PR #1 updated**. `npx cap sync ios`. Device build **SUCCEEDED** + signed.
+- [ ] **Device install** — PENDING: iPhone 15 went "unavailable" (locked/asleep). Signed `.app` ready at `ios/build/Build/Products/Debug-iphoneos/App.app`. Retry `devicectl install` when phone reconnects (or Run in open Xcode).
+
+**ALL 6 DE-SLOP PHASES SHIPPED. Device install pending phone reconnect.**
 
 ## Build order
 

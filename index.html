@@ -18,13 +18,10 @@
     <meta name="apple-mobile-web-app-title" content="Notare">
     <link rel="apple-touch-icon" href="apple-touch-icon.png">
     
-    <!-- Google Fonts: JetBrains Mono, Plus Jakarta Sans, Playfair Display -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <!-- Load fonts without blocking first paint; display=swap shows fallback
-         text immediately, then swaps. <noscript> keeps it working sans JS. -->
-    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&family=Plus+Jakarta+Sans:wght@200..800&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap" onload="this.rel='stylesheet'">
-    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&family=Plus+Jakarta+Sans:wght@200..800&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap"></noscript>
+    <!-- Self-hosted fonts (@font-face in style.css) — no CDN, works fully offline.
+         Preload only the two faces needed for first paint (body + display heading). -->
+    <link rel="preload" as="font" type="font/woff2" href="/fonts/jakarta-latin.woff2" crossorigin>
+    <link rel="preload" as="font" type="font/woff2" href="/fonts/playfair-latin.woff2" crossorigin>
     <link rel="stylesheet" href="style.css">
     <!-- Tesseract OCR is lazy-loaded on first scan (see ensureTesseract in
          src/features/ocr.js) so it never blocks first paint. -->
@@ -128,21 +125,21 @@
                     <!-- Card 1: Dashboard -->
                     <div class="preview-scroll-card">
                         <div class="mock-window-shell">
-                            <img src="./assets/preview-dashboard.png" alt="Tableau de bord de Notare" class="preview-scroll-image" loading="lazy">
+                            <img src="./assets/preview-dashboard.webp" alt="Tableau de bord de Notare" class="preview-scroll-image" width="900" height="562" loading="eager" fetchpriority="high" decoding="async">
                         </div>
                     </div>
 
                     <!-- Card 2: Evolution -->
                     <div class="preview-scroll-card">
                         <div class="mock-window-shell">
-                            <img src="./assets/preview-evolution.png" alt="Graphique d'évolution générale de Notare" class="preview-scroll-image" loading="lazy">
+                            <img src="./assets/preview-evolution.webp" alt="Graphique d'évolution générale de Notare" class="preview-scroll-image" width="900" height="562" loading="lazy" decoding="async">
                         </div>
                     </div>
 
                     <!-- Card 3: Settings -->
                     <div class="preview-scroll-card">
                         <div class="mock-window-shell">
-                            <img src="./assets/preview-settings.png" alt="Paramètres de Notare" class="preview-scroll-image" loading="lazy">
+                            <img src="./assets/preview-settings.webp" alt="Paramètres de Notare" class="preview-scroll-image" width="900" height="562" loading="lazy" decoding="async">
                         </div>
                     </div>
 
